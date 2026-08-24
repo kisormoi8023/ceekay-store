@@ -309,3 +309,31 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(err => console.error('Error loading product catalog:', err));
 });
+// Global Handler for sproduct.html Add To Cart Button
+function handleAddToCart() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+    
+    fetch('products.json')
+        .then(res => res.json())
+        .then(products => {
+            // Match selected product or fallback to first catalog item
+            const product = products.find(p => p.id === productId) || products[0];
+            
+            const colorSelect = document.getElementById('color-select');
+            const sizeSelect = document.getElementById('size-select');
+            const qtyInput = document.getElementById('product-quantity');
+            
+            const selectedColor = colorSelect ? colorSelect.value : "Default";
+            const selectedSize = sizeSelect ? sizeSelect.value : "Default";
+            const qty = qtyInput ? parseInt(qtyInput.value) : 1;
+
+            const variants = product.variants || [];
+            const exactVariant = variants.find(v => v.color === selectedColor && v.size === selectedSize) 
+                || variants.find(v => v.color === selectedColor) 
+                || variants[0];
+
+            addToCartWithVariant(product, exactVariant, qty);
+        })
+        .catch(err => console.error("Error adding item to cart:", err));
+}
