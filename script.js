@@ -329,101 +329,79 @@ function loadSingleProductPage(products) {
 
     // Elements
     const mainImg = document.getElementById('MainImg');
-    const titleEl = document.querySelector('.single-pro-details h4');
-    const priceEl = document.querySelector('.single-pro-details h2');
+    const titleEl = document.getElementById('product-title') || document.querySelector('.single-pro-details h4');
+    const priceEl = document.getElementById('product-price') || document.querySelector('.single-pro-details h2');
     const sizeSelect = document.getElementById('size-select');
     const colorSelect = document.getElementById('color-select');
     const addToCartBtn = document.getElementById('add-to-cart-detail');
 
     if (titleEl) titleEl.innerText = product.title;
 
-    // 1. Extract Unique Colors & Sizes
     const variants = product.variants || [];
-    const uniqueColors = [...new Set(variants.map(v => v.color))].filter(Boolean);
-    const uniqueSizes = [...new Set(variants.map(v => v.size))].filter(Boolean);
+    if (variants.length === 0) return;
 
-    // 2. Populate Color Dropdown
+    // 1. Populate Color Dropdown with Unique Colors
+    const uniqueColors = [...new Set(variants.map(v => v.color))].filter(Boolean);
     if (colorSelect && uniqueColors.length > 0) {
         colorSelect.innerHTML = uniqueColors.map(c => `<option value="${c}">${c}</option>`).join('');
     }
 
-    // 3. Populate Size Dropdown
-    if (sizeSelect && uniqueSizes.length > 0) {
-        sizeSelect.innerHTML = uniqueSizes.map(s => `<option value="${s}">${s}</option>`).join('');
+    // 2. Update Available Sizes based on selected Color
+    function updateSizeOptions() {
+        if (!colorSelect || !sizeSelect) return;
+        const selectedColor = colorSelect.value;
+
+        // Get sizes available ONLY for this specific color
+        const colorVariants = variants.filter(v => v.color === selectedColor);
+        const availableSizes = [...new Set(colorVariants.map(v => v.size))].filter(Boolean);
+
+        sizeSelect.innerHTML = availableSizes.map(s => `<option value="${s}">${s}</option>`).join('');
+        
+        // Update photo and price for newly selected combination
+        updateVariantView();
     }
 
-    // Helper: Find matching variant object based on current dropdown selections
-    function getSelectedVariant() {
+    // 3. Update Image & Price for exact (Color + Size) match
+    function updateVariantView() {
         const selectedColor = colorSelect ? colorSelect.value : "Default";
         const selectedSize = sizeSelect ? sizeSelect.value : "Default";
 
-        return variants.find(v => v.color === selectedColor && v.size === selectedSize) 
+        // Find exact matching variant object from products.json
+        const matchedVariant = variants.find(v => v.color === selectedColor && v.size === selectedSize) 
             || variants.find(v => v.color === selectedColor) 
             || variants[0];
-    }
 
-    // Helper: Update Price and Image based on selected variant
-    function updateVariantView() {
-        const currentVariant = getSelectedVariant();
-        if (!currentVariant) return;
-
-        if (mainImg && currentVariant.image) {
-            mainImg.src = currentVariant.image;
-        }
-        if (priceEl && currentVariant.retail_price) {
-            priceEl.innerText = `$${parseFloat(currentVariant.retail_price).toFixed(2)}`;
+        if (matchedVariant) {
+            if (mainImg && matchedVariant.image) {
+                mainImg.src = matchedVariant.image;
+            }
+            if (priceEl && matchedVariant.retail_price) {
+                priceEl.innerText = `$${parseFloat(matchedVariant.retail_price).toFixed(2)}`;
+            }
         }
     }
 
     // Attach Change Listeners
-    if (colorSelect) colorSelect.addEventListener('change', updateVariantView);
+    if (colorSelect) colorSelect.addEventListener('change', updateSizeOptions);
     if (sizeSelect) sizeSelect.addEventListener('change', updateVariantView);
 
-    // Initial View Update
-    updateVariantView();
+    // Initial load sync
+    updateSizeOptions();
 
-    // 4. Add To Cart with exact Variant Details
+    // 4. Add exact variant payload to Cart
     if (addToCartBtn) {
         addToCartBtn.onclick = function(e) {
             e.preventDefault();
-            const quantityInput = document.getElementById('product-quantity');
-            const qty = quantityInput ? parseInt(quantityInput.value) : 1;
-            const currentVariant = getSelectedVariant();
+            const selectedColor = colorSelect ? colorSelect.value : "Default";
+            const selectedSize = sizeSelect ? sizeSelect.value : "Default";
+            const qtyInput = document.getElementById('product-quantity');
+            const qty = qtyInput ? parseInt(qtyInput.value) : 1;
 
-            addToCartWithVariant(product, currentVariant, qty);
+            const exactVariant = variants.find(v => v.color === selectedColor && v.size === selectedSize) 
+                || variants.find(v => v.color === selectedColor) 
+                || variants[0];
+            
+            addToCartWithVariant(product, exactVariant, qty);
         };
     }
-}
-
-// Save explicit variant parameters into localStorage
-function addToCartWithVariant(product, variant, quantity = 1) {
-    let cart = JSON.parse(localStorage.getItem('ceekay_cart')) || [];
-
-    const selectedColor = variant ? variant.color : "Default";
-    const selectedSize = variant ? variant.size : "Default";
-    const itemPrice = variant ? variant.retail_price : product.base_retail_price;
-    const itemImage = variant ? variant.image : product.default_image;
-    const itemSku = variant ? variant.sku : product.id;
-
-    const existingIndex = cart.findIndex(item => 
-        item.id === product.id && item.color === selectedColor && item.size === selectedSize
-    );
-
-    if (existingIndex > -1) {
-        cart[existingIndex].quantity += quantity;
-    } else {
-        cart.push({
-            id: product.id,
-            sku: itemSku,
-            title: product.title,
-            price: itemPrice,
-            image: itemImage,
-            color: selectedColor,
-            size: selectedSize,
-            quantity: quantity
-        });
-    }
-
-    localStorage.setItem('ceekay_cart', JSON.stringify(cart));
-    alert(`${product.title} (${selectedColor} / ${selectedSize}) added to cart!`);
 }
