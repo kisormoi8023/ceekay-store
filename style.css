@@ -1614,3 +1614,40 @@ footer a:hover {
     color: #666 !important;
     display: block !important;
 }
+/* Fix Cart Table Layout & Overlaps */
+#cart table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
+}
+
+#cart table td, 
+#cart table th {
+    padding: 12px 10px !important;
+    vertical-align: middle !important;
+    text-align: center !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+/* Specific Column Width Allocations */
+#cart table td:nth-child(1) { width: 5%; }  /* Remove Icon */
+#cart table td:nth-child(2) { width: 12%; } /* Image */
+#cart table td:nth-child(3) { width: 40%; text-align: left !important; } /* Title & Variant */
+#cart table td:nth-child(4) { width: 13%; } /* Unit Price */
+#cart table td:nth-child(5) { width: 15%; } /* Quantity Input */
+#cart table td:nth-child(6) { width: 15%; } /* Subtotal */
+
+#cart table td input[type="number"] {
+    width: 60px !important;
+    padding: 6px !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+    display: block !important;
+}
+
+#cart table td small {
+    display: block;
+    color: #666;
+    margin-top: 4px;
+}
