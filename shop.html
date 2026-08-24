@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ceekay</title>
+    <title>Ceekay - Shop</title>
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
     <link rel="stylesheet" href="style.css">
 </head>
@@ -21,7 +21,12 @@
                 <li><a class="active" href="shop.html">Shop</a></li>
                 <li><a href="blog.html">Blog</a></li>
                 <li><a href="about.html">About</a></li>
-                <li id="lg-bag"><a href="cart.html"><i class="far fa-shopping-bag"></i></a></li>
+                <li id="lg-bag">
+                    <a href="cart.html">
+                        <i class="far fa-shopping-bag"></i>
+                        <span id="cart-count">0</span>
+                    </a>
+                </li>
                 <a href="index.html" id="close"><i class="far fa-times"></i></a>
             </ul>
         </div>
@@ -33,10 +38,11 @@
 
     <!-- CATALOG SECTION (RENDERED VIA SCRIPT.JS) -->
     <section id="product1" class="section-p1">
-    <h2>Catalog</h2>
-    <p>Summer Collection New Modern Design</p>
-    <div class="pro-container" id="featured-products"></div>
-</section>
+        <h2>Catalog</h2>
+        <p>Summer Collection New Modern Design</p>
+        <div class="pro-container"></div>
+    </section>
+
     <section id="newsletter" class="section-p1 section-m1">
         <div class="newstext">
             <h4>Sign Up For Newsletters</h4>
@@ -57,11 +63,15 @@
             <div class="follow">
                 <h4>Follow Us</h4>
                 <div class="icon">
-                    <i class="fab fa-facebook-f"></i>
-                    <i class="fab fa-twitter"></i>
-                    <i class="fab fa-instagram"></i>
-                    <i class="fab fa-pinterest-p"></i>
-                    <i class="fab fa-youtube"></i>
+                    <a href="https://www.facebook.com/61584724989714" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://instagram.com/your-profile" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://pinterest.com/your-profile" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-pinterest-p"></i>
+                    </a>
                 </div>
             </div>
         </div>
@@ -99,7 +109,6 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
     <!-- Visual Slide-in Toast Notification Container -->
     <div id="cart-toast" class="cart-toast">
         <div class="toast-content">
@@ -116,7 +125,6 @@
     </div>
 
     <script src="script.js"></script>
-</body>
 </body>
 
 </html>
