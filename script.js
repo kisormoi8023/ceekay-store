@@ -76,135 +76,22 @@ document.addEventListener("DOMContentLoaded", function () {
     startSlideshow();
 });
 
-// DEFAULT FALLBACK INVENTORY
-const defaultProducts = [
-    {
-        id: "p1",
-        brand: "Masaba-Fahari",
-        name: "Striped Slim Fit Long Sleeved Long Pants Men's Suit",
-        title: "Striped Slim Fit Long Sleeved Long Pants Men's Suit",
-        price: 98.99,
-        image: "img/p1.avif",
-        featured_image: "img/p1.avif"
-    },
-    {
-        id: "p2",
-        brand: "Masaba-Fahari",
-        name: "Fashion Women's Casual High Waist Overlap Asymmetric Elegant Solid Color Wide Leg Pants",
-        title: "Fashion Women's Casual High Waist Overlap Asymmetric Elegant Solid Color Wide Leg Pants",
-        price: 37.99,
-        image: "img/p2black.webp",
-        featured_image: "img/p2black.webp"
-    }
-];
-
-// LOAD PRODUCTS FROM DASHBOARD STORAGE
-const products = JSON.parse(localStorage.getItem("storeProducts")) || defaultProducts;
-
-// CARD RENDERER
-function generateProductHTML(product) {
-    const imgSrc = product.featured_image || product.image || 'img/p1.avif';
-    const productTitle = product.title || product.name || 'Untitled Product';
-    const productPrice = Number(product.price) || 0;
-
-    return `
-        <div class="pro" onclick="window.location.href='sproduct.html?id=${product.id}';">
-            <img src="${imgSrc}" alt="${productTitle}">
-            <div class="des">
-                <span>${product.brand || 'Masaba-Fahari'}</span>
-                <h5>${productTitle}</h5>
-                <h4>$${productPrice.toFixed(2)}</h4>
-            </div>
-            <a href="cart.html"><i class="fal fa-shopping-cart cart"></i></a>
-        </div>
-    `;
-}
-document.addEventListener("DOMContentLoaded", () => {
-    fetch("products.json")
-        .then(response => response.json())
-        .then(products => {
-            window.allProducts = products;
-
-            // Helper to generate a single product card HTML
-            const createProductCard = (product, index) => {
-                const imgUrl = product.default_image || (product.images && product.images[0]) || 'img/products/f1.jpg';
-                const price = product.base_retail_price || product.retail_price;
-
-                return `
-                    <div class="pro" onclick="window.location.href='sproduct.html?title=${encodeURIComponent(product.title)}'">
-                        <img src="${imgUrl}" alt="${product.title}">
-                        <div class="des">
-                            <span>CeeKay</span>
-                            <h5>${product.title}</h5>
-                            <div class="star">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <h4>A$${price}</h4>
-                        </div>
-                        <a href="javascript:void(0);" onclick="addToCart(event, ${index})">
-                            <i class="fal fa-shopping-cart cart"></i>
-                        </a>
-                    </div>
-                `;
-            };
-
-            // Targets all .pro-container sections (Featured Products and New Arrivals)
-            const containers = document.querySelectorAll(".pro-container");
-
-            containers.forEach(container => {
-                container.innerHTML = products.map((product, index) => createProductCard(product, index)).join("");
-            });
-        })
-        .catch(error => console.error("Error displaying products:", error));
-});
-
-function addToCart(event, productIndex) {
-    event.stopPropagation(); // Prevents navigating to sproduct.html
-
-    const product = window.allProducts[productIndex];
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-    const existingIndex = cart.findIndex(item => item.title === product.title);
-
-    const price = product.base_retail_price || product.retail_price;
-    const imgUrl = product.default_image || (product.images && product.images[0]) || 'img/products/f1.jpg';
-    const defaultSize = (product.variants && product.variants[0] && product.variants[0].size) || (product.sizes && product.sizes[0]) || 'Default';
-
-    if (existingIndex > -1) {
-        cart[existingIndex].quantity += 1;
-    } else {
-        cart.push({
-            title: product.title,
-            price: price,
-            image: imgUrl,
-            quantity: 1,
-            size: defaultSize
-        });
-    }
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-    alert("Item added to cart!");
-}
-// Function to render products dynamically onto shop grids
+// Render products on shop grid (index.html / shop.html)
 function renderProducts(products) {
     const productContainer = document.querySelector('.pro-container');
     if (!productContainer) return;
 
     productContainer.innerHTML = products.map(product => {
-        // Encode title or ID safely for URL parameters
         const detailUrl = `sproduct.html?id=${encodeURIComponent(product.id)}`;
+        const displayPrice = product.base_retail_price ? product.base_retail_price.toFixed(2) : "0.00";
 
         return `
             <div class="pro" data-id="${product.id}">
                 <img src="${product.default_image}" alt="${product.title}" onclick="window.location.href='${detailUrl}'">
                 <div class="des" onclick="window.location.href='${detailUrl}'">
-                    <span>Ceekay</span>
+                    <span>CeeKay</span>
                     <h5>${product.title}</h5>
-                    <h4>$${product.base_retail_price.toFixed(2)}</h4>
+                    <h4>$${displayPrice}</h4>
                 </div>
                 <a href="#" class="add-to-cart-btn" data-id="${product.id}">
                     <i class="fal fa-shopping-cart cart"></i>
@@ -215,109 +102,8 @@ function renderProducts(products) {
 
     attachCartEventListeners(products);
 }
-// Handle sproduct.html dynamic details loading
-function loadSingleProductPage(products) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('id');
 
-    if (!productId) return;
-
-    // Find selected product
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
-
-    // Populate main visual elements
-    const mainImg = document.getElementById('MainImg');
-    const titleEl = document.querySelector('.single-pro-details h4');
-    const priceEl = document.querySelector('.single-pro-details h2');
-    const sizeSelect = document.getElementById('size-select');
-    const addToCartBtn = document.getElementById('add-to-cart-detail');
-
-    if (mainImg) mainImg.src = product.default_image;
-    if (titleEl) titleEl.innerText = product.title;
-    if (priceEl) priceEl.innerText = `$${product.base_retail_price.toFixed(2)}`;
-
-    // Populate size dropdown options from variants
-    if (sizeSelect && product.variants) {
-        sizeSelect.innerHTML = product.variants.map(v => 
-            `<option value="${v.size}" data-image="${v.image}" data-price="${v.retail_price}">${v.size}</option>`
-        ).join('');
-
-        // Switch main photo when size/variant selection changes
-        sizeSelect.addEventListener('change', (e) => {
-            const selectedOption = e.target.options[e.target.selectedIndex];
-            const variantImage = selectedOption.getAttribute('data-image');
-            const variantPrice = selectedOption.getAttribute('data-price');
-            
-            if (variantImage && mainImg) mainImg.src = variantImage;
-            if (variantPrice && priceEl) priceEl.innerText = `$${parseFloat(variantPrice).toFixed(2)}`;
-        });
-    }
-
-    // Detail page "Add to Cart" listener
-    if (addToCartBtn) {
-        addToCartBtn.onclick = function(e) {
-            e.preventDefault();
-            const quantityInput = document.getElementById('product-quantity');
-            const qty = quantityInput ? parseInt(quantityInput.value) : 1;
-            const selectedSize = sizeSelect ? sizeSelect.value : "Default";
-
-            addToCart(product, selectedSize, qty);
-        };
-    }
-}
-// Cart handling helper
-function addToCart(product, selectedSize = "Default", quantity = 1) {
-    let cart = JSON.parse(localStorage.getItem('ceekay_cart')) || [];
-
-    // Find existing variant match in cart
-    const existingIndex = cart.findIndex(item => item.id === product.id && item.size === selectedSize);
-
-    if (existingIndex > -1) {
-        cart[existingIndex].quantity += quantity;
-    } else {
-        cart.push({
-            id: product.id,
-            title: product.title,
-            price: product.base_retail_price,
-            image: product.default_image,
-            size: selectedSize,
-            quantity: quantity
-        });
-    }
-
-    localStorage.setItem('ceekay_cart', JSON.stringify(cart));
-    alert(`${product.title} has been added to your cart!`);
-}
-
-// Attach listeners for shop grid quick-add buttons
-function attachCartEventListeners(products) {
-    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation(); // Prevents navigating to product detail page
-
-            const productId = btn.getAttribute('data-id');
-            const product = products.find(p => p.id === productId);
-
-            if (product) {
-                addToCart(product, "Default", 1);
-            }
-        });
-    });
-}
-
-// Master Initialization on DOM Load
-document.addEventListener('DOMContentLoaded', () => {
-    fetch('products.json')
-        .then(response => response.json())
-        .then(products => {
-            renderProducts(products);
-            loadSingleProductPage(products);
-        })
-        .catch(err => console.error('Error loading product catalog:', err));
-});
-// Load and display multi-variant product details on sproduct.html
+// Single Product Page (sproduct.html) Dynamic Loader
 function loadSingleProductPage(products) {
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
@@ -327,68 +113,68 @@ function loadSingleProductPage(products) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
-    // Elements
+    // UI Elements
     const mainImg = document.getElementById('MainImg');
     const titleEl = document.getElementById('product-title') || document.querySelector('.single-pro-details h4');
     const priceEl = document.getElementById('product-price') || document.querySelector('.single-pro-details h2');
+    const descEl = document.getElementById('product-description');
     const sizeSelect = document.getElementById('size-select');
     const colorSelect = document.getElementById('color-select');
     const addToCartBtn = document.getElementById('add-to-cart-detail');
 
+    // Set Text Content
     if (titleEl) titleEl.innerText = product.title;
+    if (descEl && product.description) descEl.innerText = product.description;
+    if (mainImg && product.default_image) mainImg.src = product.default_image;
 
     const variants = product.variants || [];
-    if (variants.length === 0) return;
 
-    // 1. Populate Color Dropdown with Unique Colors
+    // 1. Populate Color Dropdown
     const uniqueColors = [...new Set(variants.map(v => v.color))].filter(Boolean);
     if (colorSelect && uniqueColors.length > 0) {
         colorSelect.innerHTML = uniqueColors.map(c => `<option value="${c}">${c}</option>`).join('');
     }
 
-    // 2. Update Available Sizes based on selected Color
+    // 2. Filter available sizes when Color changes
     function updateSizeOptions() {
         if (!colorSelect || !sizeSelect) return;
         const selectedColor = colorSelect.value;
 
-        // Get sizes available ONLY for this specific color
         const colorVariants = variants.filter(v => v.color === selectedColor);
         const availableSizes = [...new Set(colorVariants.map(v => v.size))].filter(Boolean);
 
         sizeSelect.innerHTML = availableSizes.map(s => `<option value="${s}">${s}</option>`).join('');
-        
-        // Update photo and price for newly selected combination
         updateVariantView();
     }
 
-    // 3. Update Image & Price for exact (Color + Size) match
+    // 3. Update Image & Price for matched Variant
     function updateVariantView() {
         const selectedColor = colorSelect ? colorSelect.value : "Default";
         const selectedSize = sizeSelect ? sizeSelect.value : "Default";
 
-        // Find exact matching variant object from products.json
         const matchedVariant = variants.find(v => v.color === selectedColor && v.size === selectedSize) 
             || variants.find(v => v.color === selectedColor) 
             || variants[0];
 
         if (matchedVariant) {
-            if (mainImg && matchedVariant.image) {
-                mainImg.src = matchedVariant.image;
-            }
+            if (mainImg && matchedVariant.image) mainImg.src = matchedVariant.image;
             if (priceEl && matchedVariant.retail_price) {
                 priceEl.innerText = `$${parseFloat(matchedVariant.retail_price).toFixed(2)}`;
             }
         }
     }
 
-    // Attach Change Listeners
     if (colorSelect) colorSelect.addEventListener('change', updateSizeOptions);
     if (sizeSelect) sizeSelect.addEventListener('change', updateVariantView);
 
-    // Initial load sync
-    updateSizeOptions();
+    // Initial View Sync
+    if (variants.length > 0) {
+        updateSizeOptions();
+    } else if (priceEl && product.base_retail_price) {
+        priceEl.innerText = `$${parseFloat(product.base_retail_price).toFixed(2)}`;
+    }
 
-    // 4. Add exact variant payload to Cart
+    // 4. Detail Page Add to Cart Listener
     if (addToCartBtn) {
         addToCartBtn.onclick = function(e) {
             e.preventDefault();
@@ -400,8 +186,126 @@ function loadSingleProductPage(products) {
             const exactVariant = variants.find(v => v.color === selectedColor && v.size === selectedSize) 
                 || variants.find(v => v.color === selectedColor) 
                 || variants[0];
-            
+
             addToCartWithVariant(product, exactVariant, qty);
         };
     }
 }
+
+// Save Variant Payload to LocalStorage
+function addToCartWithVariant(product, variant, quantity = 1) {
+    let cart = JSON.parse(localStorage.getItem('ceekay_cart')) || [];
+
+    const selectedColor = variant ? variant.color : "Default";
+    const selectedSize = variant ? variant.size : "Default";
+    const itemPrice = variant ? variant.retail_price : product.base_retail_price;
+    const itemImage = variant ? variant.image : product.default_image;
+    const itemSku = variant ? variant.sku : product.id;
+
+    const existingIndex = cart.findIndex(item => 
+        item.id === product.id && item.color === selectedColor && item.size === selectedSize
+    );
+
+    if (existingIndex > -1) {
+        cart[existingIndex].quantity += quantity;
+    } else {
+        cart.push({
+            id: product.id,
+            sku: itemSku,
+            title: product.title,
+            price: itemPrice,
+            image: itemImage,
+            color: selectedColor,
+            size: selectedSize,
+            quantity: quantity
+        });
+    }
+
+    localStorage.setItem('ceekay_cart', JSON.stringify(cart));
+    alert(`${product.title} (${selectedColor} / ${selectedSize}) added to cart!`);
+}
+
+// Quick Add Handler for Grid Cards
+function attachCartEventListeners(products) {
+    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const productId = btn.getAttribute('data-id');
+            const product = products.find(p => p.id === productId);
+
+            if (product) {
+                const defaultVariant = (product.variants && product.variants.length > 0) ? product.variants[0] : null;
+                addToCartWithVariant(product, defaultVariant, 1);
+            }
+        });
+    });
+}
+
+// Render Cart Items on cart.html
+function renderCartPage() {
+    const cartTableContainer = document.querySelector('#cart tbody');
+    const subtotalEl = document.getElementById('cart-subtotal');
+    const totalEl = document.getElementById('cart-total');
+
+    if (!cartTableContainer) return;
+
+    let cart = JSON.parse(localStorage.getItem('ceekay_cart')) || [];
+    cartTableContainer.innerHTML = '';
+    let subtotal = 0;
+
+    if (cart.length === 0) {
+        cartTableContainer.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">Your cart is empty.</td></tr>';
+        if (subtotalEl) subtotalEl.innerText = '$0.00';
+        if (totalEl) totalEl.innerText = '$0.00';
+        return;
+    }
+
+    cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        subtotal += itemTotal;
+
+        cartTableContainer.innerHTML += `
+            <tr>
+                <td><a href="#" onclick="removeCartItem(${index}); return false;"><i class="far fa-times-circle"></i></a></td>
+                <td><img src="${item.image}" width="70px" alt="${item.title}"></td>
+                <td>${item.title} <br><small>(${item.color} / ${item.size})</small></td>
+                <td>$${parseFloat(item.price).toFixed(2)}</td>
+                <td><input type="number" value="${item.quantity}" min="1" onchange="updateCartQuantity(${index}, this.value)"></td>
+                <td>$${itemTotal.toFixed(2)}</td>
+            </tr>
+        `;
+    });
+
+    if (subtotalEl) subtotalEl.innerText = `$${subtotal.toFixed(2)}`;
+    if (totalEl) totalEl.innerText = `$${subtotal.toFixed(2)}`;
+}
+
+// Remove item from cart
+function removeCartItem(index) {
+    let cart = JSON.parse(localStorage.getItem('ceekay_cart')) || [];
+    cart.splice(index, 1);
+    localStorage.setItem('ceekay_cart', JSON.stringify(cart));
+    renderCartPage();
+}
+
+// Update item quantity in cart
+function updateCartQuantity(index, newQty) {
+    let cart = JSON.parse(localStorage.getItem('ceekay_cart')) || [];
+    cart[index].quantity = parseInt(newQty) || 1;
+    localStorage.setItem('ceekay_cart', JSON.stringify(cart));
+    renderCartPage();
+}
+
+// Master Initialization Entry Point
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('products.json')
+        .then(response => response.json())
+        .then(products => {
+            renderProducts(products);
+            loadSingleProductPage(products);
+            renderCartPage();
+        })
+        .catch(err => console.error('Error loading product catalog:', err));
+});
