@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ceekay</title>
+    <title>Ceekay - Product Details</title>
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
     <link rel="stylesheet" href="style.css">
 </head>
@@ -21,7 +21,12 @@
                 <li><a class="active" href="shop.html">Shop</a></li>
                 <li><a href="blog.html">Blog</a></li>
                 <li><a href="about.html">About</a></li>
-                <li id="lg-bag"><a href="cart.html"><i class="far fa-shopping-bag"></i></a></li>
+                <li id="lg-bag">
+                    <a href="cart.html">
+                        <i class="far fa-shopping-bag"></i>
+                        <span id="cart-count">0</span>
+                    </a>
+                </li>
                 <a href="index.html" id="close"><i class="far fa-times"></i></a>
             </ul>
         </div>
@@ -30,52 +35,54 @@
             <i id="bar" class="fas fa-outdent"></i>
         </div>
     </section>
+
     <!-- DYNAMIC MAIN PRODUCT DETAILS -->
-<section id="prodetails" class="section-p1">
-    <div class="single-pro-image">
-        <img src="img/p2black.webp" width="100%" id="MainImg" alt="Product Image">
-    </div>
+    <section id="prodetails" class="section-p1">
+        <div class="single-pro-image">
+            <img src="img/p2black.webp" width="100%" id="MainImg" alt="Product Image">
+        </div>
 
-    <div class="single-pro-details">
-    <h6 id="product-category">Home / Collection</h6>
-    <h4 id="product-title">Loading product...</h4>
-    <h2 id="product-price">$0.00</h2>
-    
-    <!-- Dynamic Color Selector (Empty by default) -->
-    <select id="color-select">
-        <option value="">Loading colors...</option>
-    </select>
+        <div class="single-pro-details">
+            <h6 id="product-category">Home / Collection</h6>
+            <h4 id="product-title">Loading product...</h4>
+            <h2 id="product-price">$0.00</h2>
+            
+            <!-- Dynamic Color Selector -->
+            <select id="color-select">
+                <option value="">Loading colors...</option>
+            </select>
 
-    <!-- Dynamic Size Selector (Empty by default) -->
-    <select id="size-select">
-        <option value="">Loading sizes...</option>
-    </select>
+            <!-- Dynamic Size Selector -->
+            <select id="size-select">
+                <option value="">Loading sizes...</option>
+            </select>
 
-    <input type="number" id="product-quantity" value="1" min="1">
-    <button type="button" class="normal" id="add-to-cart-detail" onclick="handleAddToCart()">Add To Cart</button>
-    
-    <h4>Product Details</h4>
-    <span id="product-description">Product description loading...</span>
-</div>
-</section>
+            <input type="number" id="product-quantity" value="1" min="1">
+            <button type="button" class="normal" id="add-to-cart-detail" onclick="handleAddToCart()">Add To Cart</button>
+            
+            <h4>Product Details</h4>
+            <span id="product-description">Product description loading...</span>
+        </div>
+    </section>
 
-<!-- FEATURED PRODUCTS SECTION (RENDERED VIA SCRIPT.JS) -->
-<section id="product1" class="section-p1">
-    <h2>Featured Products</h2>
-    <p>Summer Collection New Modern Design</p>
-    <div class="pro-container" id="shop-products"></div>
-</section>
+    <!-- FEATURED PRODUCTS SECTION -->
+    <section id="product1" class="section-p1">
+        <h2>Featured Products</h2>
+        <p>Summer Collection New Modern Design</p>
+        <div class="pro-container" id="shop-products"></div>
+    </section>
 
-<section id="newsletter" class="section-p1 section-m1">
-    <div class="newstext">
-        <h4>Sign Up For Newsletters</h4>
-        <p>Get E-mail updates about our latest shop and <span>special offers.</span> </p>
-    </div>
-    <div class="form">
-        <input type="text" placeholder="Your email address">
-        <button class="normal">Sign Up</button>
-    </div>
-</section>
+    <section id="newsletter" class="section-p1 section-m1">
+        <div class="newstext">
+            <h4>Sign Up For Newsletters</h4>
+            <p>Get E-mail updates about our latest shop and <span>special offers.</span> </p>
+        </div>
+        <div class="form">
+            <input type="text" placeholder="Your email address">
+            <button class="normal">Sign Up</button>
+        </div>
+    </section>
+
     <footer class="section-p1">
         <div class="col">
             <img class="logo" src="img/High-Resolution-Logo-Black-on-White-Background.png" alt="Ceekay Logo">
@@ -126,6 +133,21 @@
             <p>© 2021, Tech2 etc - HTML CSS Ecommerce Template</p>
         </div>
     </footer>
+
+    <!-- Visual Slide-in Toast Notification Container -->
+    <div id="cart-toast" class="cart-toast">
+        <div class="toast-content">
+            <img id="toast-img" src="" alt="Product Thumbnail" class="toast-thumb">
+            <div class="toast-message">
+                <div class="toast-header-row">
+                    <i class="fas fa-check-circle toast-icon"></i>
+                    <strong id="toast-title">Added to Cart!</strong>
+                </div>
+                <p id="toast-desc">Product title</p>
+                <span id="toast-variant">Variant info</span>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

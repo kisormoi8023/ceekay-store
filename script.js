@@ -192,15 +192,50 @@ function loadSingleProductPage(products) {
     }
 }
 
-// Save Variant Payload to LocalStorage
+// Show Visual Toast Notification with Product Image & Details
+function showCartToast(product, variant) {
+    const toast = document.getElementById('cart-toast');
+    const toastImg = document.getElementById('toast-img');
+    const toastDesc = document.getElementById('toast-desc');
+    const toastVariant = document.getElementById('toast-variant');
+
+    if (!toast) return;
+
+    const selectedColor = (variant && variant.color) ? variant.color : "Default";
+    const selectedSize = (variant && variant.size) ? variant.size : "Default";
+    const itemImage = (variant && variant.image) ? variant.image : (product.default_image || 'img/p1.avif');
+
+    if (toastImg) toastImg.src = itemImage;
+    if (toastDesc) toastDesc.innerText = product.title || product.name || "Product";
+    if (toastVariant) toastVariant.innerText = `Color: ${selectedColor} | Size: ${selectedSize}`;
+
+    toast.classList.add('show');
+    updateCartCountBadge();
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 4000);
+}
+
+// Update navbar cart item count badge safely
+function updateCartCountBadge() {
+    const badge = document.getElementById('cart-count');
+    if (!badge) return;
+
+    let cart = JSON.parse(localStorage.getItem('ceekay_cart')) || [];
+    const totalQty = cart.reduce((sum, item) => sum + (parseInt(item.quantity) || 1), 0);
+    badge.innerText = totalQty;
+}
+
+// Global Add to Cart Logic
 function addToCartWithVariant(product, variant, quantity = 1) {
     let cart = JSON.parse(localStorage.getItem('ceekay_cart')) || [];
 
-    const selectedColor = variant ? variant.color : "Default";
-    const selectedSize = variant ? variant.size : "Default";
-    const itemPrice = variant ? variant.retail_price : product.base_retail_price;
-    const itemImage = variant ? variant.image : product.default_image;
-    const itemSku = variant ? variant.sku : product.id;
+    const selectedColor = (variant && variant.color) ? variant.color : "Default";
+    const selectedSize = (variant && variant.size) ? variant.size : "Default";
+    const itemPrice = (variant && variant.retail_price) ? variant.retail_price : (product.base_retail_price || product.price || 0);
+    const itemImage = (variant && variant.image) ? variant.image : (product.default_image || product.image);
+    const itemSku = (variant && variant.sku) ? variant.sku : product.id;
 
     const existingIndex = cart.findIndex(item => 
         item.id === product.id && item.color === selectedColor && item.size === selectedSize
@@ -212,7 +247,7 @@ function addToCartWithVariant(product, variant, quantity = 1) {
         cart.push({
             id: product.id,
             sku: itemSku,
-            title: product.title,
+            title: product.title || product.name,
             price: itemPrice,
             image: itemImage,
             color: selectedColor,
@@ -222,7 +257,7 @@ function addToCartWithVariant(product, variant, quantity = 1) {
     }
 
     localStorage.setItem('ceekay_cart', JSON.stringify(cart));
-    alert(`${product.title} (${selectedColor} / ${selectedSize}) added to cart!`);
+    showCartToast(product, variant);
 }
 
 // Quick Add Handler for Grid Cards
@@ -263,7 +298,7 @@ function renderCartPage() {
     }
 
     cart.forEach((item, index) => {
-        const itemTotal = item.price * item.quantity;
+        const itemTotal = (item.price || 0) * (item.quantity || 1);
         subtotal += itemTotal;
 
         cartTableContainer.innerHTML += `
@@ -271,8 +306,8 @@ function renderCartPage() {
                 <td><a href="#" onclick="removeCartItem(${index}); return false;"><i class="far fa-times-circle"></i></a></td>
                 <td><img src="${item.image}" width="70px" alt="${item.title}"></td>
                 <td>${item.title} <br><small>(${item.color} / ${item.size})</small></td>
-                <td>$${parseFloat(item.price).toFixed(2)}</td>
-                <td><input type="number" value="${item.quantity}" min="1" onchange="updateCartQuantity(${index}, this.value)"></td>
+                <td>$${parseFloat(item.price || 0).toFixed(2)}</td>
+                <td><input type="number" value="${item.quantity || 1}" min="1" onchange="updateCartQuantity(${index}, this.value)"></td>
                 <td>$${itemTotal.toFixed(2)}</td>
             </tr>
         `;
@@ -282,33 +317,24 @@ function renderCartPage() {
     if (totalEl) totalEl.innerText = `$${subtotal.toFixed(2)}`;
 }
 
-// Remove item from cart
+// Remove item from cart & update badge
 function removeCartItem(index) {
     let cart = JSON.parse(localStorage.getItem('ceekay_cart')) || [];
     cart.splice(index, 1);
     localStorage.setItem('ceekay_cart', JSON.stringify(cart));
     renderCartPage();
+    updateCartCountBadge();
 }
 
-// Update item quantity in cart
+// Update item quantity in cart & update badge
 function updateCartQuantity(index, newQty) {
     let cart = JSON.parse(localStorage.getItem('ceekay_cart')) || [];
     cart[index].quantity = parseInt(newQty) || 1;
     localStorage.setItem('ceekay_cart', JSON.stringify(cart));
     renderCartPage();
+    updateCartCountBadge();
 }
 
-// Master Initialization Entry Point
-document.addEventListener('DOMContentLoaded', () => {
-    fetch('products.json')
-        .then(response => response.json())
-        .then(products => {
-            renderProducts(products);
-            loadSingleProductPage(products);
-            renderCartPage();
-        })
-        .catch(err => console.error('Error loading product catalog:', err));
-});
 // Global Handler for sproduct.html Add To Cart Button
 function handleAddToCart() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -317,7 +343,6 @@ function handleAddToCart() {
     fetch('products.json')
         .then(res => res.json())
         .then(products => {
-            // Match selected product or fallback to first catalog item
             const product = products.find(p => p.id === productId) || products[0];
             
             const colorSelect = document.getElementById('color-select');
@@ -337,3 +362,16 @@ function handleAddToCart() {
         })
         .catch(err => console.error("Error adding item to cart:", err));
 }
+
+// Master Initialization Entry Point
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('products.json')
+        .then(response => response.json())
+        .then(products => {
+            renderProducts(products);
+            loadSingleProductPage(products);
+            renderCartPage();
+            updateCartCountBadge();
+        })
+        .catch(err => console.error('Error loading product catalog:', err));
+});
