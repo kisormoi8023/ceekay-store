@@ -1348,15 +1348,21 @@ footer a:hover {
         width: 100%;
         padding-bottom: 30px;
     }
+    /* Cart Page Mobile Fixes */
     #cart-add {
-        flex-direction: column;
+        display: flex;
+        flex-direction: column !important;
+        gap: 20px !important;
+        width: 100% !important;
     }
     #cuopon,
     #subtotal {
-        width: 100%;
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: none !important;
     }
     #subtotal {
-        padding: 20px;
+        padding: 20px !important;
     }
     #prodetails {
         flex-direction: column;
