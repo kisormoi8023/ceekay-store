@@ -1650,4 +1650,80 @@ footer a:hover {
     display: block;
     color: #666;
     margin-top: 4px;
+}/* Fix Cart Table Layout, Widths, & Text Overlaps */
+#cart table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
+}
+
+#cart table th,
+#cart table td {
+    padding: 12px 8px !important;
+    vertical-align: middle !important;
+    text-align: center !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+/* Explicit Column Width Ratios */
+#cart table th:nth-child(1), #cart table td:nth-child(1) { width: 6%; }  /* Remove */
+#cart table th:nth-child(2), #cart table td:nth-child(2) { width: 10%; } /* Image */
+#cart table th:nth-child(3), #cart table td:nth-child(3) { width: 44%; text-align: left !important; } /* Product Title */
+#cart table th:nth-child(4), #cart table td:nth-child(4) { width: 12%; } /* Price */
+#cart table th:nth-child(5), #cart table td:nth-child(5) { width: 14%; } /* Quantity */
+#cart table th:nth-child(6), #cart table td:nth-child(6) { width: 14%; } /* Subtotal */
+
+/* Keep Quantity Box Centered and Sized */
+#cart table td input[type="number"] {
+    width: 55px !important;
+    padding: 6px !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+    display: block !important;
+}
+
+#cart table td small {
+    display: block;
+    color: #666;
+    margin-top: 4px;
+}/* Fix Cart Table Layout, Widths, & Text Overlaps */
+#cart table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
+}
+
+#cart table th,
+#cart table td {
+    padding: 12px 8px !important;
+    vertical-align: middle !important;
+    text-align: center !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+/* Explicit Column Width Ratios */
+#cart table th:nth-child(1), #cart table td:nth-child(1) { width: 6%; }  /* Remove */
+#cart table th:nth-child(2), #cart table td:nth-child(2) { width: 10%; } /* Image */
+#cart table th:nth-child(3), #cart table td:nth-child(3) { width: 44%; text-align: left !important; } /* Product Title */
+#cart table th:nth-child(4), #cart table td:nth-child(4) { width: 12%; } /* Price */
+#cart table th:nth-child(5), #cart table td:nth-child(5) { width: 14%; } /* Quantity */
+#cart table th:nth-child(6), #cart table td:nth-child(6) { width: 14%; } /* Subtotal */
+
+/* Keep Quantity Box Centered and Sized */
+#cart table td input[type="number"] {
+    width: 55px !important;
+    padding: 6px !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+    display: block !important;
+}
+
+#cart table td small {
+    display: block;
+    color: #666;
+    margin-top: 4px;
 }
