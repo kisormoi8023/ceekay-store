@@ -317,3 +317,113 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(err => console.error('Error loading product catalog:', err));
 });
+// Load and display multi-variant product details on sproduct.html
+function loadSingleProductPage(products) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+
+    if (!productId) return;
+
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    // Elements
+    const mainImg = document.getElementById('MainImg');
+    const titleEl = document.querySelector('.single-pro-details h4');
+    const priceEl = document.querySelector('.single-pro-details h2');
+    const sizeSelect = document.getElementById('size-select');
+    const colorSelect = document.getElementById('color-select');
+    const addToCartBtn = document.getElementById('add-to-cart-detail');
+
+    if (titleEl) titleEl.innerText = product.title;
+
+    // 1. Extract Unique Colors & Sizes
+    const variants = product.variants || [];
+    const uniqueColors = [...new Set(variants.map(v => v.color))].filter(Boolean);
+    const uniqueSizes = [...new Set(variants.map(v => v.size))].filter(Boolean);
+
+    // 2. Populate Color Dropdown
+    if (colorSelect && uniqueColors.length > 0) {
+        colorSelect.innerHTML = uniqueColors.map(c => `<option value="${c}">${c}</option>`).join('');
+    }
+
+    // 3. Populate Size Dropdown
+    if (sizeSelect && uniqueSizes.length > 0) {
+        sizeSelect.innerHTML = uniqueSizes.map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+
+    // Helper: Find matching variant object based on current dropdown selections
+    function getSelectedVariant() {
+        const selectedColor = colorSelect ? colorSelect.value : "Default";
+        const selectedSize = sizeSelect ? sizeSelect.value : "Default";
+
+        return variants.find(v => v.color === selectedColor && v.size === selectedSize) 
+            || variants.find(v => v.color === selectedColor) 
+            || variants[0];
+    }
+
+    // Helper: Update Price and Image based on selected variant
+    function updateVariantView() {
+        const currentVariant = getSelectedVariant();
+        if (!currentVariant) return;
+
+        if (mainImg && currentVariant.image) {
+            mainImg.src = currentVariant.image;
+        }
+        if (priceEl && currentVariant.retail_price) {
+            priceEl.innerText = `$${parseFloat(currentVariant.retail_price).toFixed(2)}`;
+        }
+    }
+
+    // Attach Change Listeners
+    if (colorSelect) colorSelect.addEventListener('change', updateVariantView);
+    if (sizeSelect) sizeSelect.addEventListener('change', updateVariantView);
+
+    // Initial View Update
+    updateVariantView();
+
+    // 4. Add To Cart with exact Variant Details
+    if (addToCartBtn) {
+        addToCartBtn.onclick = function(e) {
+            e.preventDefault();
+            const quantityInput = document.getElementById('product-quantity');
+            const qty = quantityInput ? parseInt(quantityInput.value) : 1;
+            const currentVariant = getSelectedVariant();
+
+            addToCartWithVariant(product, currentVariant, qty);
+        };
+    }
+}
+
+// Save explicit variant parameters into localStorage
+function addToCartWithVariant(product, variant, quantity = 1) {
+    let cart = JSON.parse(localStorage.getItem('ceekay_cart')) || [];
+
+    const selectedColor = variant ? variant.color : "Default";
+    const selectedSize = variant ? variant.size : "Default";
+    const itemPrice = variant ? variant.retail_price : product.base_retail_price;
+    const itemImage = variant ? variant.image : product.default_image;
+    const itemSku = variant ? variant.sku : product.id;
+
+    const existingIndex = cart.findIndex(item => 
+        item.id === product.id && item.color === selectedColor && item.size === selectedSize
+    );
+
+    if (existingIndex > -1) {
+        cart[existingIndex].quantity += quantity;
+    } else {
+        cart.push({
+            id: product.id,
+            sku: itemSku,
+            title: product.title,
+            price: itemPrice,
+            image: itemImage,
+            color: selectedColor,
+            size: selectedSize,
+            quantity: quantity
+        });
+    }
+
+    localStorage.setItem('ceekay_cart', JSON.stringify(cart));
+    alert(`${product.title} (${selectedColor} / ${selectedSize}) added to cart!`);
+}
