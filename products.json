@@ -31,7 +31,7 @@
         "image": "img/xpluswear_design_plus_size_for_4.jpg"
       },
       {
-        "sku": "XPW-GOLD-L",
+        "sku": "XPW-PURPLE-L",
         "size": "L/10-12",
         "color": "Purple",
         "vendor_price": 126.0,
@@ -39,7 +39,7 @@
         "image": "img/xpluswear_design_plus_size_for_3.png"
       },
       {
-        "sku": "XPW-GOLD-L",
+        "sku": "XPW-PURPLE-XL",
         "size": "XL/14-16",
         "color": "Purple",
         "vendor_price": 126.0,
@@ -47,7 +47,7 @@
         "image": "img/xpluswear_design_plus_size_for_6.png"
       },
       {
-        "sku": "XPW-GOLD-L",
+        "sku": "XPW-PURPLE-2XL",
         "size": "2XL/18-20",
         "color": "Purple",
         "vendor_price": 126.0,
@@ -55,7 +55,7 @@
         "image": "img/xpluswear_design_plus_size_for_6.png"
       },
       {
-        "sku": "XPW-GOLD-L",
+        "sku": "XPW-RED-L",
         "size": "L/10-12",
         "color": "Red",
         "vendor_price": 126.0,
@@ -63,7 +63,7 @@
         "image": "img/xpluswear_design_plus_size_for_6.png"
       },
       {
-        "sku": "XPW-GOLD-L",
+        "sku": "XPW-RED-XL",
         "size": "XL/14-16",
         "color": "Red",
         "vendor_price": 126.0,
@@ -71,7 +71,7 @@
         "image": "img/xpluswear_design_plus_size_for_6.png"
       },
       {
-        "sku": "XPW-GOLD-L",
+        "sku": "XPW-RED-2XL",
         "size": "2XL/18-20",
         "color": "Red",
         "vendor_price": 126.0,
@@ -88,7 +88,7 @@
     "default_image": "img/p006_1.png",
     "variants": [
       {
-        "sku": "P006-V1",
+        "sku": "P006-MULTICOLOR-L",
         "size": "L/10-12",
         "color": "Multicolor",
         "vendor_price": 126.0,
@@ -96,7 +96,7 @@
         "image": "img/p006_1.png"
       },
       {
-        "sku": "P006-V2",
+        "sku": "P006-MULTICOLOR-XL",
         "size": "XL/14-16",
         "color": "Multicolor",
         "vendor_price": 126.0,
@@ -104,7 +104,7 @@
         "image": "img/p006_2.jpg"
       },
       {
-        "sku": "P006-V3",
+        "sku": "P006-MULTICOLOR-2XL",
         "size": "2XL/18-20",
         "color": "Multicolor",
         "vendor_price": 126.0,
@@ -112,7 +112,7 @@
         "image": "img/p006_3.jpg"
       },
       {
-        "sku": "P006-V4",
+        "sku": "P006-MULTICOLOR-3XL",
         "size": "3XL/22-24",
         "color": "Multicolor",
         "vendor_price": 126.0,
@@ -120,7 +120,7 @@
         "image": "img/p006_4.jpg"
       },
       {
-        "sku": "P006-V5",
+        "sku": "P006-MULTICOLOR-4XL",
         "size": "4XL/26",
         "color": "Multicolor",
         "vendor_price": 126.0,
@@ -128,7 +128,7 @@
         "image": "img/p006_5.jpg"
       },
       {
-        "sku": "P006-V6",
+        "sku": "P006-MULTICOLOR-5XL",
         "size": "5XL/28",
         "color": "Multicolor",
         "vendor_price": 126.0,
@@ -145,7 +145,7 @@
     "default_image": "img/p005_2.jpg",
     "variants": [
       {
-        "sku": "P005-V1",
+        "sku": "P005-ORANGE-L",
         "size": "L/10-12",
         "color": "Default",
         "vendor_price": 126.0,
@@ -153,7 +153,7 @@
         "image": "img/p005_2.jpg"
       },
       {
-        "sku": "P005-V2",
+        "sku": "P005-ORANGE-XL",
         "size": "XL/14-16",
         "color": "Default",
         "vendor_price": 126.0,
@@ -161,7 +161,7 @@
         "image": "img/p005_2.jpg"
       },
       {
-        "sku": "P005-V3",
+        "sku": "P005-ORANGE-2XL",
         "size": "2XL/18-20",
         "color": "Default",
         "vendor_price": 126.0,
@@ -169,7 +169,7 @@
         "image": "img/p005_2.jpg"
       },
       {
-        "sku": "P005-V4",
+        "sku": "P005-ORANGE-3XL",
         "size": "3XL/22-24",
         "color": "Default",
         "vendor_price": 126.0,
@@ -177,7 +177,7 @@
         "image": "img/p005_2.jpg"
       },
       {
-        "sku": "P005-V5",
+        "sku": "P005-ORANGE-4XL",
         "size": "4XL/26",
         "color": "Default",
         "vendor_price": 126.0,
@@ -185,7 +185,7 @@
         "image": "img/p005_2.jpg"
       },
       {
-        "sku": "P005-V6",
+        "sku": "P005-ORANGE-5XL",
         "size": "5XL/28",
         "color": "Default",
         "vendor_price": 126.0,
