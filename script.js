@@ -299,6 +299,7 @@ function attachCartEventListeners(products) {
 }
 
 // Render Cart Table on cart.html
+// Render Cart Items & Calculate Totals accurately
 function renderCartPage() {
     const cartTableContainer = document.querySelector('#cart tbody');
     const subtotalEl = document.getElementById('cart-subtotal');
@@ -318,6 +319,32 @@ function renderCartPage() {
     }
 
     cart.forEach((item, index) => {
+        // Force conversion to numbers to ensure math calculations add up correctly
+        const price = parseFloat(item.price) || 0;
+        const qty = parseInt(item.quantity) || 1;
+        const itemTotal = price * qty;
+        
+        subtotal += itemTotal;
+
+        cartTableContainer.innerHTML += `
+            <tr>
+                <td><a href="#" onclick="removeCartItem(${index}); return false;"><i class="far fa-times-circle"></i></a></td>
+                <td><img src="${item.image}" width="70px" alt="${item.title}"></td>
+                <td>${item.title} <br><small>(${item.color} / ${item.size})</small></td>
+                <td>$${price.toFixed(2)}</td>
+                <td><input type="number" value="${qty}" min="1" onchange="updateCartQuantity(${index}, this.value)"></td>
+                <td>$${itemTotal.toFixed(2)}</td>
+            </tr>
+        `;
+    });
+
+    // Update Cart Totals box with exact sum formatted to 2 decimal places
+    const formattedTotal = `$${subtotal.toFixed(2)}`;
+    if (subtotalEl) subtotalEl.innerText = formattedTotal;
+    if (totalEl) totalEl.innerText = formattedTotal;
+}    
+
+    cart.forEach((item, index) => {
         const itemTotal = (item.price || 0) * (item.quantity || 1);
         subtotal += itemTotal;
 
@@ -335,7 +362,7 @@ function renderCartPage() {
 
     if (subtotalEl) subtotalEl.innerText = `$${subtotal.toFixed(2)}`;
     if (totalEl) totalEl.innerText = `$${subtotal.toFixed(2)}`;
-}
+
 
 // Remove item from cart
 function removeCartItem(index) {
