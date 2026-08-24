@@ -1727,3 +1727,54 @@ footer a:hover {
     color: #666;
     margin-top: 4px;
 }
+/* Cart Totals (Subtotal) Box Styling */
+#subtotal {
+    padding: 30px;
+    border: 1px solid #e2e9e1;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+}
+
+#subtotal table {
+    width: 100% !important;
+    border-collapse: collapse;
+    margin-bottom: 25px;
+}
+
+#subtotal table td {
+    padding: 15px 12px !important;
+    border: 1px solid #e2e9e1 !important;
+    font-size: 14px;
+}
+
+/* Right-align the prices/values in the 2nd column */
+#subtotal table td:nth-child(2) {
+    text-align: right !important;
+    font-weight: 600 !important;
+    color: #222 !important;
+}
+
+/* Emphasize the final Total row */
+#subtotal table tr:last-child td {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #088178 !important;
+}
+
+/* Polish the Proceed to Checkout button */
+#subtotal button {
+    background-color: #088178;
+    color: #fff;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    width: 100%; /* Spans the full width of the box */
+    font-size: 15px;
+    transition: background 0.3s ease;
+}
+
+#subtotal button:hover {
+    background-color: #06665f;
+}
