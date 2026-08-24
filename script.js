@@ -189,3 +189,131 @@ function addToCart(event, productIndex) {
     localStorage.setItem("cart", JSON.stringify(cart));
     alert("Item added to cart!");
 }
+// Function to render products dynamically onto shop grids
+function renderProducts(products) {
+    const productContainer = document.querySelector('.pro-container');
+    if (!productContainer) return;
+
+    productContainer.innerHTML = products.map(product => {
+        // Encode title or ID safely for URL parameters
+        const detailUrl = `sproduct.html?id=${encodeURIComponent(product.id)}`;
+
+        return `
+            <div class="pro" data-id="${product.id}">
+                <img src="${product.default_image}" alt="${product.title}" onclick="window.location.href='${detailUrl}'">
+                <div class="des" onclick="window.location.href='${detailUrl}'">
+                    <span>Ceekay</span>
+                    <h5>${product.title}</h5>
+                    <h4>$${product.base_retail_price.toFixed(2)}</h4>
+                </div>
+                <a href="#" class="add-to-cart-btn" data-id="${product.id}">
+                    <i class="fal fa-shopping-cart cart"></i>
+                </a>
+            </div>
+        `;
+    }).join('');
+
+    attachCartEventListeners(products);
+}
+// Handle sproduct.html dynamic details loading
+function loadSingleProductPage(products) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+
+    if (!productId) return;
+
+    // Find selected product
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    // Populate main visual elements
+    const mainImg = document.getElementById('MainImg');
+    const titleEl = document.querySelector('.single-pro-details h4');
+    const priceEl = document.querySelector('.single-pro-details h2');
+    const sizeSelect = document.getElementById('size-select');
+    const addToCartBtn = document.getElementById('add-to-cart-detail');
+
+    if (mainImg) mainImg.src = product.default_image;
+    if (titleEl) titleEl.innerText = product.title;
+    if (priceEl) priceEl.innerText = `$${product.base_retail_price.toFixed(2)}`;
+
+    // Populate size dropdown options from variants
+    if (sizeSelect && product.variants) {
+        sizeSelect.innerHTML = product.variants.map(v => 
+            `<option value="${v.size}" data-image="${v.image}" data-price="${v.retail_price}">${v.size}</option>`
+        ).join('');
+
+        // Switch main photo when size/variant selection changes
+        sizeSelect.addEventListener('change', (e) => {
+            const selectedOption = e.target.options[e.target.selectedIndex];
+            const variantImage = selectedOption.getAttribute('data-image');
+            const variantPrice = selectedOption.getAttribute('data-price');
+            
+            if (variantImage && mainImg) mainImg.src = variantImage;
+            if (variantPrice && priceEl) priceEl.innerText = `$${parseFloat(variantPrice).toFixed(2)}`;
+        });
+    }
+
+    // Detail page "Add to Cart" listener
+    if (addToCartBtn) {
+        addToCartBtn.onclick = function(e) {
+            e.preventDefault();
+            const quantityInput = document.getElementById('product-quantity');
+            const qty = quantityInput ? parseInt(quantityInput.value) : 1;
+            const selectedSize = sizeSelect ? sizeSelect.value : "Default";
+
+            addToCart(product, selectedSize, qty);
+        };
+    }
+}
+// Cart handling helper
+function addToCart(product, selectedSize = "Default", quantity = 1) {
+    let cart = JSON.parse(localStorage.getItem('ceekay_cart')) || [];
+
+    // Find existing variant match in cart
+    const existingIndex = cart.findIndex(item => item.id === product.id && item.size === selectedSize);
+
+    if (existingIndex > -1) {
+        cart[existingIndex].quantity += quantity;
+    } else {
+        cart.push({
+            id: product.id,
+            title: product.title,
+            price: product.base_retail_price,
+            image: product.default_image,
+            size: selectedSize,
+            quantity: quantity
+        });
+    }
+
+    localStorage.setItem('ceekay_cart', JSON.stringify(cart));
+    alert(`${product.title} has been added to your cart!`);
+}
+
+// Attach listeners for shop grid quick-add buttons
+function attachCartEventListeners(products) {
+    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation(); // Prevents navigating to product detail page
+
+            const productId = btn.getAttribute('data-id');
+            const product = products.find(p => p.id === productId);
+
+            if (product) {
+                addToCart(product, "Default", 1);
+            }
+        });
+    });
+}
+
+// Master Initialization on DOM Load
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('products.json')
+        .then(response => response.json())
+        .then(products => {
+            renderProducts(products);
+            loadSingleProductPage(products);
+        })
+        .catch(err => console.error('Error loading product catalog:', err));
+});
