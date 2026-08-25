@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart</title>
+    <title>Ceekay - Shopping Cart</title>
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
     <link rel="stylesheet" href="style.css">
 </head>
@@ -14,14 +14,20 @@
 
     <section id="header">
         <a href="index.html"><img src="img/High-Resolution-Color-Logo (1).png" class="logo" alt="Logo"></a>
+
         <div>
             <ul id="navbar">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="shop.html">Shop</a></li>
                 <li><a href="blog.html">Blog</a></li>
                 <li><a href="about.html">About</a></li>
-                <li id="lg-bag"><a href="cart.html" class="active"><i class="far fa-shopping-bag"></i></a></li>
-                <a id="close" href="index.html"><i class="far fa-times"></i></a>
+                <li id="lg-bag">
+                    <a class="active" href="cart.html">
+                        <i class="far fa-shopping-bag"></i>
+                        <span id="cart-count">0</span>
+                    </a>
+                </li>
+                <a href="index.html" id="close"><i class="far fa-times"></i></a>
             </ul>
         </div>
         <div id="mobile">
@@ -32,9 +38,10 @@
 
     <section id="page-header" class="about-header">
         <h2>#cart</h2>
-        <p>Add your coupon code & SAVE up to 70%!</p>
+        <p>Review your selected items & proceed to checkout</p>
     </section>
 
+    <!-- DYNAMIC CART ITEMS TABLE -->
     <section id="cart" class="section-p1">
         <table width="100%">
             <thead>
@@ -47,20 +54,13 @@
                     <td>Subtotal</td>
                 </tr>
             </thead>
-
             <tbody>
-                <tr>
-                    <td><a href="#"><i class="far fa-times-circle"></i></a></td>
-                    <td><img src="img/p1.avif" alt="Striped Slim Fit Suit"></td>
-                    <td>Striped Slim Fit Long Sleeved Long Pants Men's Suit</td>
-                    <td>$98.99</td>
-                    <td><input type="number" value="1" min="1"></td>
-                    <td>$98.99</td>
-                </tr>
+                <!-- JS dynamically populates items here -->
             </tbody>
         </table>
     </section>
 
+    <!-- CART TOTALS SECTION -->
     <section id="cart-add" class="section-p1">
         <div id="cuopon">
             <h3>Apply Coupon</h3>
@@ -75,7 +75,7 @@
             <table>
                 <tr>
                     <td>Cart Subtotal</td>
-                    <td>$98.99</td>
+                    <td id="cart-subtotal">$0.00</td>
                 </tr>
                 <tr>
                     <td>Shipping</td>
@@ -83,7 +83,7 @@
                 </tr>
                 <tr>
                     <td><strong>Total</strong></td>
-                    <td><strong>$98.99</strong></td>
+                    <td id="cart-total">$0.00</td>
                 </tr>
             </table>
             <button class="normal">Proceed to checkout</button>
@@ -140,6 +140,21 @@
             <p>© 2021, Tech2 etc - HTML CSS Ecommerce Template</p>
         </div>
     </footer>
+
+    <!-- Visual Slide-in Toast Notification Container -->
+    <div id="cart-toast" class="cart-toast">
+        <div class="toast-content">
+            <img id="toast-img" src="" alt="Product Thumbnail" class="toast-thumb">
+            <div class="toast-message">
+                <div class="toast-header-row">
+                    <i class="fas fa-check-circle toast-icon"></i>
+                    <strong id="toast-title">Added to Cart!</strong>
+                </div>
+                <p id="toast-desc">Product title</p>
+                <span id="toast-variant">Variant info</span>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
