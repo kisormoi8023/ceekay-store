@@ -81,6 +81,20 @@ function renderProducts(products) {
     const productContainer = document.querySelector('.pro-container');
     if (!productContainer) return;
 
+    productContainer.innerHTML = products.map(product => `
+        <div class="pro">
+            <img src="${product.image}" alt="${product.name}" onclick="window.location.href='sproduct.html?id=${product.id}'">
+            <div class="des" onclick="window.location.href='sproduct.html?id=${product.id}'">
+                <span>${product.brand || 'Ceekay'}</span>
+                <h5>${product.name}</h5>
+                <h4>$${product.price}</h4>
+            </div>
+            <button class="add-to-cart-btn" onclick="addToCart('${product.id}')" aria-label="Add to Cart">
+                <i class="fas fa-shopping-bag"></i>
+            </button>
+        </div>
+    `).join('');
+}
     productContainer.innerHTML = products.map(product => {
         const detailUrl = `sproduct.html?id=${encodeURIComponent(product.id)}`;
         const displayPrice = product.base_retail_price ? parseFloat(product.base_retail_price).toFixed(2) : "0.00";
