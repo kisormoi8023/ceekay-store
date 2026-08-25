@@ -81,20 +81,6 @@ function renderProducts(products) {
     const productContainer = document.querySelector('.pro-container');
     if (!productContainer) return;
 
-    productContainer.innerHTML = products.map(product => `
-        <div class="pro">
-            <img src="${product.image}" alt="${product.name}" onclick="window.location.href='sproduct.html?id=${product.id}'">
-            <div class="des" onclick="window.location.href='sproduct.html?id=${product.id}'">
-                <span>${product.brand || 'Ceekay'}</span>
-                <h5>${product.name}</h5>
-                <h4>$${product.price}</h4>
-            </div>
-            <button class="add-to-cart-btn" onclick="addToCart('${product.id}')" aria-label="Add to Cart">
-                <i class="fas fa-shopping-bag"></i>
-            </button>
-        </div>
-    `).join('');
-}
     productContainer.innerHTML = products.map(product => {
         const detailUrl = `sproduct.html?id=${encodeURIComponent(product.id)}`;
         const displayPrice = product.base_retail_price ? parseFloat(product.base_retail_price).toFixed(2) : "0.00";
@@ -107,9 +93,9 @@ function renderProducts(products) {
                     <h5>${product.title}</h5>
                     <h4>$${displayPrice}</h4>
                 </div>
-                <a href="#" class="add-to-cart-btn" data-id="${product.id}">
-                    <i class="fal fa-shopping-cart cart" data-id="${product.id}"></i>
-                </a>
+                <button class="add-to-cart-btn" data-id="${product.id}" aria-label="Add to Cart">
+                    <i class="fas fa-shopping-bag"></i>
+                </button>
             </div>
         `;
     }).join('');
@@ -249,6 +235,7 @@ function showCartToast(product, variant) {
         toast.classList.remove('show');
     }, 4000);
 }
+
 // Safely update navbar cart count badge (Hides when 0)
 function updateCartCountBadge() {
     const badge = document.getElementById('cart-count');
@@ -264,7 +251,8 @@ function updateCartCountBadge() {
         badge.style.display = 'none';
     }
 }
-// Global Add to Cart Logic (Ensures numbers are stored as primitive numbers)
+
+// Global Add to Cart Logic
 function addToCartWithVariant(product, variant, quantity = 1) {
     let cart = JSON.parse(localStorage.getItem('ceekay_cart')) || [];
 
@@ -297,7 +285,7 @@ function addToCartWithVariant(product, variant, quantity = 1) {
     showCartToast(product, variant);
 }
 
-// Quick Add Handler for Grid Cards (Circular Green Icon)
+// Quick Add Handler for Grid Cards
 function attachCartEventListeners(products) {
     document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
         btn.onclick = function(e) {
@@ -315,7 +303,7 @@ function attachCartEventListeners(products) {
     });
 }
 
-// Render Cart Table & Calculate Totals accurately on cart.html
+// Render Cart Table & Calculate Totals
 function renderCartPage() {
     const cartTableContainer = document.querySelector('#cart tbody');
     const subtotalEl = document.getElementById('cart-subtotal');
