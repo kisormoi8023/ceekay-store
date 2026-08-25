@@ -99,8 +99,39 @@
             <button class="normal">Sign Up</button>
         </div>
     </section>
+    <!-- ACCOUNT MODAL -->
+<div id="auth-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span id="close-auth" class="close-btn">&times;</span>
+        
+        <!-- REGISTER FORM -->
+        <form id="signup-form">
+            <h2>Create an Account</h2>
+            <input type="text" id="reg-name" placeholder="Full Name" required>
+            <input type="email" id="reg-email" placeholder="Email Address" required>
+            <input type="password" id="reg-password" placeholder="Password" required>
+            
+            <h4>Shipping Address</h4>
+            <input type="text" id="reg-street" placeholder="Street Address" required>
+            <input type="text" id="reg-city" placeholder="City / Suburb" required>
+            <input type="text" id="reg-state" placeholder="State / Province" required>
+            <input type="text" id="reg-postcode" placeholder="Postcode / ZIP" required>
+            
+            <button type="submit" class="normal">Create Account</button>
+            <p>Already have an account? <a href="#" id="show-login">Log In</a></p>
+        </form>
 
-    <footer class="section-p1">
+        <!-- LOGIN FORM -->
+        <form id="login-form" style="display: none;">
+            <h2>Customer Login</h2>
+            <input type="email" id="login-email" placeholder="Email Address" required>
+            <input type="password" id="login-password" placeholder="Password" required>
+            <button type="submit" class="normal">Sign In</button>
+            <p>Don't have an account? <a href="#" id="show-signup">Sign Up</a></p>
+        </form>
+    </div>
+</div>
+<footer class="section-p1">
         <div class="col">
             <img class="logo" src="img/High-Resolution-Logo-Black-on-White-Background.png" alt="Ceekay Logo">
             <h4>Contact</h4>
@@ -128,9 +159,9 @@
         <div class="col">
             <h4>About</h4>
             <a href="about.html">About Us</a>
-            <a href="index.html">Delivery Information</a>
-            <a href="index.html">Privacy Policy</a>
-            <a href="index.html">Terms & Conditions</a>
+            <a href="about.html#return-refund-policy">Delivery Information</a>
+            <a href="about.html#return-refund-policy">Privacy Policy</a>
+            <a href="about.html#return-refund-policy">Terms & Conditions</a>
         </div>
 
         <div class="col">
@@ -139,7 +170,7 @@
             <a href="cart.html">View Cart</a>
             <a href="index.html">My Wishlist</a>
             <a href="index.html">Track My Order</a>
-            <a href="index.html">Help</a>
+            <a href="about.html#return-refund-policy">Help</a>
         </div>
 
         <div class="col install">
@@ -154,10 +185,9 @@
         </div>
 
         <div class="copyright">
-            <p>© 2021, Tech2 etc - HTML CSS Ecommerce Template</p>
+            <p>© 2026, Ceekay Store</p>
         </div>
     </footer>
-
     <!-- Visual Slide-in Toast Notification Container -->
     <div id="cart-toast" class="cart-toast">
         <div class="toast-content">
@@ -174,6 +204,10 @@
     </div>
 
     <script src="script.js"></script>
+    <!-- Firebase App & Auth SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </body>
 
 </html>
