@@ -404,3 +404,139 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(err => console.error('Error loading product catalog:', err));
 });
+// Global function to sync cart state and update DOM badge count
+window.syncCartWithServer = async function () {
+    if (window.currentUser) {
+        try {
+            const data = await apiFetch('/api/cart');
+            updateCartBadge(data.items);
+            if (typeof renderCartTable === 'function') {
+                renderCartTable(data.items);
+            }
+        } catch (err) {
+            console.error('Failed to fetch user cart:', err);
+        }
+    } else {
+        const localCart = JSON.parse(localStorage.getItem('ceekay_cart') || '[]');
+        updateCartBadge(localCart);
+        if (typeof renderCartTable === 'function') {
+            renderCartTable(localCart);
+        }
+    }
+};
+
+// Add Item to Cart (Handles both API and Guest LocalStorage)
+async function addToCart(productId, productName, price, imageUrl, quantity = 1) {
+    if (window.currentUser) {
+        try {
+            await apiFetch('/api/cart/items', {
+                method: 'POST',
+                body: JSON.stringify({
+                    productId: String(productId),
+                    productName: productName,
+                    price: Number(price),
+                    imageUrl: imageUrl,
+                    quantity: Number(quantity)
+                })
+            });
+            alert('Item added to cart!');
+            window.syncCartWithServer();
+        } catch (err) {
+            alert(err.message);
+        }
+    } else {
+        // Fallback for Guest Users (localStorage)
+        let localCart = JSON.parse(localStorage.getItem('ceekay_cart') || '[]');
+        const existingIndex = localCart.findIndex(item => item.id === productId);
+
+        if (existingIndex > -1) {
+            localCart[existingIndex].quantity += quantity;
+        } else {
+            localCart.push({ id: productId, name: productName, price, image: imageUrl, quantity });
+        }
+
+        localStorage.setItem('ceekay_cart', JSON.stringify(localCart));
+        alert('Item added to local cart!');
+        window.syncCartWithServer();
+    }
+}
+
+// Update Cart Badge Counter UI
+function updateCartBadge(items) {
+    const badge = document.getElementById('cart-count');
+    if (!badge) return;
+
+    const totalQuantity = items.reduce((sum, item) => sum + Number(item.quantity), 0);
+    badge.innerText = totalQuantity;
+}
+<!-- Place inside cart.html script tags or link to script.js -->
+async function renderCartTable(items) {
+    const tableBody = document.querySelector('#cart tbody');
+    const subtotalEl = document.getElementById('cart-subtotal');
+    const totalEl = document.getElementById('cart-total');
+    
+    if (!tableBody) return;
+    tableBody.innerHTML = '';
+    
+    let subtotal = 0;
+
+    items.forEach(item => {
+        const id = item.product_id || item.id;
+        const name = item.product_name || item.name;
+        const price = Number(item.price);
+        const image = item.image_url || item.image;
+        const qty = Number(item.quantity);
+        
+        const itemSubtotal = price * qty;
+        subtotal += itemSubtotal;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><a href="#" onclick="removeItem('${id}')"><i class="far fa-times-circle"></i></a></td>
+            <td><img src="${image || 'img/products/f1.jpg'}" alt="${name}"></td>
+            <td>${name}</td>
+            <td>$${price.toFixed(2)}</td>
+            <td><input type="number" value="${qty}" min="1" onchange="updateItemQuantity('${id}', this.value)"></td>
+            <td>$${itemSubtotal.toFixed(2)}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+
+    if (subtotalEl) subtotalEl.innerText = `$${subtotal.toFixed(2)}`;
+    if (totalEl) totalEl.innerText = `$${subtotal.toFixed(2)}`;
+}
+
+// Remove Item Endpoint Hook
+async function removeItem(productId) {
+    if (window.currentUser) {
+        await apiFetch(`/api/cart/items/${productId}`, { method: 'DELETE' });
+        window.syncCartWithServer();
+    } else {
+        let localCart = JSON.parse(localStorage.getItem('ceekay_cart') || '[]');
+        localCart = localCart.filter(item => item.id !== productId);
+        localStorage.setItem('ceekay_cart', JSON.stringify(localCart));
+        window.syncCartWithServer();
+    }
+}
+
+// Update Quantity Endpoint Hook
+async function updateItemQuantity(productId, newQty) {
+    const quantity = parseInt(newQty);
+    if (quantity < 1) return;
+
+    if (window.currentUser) {
+        await apiFetch(`/api/cart/items/${productId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ quantity })
+        });
+        window.syncCartWithServer();
+    } else {
+        let localCart = JSON.parse(localStorage.getItem('ceekay_cart') || '[]');
+        const item = localCart.find(i => i.id === productId);
+        if (item) {
+            item.quantity = quantity;
+            localStorage.setItem('ceekay_cart', JSON.stringify(localCart));
+            window.syncCartWithServer();
+        }
+    }
+}
