@@ -208,6 +208,31 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<!-- ACCOUNT AUTHENTICATION MODAL -->
+<div id="auth-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span id="close-auth" class="close-btn" onclick="document.getElementById('auth-modal').style.display='none'">&times;</span>
+        
+        <!-- REGISTRATION FORM -->
+        <form id="signup-form">
+            <h2>Create an Account</h2>
+            <input type="text" id="reg-name" placeholder="Full Name" required>
+            <input type="email" id="reg-email" placeholder="Email Address" required>
+            <input type="password" id="reg-password" placeholder="Password (min 8 chars)" minlength="8" required>
+            <button type="submit" class="normal">Sign Up</button>
+            <p>Already have an account? <a href="#" id="show-login-link">Log In</a></p>
+        </form>
+
+        <!-- LOGIN FORM -->
+        <form id="login-form" style="display: none;">
+            <h2>Customer Login</h2>
+            <input type="email" id="login-email" placeholder="Email Address" required>
+            <input type="password" id="login-password" placeholder="Password" required>
+            <button type="submit" class="normal">Sign In</button>
+            <p>Don't have an account? <a href="#" id="show-signup-link">Sign Up</a></p>
+        </form>
+    </div>
+</div>
 </body>
 
 </html>

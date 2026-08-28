@@ -145,3 +145,25 @@ async function mergeGuestCartToServer() {
 
 // Run auth check when DOM is ready
 document.addEventListener('DOMContentLoaded', checkAuthStatus);     
+// Toggle between Sign Up and Login forms inside the modal
+document.getElementById('show-login-link')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('signup-form').style.display = 'none';
+    document.getElementById('login-form').style.display = 'flex';
+});
+
+document.getElementById('show-signup-link')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('signup-form').style.display = 'flex';
+});
+
+// Open modal button action
+document.getElementById('login-modal-btn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (window.currentUser) {
+        logoutUser();
+    } else {
+        document.getElementById('auth-modal').style.display = 'flex';
+    }
+});
