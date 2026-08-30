@@ -11,7 +11,6 @@
 </head>
 
 <body>
-
     <section id="header">
         <a href="index.html"><img src="img/High-Resolution-Color-Logo (1).png" class="logo" alt="Logo"></a>
 
@@ -21,13 +20,21 @@
                 <li><a href="shop.html">Shop</a></li>
                 <li><a href="blog.html">Blog</a></li>
                 <li><a class="active" href="about.html">About</a></li>
+                <!-- Dynamic User Account Status Badge -->
+                <li>
+                    <a href="#" id="login-modal-btn">
+                        <i class="far fa-user"></i>
+                        <span id="user-display-name">Log In</span>
+                        <span id="user-logged-in-dot" class="status-dot" style="display: none;"></span>
+                    </a>
+                </li>
                 <li id="lg-bag">
-    <a href="cart.html">
-        <i class="fas fa-shopping-bag"></i>
-        <span id="cart-count">0</span>
-    </a>
-</li>
-<a href="index.html" id="close"><i class="far fa-times"></i></a>
+                    <a href="cart.html">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span id="cart-count">0</span>
+                    </a>
+                </li>
+                <a href="#" id="close"><i class="far fa-times"></i></a>
             </ul>
         </div>
         <div id="mobile">
@@ -36,11 +43,13 @@
         </div>
     </section>
 
+    <!-- PAGE HEADER -->
     <section id="page-header" class="about-header">
         <h2>#OurStory</h2>
         <p>Blending contemporary fashion with rich African heritage.</p>
     </section>
 
+    <!-- BRAND STORY SECTION -->
     <section id="about-head" class="section-p1">
         <img src="img/High-Resolution-Logo-Black-on-White-Background.png" alt="About Ceekay">
         <div>
@@ -56,6 +65,8 @@
             </marquee>
         </div>
     </section>
+
+    <!-- NEWSLETTER SECTION -->
     <section id="newsletter" class="section-p1 section-m1">
         <div class="newstext">
             <h4>Sign Up For Newsletters</h4>
@@ -63,76 +74,80 @@
         </div>
         <div class="form">
             <input type="text" placeholder="Your email address">
-            <button class="normal">Sign Up</button>
+            <button class="normal" id="newsletter-btn">Sign Up</button>
         </div>
     </section>
-<section id="return-refund-policy" class="section-p1 policy-section">
-    <div class="policy-inner">
-        <p class="policy-eyebrow">Customer Care</p>
-        <h2>Return &amp; Refund Policy</h2>
-        <p class="policy-updated"><strong>Last updated:</strong> 25 August 2026</p>
- 
-        <p>Thank you for shopping with Ceekay. If you are not entirely satisfied with your purchase, we are here to help.</p>
- 
-        <details class="policy-item">
-            <summary>1. Returns <span class="policy-icon" aria-hidden="true">+</span></summary>
-            <div class="policy-content">
-                <p>You have 30 calendar days to return an item from the date you received it.</p>
-                <p>To be eligible for a return, your item must:</p>
-                <ul>
-                    <li>Be unused, unworn, unwashed, and in the same condition that you received it.</li>
-                    <li>Be in its original packaging with all tags still attached.</li>
-                    <li>Include the receipt, order confirmation, or other proof of purchase.</li>
-                </ul>
-                <h4>Non-Returnable Items</h4>
-                <ul>
-                    <li>Gift cards</li>
-                    <li>Final-sale or clearance items</li>
-                    <li>Intimate apparel, swimwear, or hygiene-sensitive products where the seal has been broken</li>
-                </ul>
-            </div>
-        </details>
- 
-        <details class="policy-item">
-            <summary>2. Refunds <span class="policy-icon" aria-hidden="true">+</span></summary>
-            <div class="policy-content">
-                <p>Once we receive your returned item, our team will inspect it and notify you that we have received your package. We will then notify you of the status of your refund.</p>
-                <p><strong>Approved returns:</strong> If your return is approved, we will initiate a refund to your original method of payment.</p>
-                <p><strong>Processing time:</strong> Your credit should appear within 5–10 business days, depending on your card issuer’s policies.</p>
-            </div>
-        </details>
- 
-        <details class="policy-item">
-            <summary>3. Exchanges <span class="policy-icon" aria-hidden="true">+</span></summary>
-            <div class="policy-content">
-                <p>We replace items only when they are defective, damaged, or when you need a different size. To request an exchange for the same product, contact us at <a href="mailto:ceekay.customersupport@gmail.com">ceekay.customersupport@gmail.com</a> and follow the return instructions we provide.</p>
-            </div>
-        </details>
- 
-        <details class="policy-item">
-            <summary>4. Shipping Costs <span class="policy-icon" aria-hidden="true">+</span></summary>
-            <div class="policy-content">
-                <p>You are responsible for return shipping costs. Shipping costs are non-refundable. If you receive a refund, the cost of the initial shipping may be deducted from your refund.</p>
-                <p>For items valued at more than $50, we recommend using a trackable shipping service or purchasing shipping insurance.</p>
-            </div>
-        </details>
- 
-        <details class="policy-item">
-            <summary>5. Damaged or Defective Items <span class="policy-icon" aria-hidden="true">+</span></summary>
-            <div class="policy-content">
-                <p>If you receive a damaged or defective product, contact us immediately at <a href="mailto:ceekay.customersupport@gmail.com">ceekay.customersupport@gmail.com</a> with your order number and clear photos of the damage. We will process a replacement or full refund at no extra cost to you.</p>
-            </div>
-        </details>
- 
-        <details class="policy-item">
-            <summary>6. Contact Us <span class="policy-icon" aria-hidden="true">+</span></summary>
-            <div class="policy-content">
-                <p>If you have questions about returning an item, contact us at <a href="mailto:ceekay.customersupport@gmail.com">ceekay.customersupport@gmail.com</a>.</p>
-                <p>Website: <a href="https://kisormoi8023.github.io/ceekay-store/">Ceekay Store</a></p>
-            </div>
-        </details>
-    </div>
-</section>
+
+    <!-- CUSTOMER CARE / POLICIES SECTION -->
+    <section id="return-refund-policy" class="section-p1 policy-section">
+        <div class="policy-inner">
+            <p class="policy-eyebrow">Customer Care</p>
+            <h2>Return &amp; Refund Policy</h2>
+            <p class="policy-updated"><strong>Last updated:</strong> 25 August 2026</p>
+
+            <p>Thank you for shopping with Ceekay. If you are not entirely satisfied with your purchase, we are here to help.</p>
+
+            <details class="policy-item">
+                <summary>1. Returns <span class="policy-icon" aria-hidden="true">+</span></summary>
+                <div class="policy-content">
+                    <p>You have 30 calendar days to return an item from the date you received it.</p>
+                    <p>To be eligible for a return, your item must:</p>
+                    <ul>
+                        <li>Be unused, unworn, unwashed, and in the same condition that you received it.</li>
+                        <li>Be in its original packaging with all tags still attached.</li>
+                        <li>Include the receipt, order confirmation, or other proof of purchase.</li>
+                    </ul>
+                    <h4>Non-Returnable Items</h4>
+                    <ul>
+                        <li>Gift cards</li>
+                        <li>Final-sale or clearance items</li>
+                        <li>Intimate apparel, swimwear, or hygiene-sensitive products where the seal has been broken</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details class="policy-item">
+                <summary>2. Refunds <span class="policy-icon" aria-hidden="true">+</span></summary>
+                <div class="policy-content">
+                    <p>Once we receive your returned item, our team will inspect it and notify you that we have received your package. We will then notify you of the status of your refund.</p>
+                    <p><strong>Approved returns:</strong> If your return is approved, we will initiate a refund to your original method of payment.</p>
+                    <p><strong>Processing time:</strong> Your credit should appear within 5–10 business days, depending on your card issuer’s policies.</p>
+                </div>
+            </details>
+
+            <details class="policy-item">
+                <summary>3. Exchanges <span class="policy-icon" aria-hidden="true">+</span></summary>
+                <div class="policy-content">
+                    <p>We replace items only when they are defective, damaged, or when you need a different size. To request an exchange for the same product, contact us at <a href="mailto:ceekay.customersupport@gmail.com">ceekay.customersupport@gmail.com</a> and follow the return instructions we provide.</p>
+                </div>
+            </details>
+
+            <details class="policy-item">
+                <summary>4. Shipping Costs <span class="policy-icon" aria-hidden="true">+</span></summary>
+                <div class="policy-content">
+                    <p>You are responsible for return shipping costs. Shipping costs are non-refundable. If you receive a refund, the cost of the initial shipping may be deducted from your refund.</p>
+                    <p>For items valued at more than $50, we recommend using a trackable shipping service or purchasing shipping insurance.</p>
+                </div>
+            </details>
+
+            <details class="policy-item">
+                <summary>5. Damaged or Defective Items <span class="policy-icon" aria-hidden="true">+</span></summary>
+                <div class="policy-content">
+                    <p>If you receive a damaged or defective product, contact us immediately at <a href="mailto:ceekay.customersupport@gmail.com">ceekay.customersupport@gmail.com</a> with your order number and clear photos of the damage. We will process a replacement or full refund at no extra cost to you.</p>
+                </div>
+            </details>
+
+            <details class="policy-item">
+                <summary>6. Contact Us <span class="policy-icon" aria-hidden="true">+</span></summary>
+                <div class="policy-content">
+                    <p>If you have questions about returning an item, contact us at <a href="mailto:ceekay.customersupport@gmail.com">ceekay.customersupport@gmail.com</a>.</p>
+                    <p>Website: <a href="https://kisormoi8023.github.io/ceekay-store/">Ceekay Store</a></p>
+                </div>
+            </details>
+        </div>
+    </section>
+
+    <!-- FOOTER SECTION -->
     <footer class="section-p1">
         <div class="col">
             <img class="logo" src="img/High-Resolution-Logo-Black-on-White-Background.png" alt="Ceekay Logo">
@@ -142,18 +157,10 @@
             <div class="follow">
                 <h4>Follow Us</h4>
                 <div class="icon">
-                    <a href="https://www.facebook.com/61584724989714" target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="https://www.instagram.com/ceekaystore/" target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="https://www.pinterest.com/CeeKayStore/" target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-pinterest-p"></i>
-                    </a>
-                    <a href="https://www.tiktok.com/@ceekaystore?lang=en-GB" target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-tiktok"></i>
-                    </a>
+                    <a href="https://www.facebook.com/61584724989714" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/ceekaystore/" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.pinterest.com/CeeKayStore/" target="_blank" rel="noopener noreferrer"><i class="fab fa-pinterest-p"></i></a>
+                    <a href="https://www.tiktok.com/@ceekaystore?lang=en-GB" target="_blank" rel="noopener noreferrer"><i class="fab fa-tiktok"></i></a>
                 </div>
             </div>
         </div>
@@ -161,26 +168,33 @@
         <div class="col">
             <h4>About</h4>
             <a href="about.html">About Us</a>
-            <a href="index.html">Delivery Information</a>
-            <a href="index.html">Privacy Policy</a>
-            <a href="index.html">Terms & Conditions</a>
-            <a href="index.html">Return & Refund Policies</a>
+            <a href="#return-refund-policy">Delivery Information</a>
+            <a href="#return-refund-policy">Privacy Policy</a>
+            <a href="#return-refund-policy">Terms & Conditions</a>
+            <a href="#return-refund-policy">Return & Refund Policies</a>
         </div>
 
         <div class="col">
             <h4>My Account</h4>
-            <a href="index.html">Sign In</a>
+            <a href="#" id="footer-login-btn">Sign In / Register</a>
             <a href="cart.html">View Cart</a>
-            <a href="index.html">My Wishlist</a>
-            <a href="index.html">Track My Order</a>
-            <a href="index.html">Help</a>
+            <a href="#" onclick="document.getElementById('footer-login-btn').click(); return false;">My Wishlist</a>
+            <a href="#return-refund-policy">Help & Support</a>
         </div>
-    <p>Secured Payment Gateways</p>
+
+        <div class="col install">
+            <h4>Install App</h4>
+            <p>From App Store or Google Play</p>
+            <div class="row">
+                <img src="img/pay/app.jpg" alt="">
+                <img src="img/pay/play.jpg" alt="">
+            </div>
+            <p>Secured Payment Gateways</p>
             <img src="img/pay/pay.png" alt="Payment Gateways">
         </div>
 
         <div class="copyright">
-            <p>© 2026, Ceekay - HTML CSS Ecommerce Template</p>
+            <p>© 2026, Ceekay Store</p>
         </div>
     </footer>
 
@@ -199,6 +213,42 @@
         </div>
     </div>
 
+    <!-- ACCOUNT AUTHENTICATION MODAL -->
+    <div id="auth-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span id="close-auth" class="close-btn" onclick="document.getElementById('auth-modal').style.display='none'">&times;</span>
+            
+            <!-- REGISTRATION FORM -->
+            <form id="signup-form">
+                <h2>Create an Account</h2>
+                <input type="text" id="reg-name" placeholder="Full Name" required>
+                <input type="email" id="reg-email" placeholder="Email Address" required>
+                <input type="password" id="reg-password" placeholder="Password (min 8 chars)" minlength="8" required>
+                
+                <h4>Shipping Address</h4>
+                <input type="text" id="reg-street" placeholder="Street Address" required>
+                <input type="text" id="reg-city" placeholder="City / Suburb" required>
+                <input type="text" id="reg-state" placeholder="State / Province" required>
+                <input type="text" id="reg-postcode" placeholder="Postcode / ZIP" required>
+
+                <button type="submit" class="normal">Sign Up</button>
+                <p>Already have an account? <a href="#" id="show-login-link">Log In</a></p>
+            </form>
+
+            <!-- LOGIN FORM -->
+            <form id="login-form" style="display: none;">
+                <h2>Customer Login</h2>
+                <input type="email" id="login-email" placeholder="Email Address" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit" class="normal">Sign In</button>
+                <p>Don't have an account? <a href="#" id="show-signup-link">Sign Up</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
     <script src="script.js"></script>
 </body>
 

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ceekay Store — Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+<!-- ===================== LOGIN SCREEN ===================== -->
+<div id="admin-login-screen">
+    <div class="login-card">
+        <h1>Store Admin</h1>
+        <p class="subtitle">Owner &amp; associate access only</p>
+        <form id="admin-login-form">
+            <div class="admin-field">
+                <label for="admin-login-email">Email</label>
+                <input type="email" id="admin-login-email" required autocomplete="username">
+            </div>
+            <div class="admin-field">
+                <label for="admin-login-password">Password</label>
+                <input type="password" id="admin-login-password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="admin-btn gold" style="width:100%;">Log In</button>
+            <p id="admin-login-error"></p>
+        </form>
+    </div>
+</div>
+
+<!-- ===================== DASHBOARD SHELL ===================== -->
+<div id="admin-shell">
+    <div class="admin-shell-flex">
+        <aside id="admin-sidebar">
+            <h2>Ceekay Admin</h2>
+            <div class="role-badge" id="admin-role-badge"></div>
+            <nav>
+                <button data-tab="dashboard" class="active">Dashboard</button>
+                <button data-tab="products">Products</button>
+                <button data-tab="scrape">Scraper Bot</button>
+                <button data-tab="orders">Orders</button>
+                <button data-tab="coupons">Coupons</button>
+                <button data-tab="customers">Customers</button>
+                <button data-tab="team" id="team-nav-btn">Team</button>
+                <button data-tab="audit" id="audit-nav-btn">Audit Log</button>
+            </nav>
+            <div class="logout-btn">
+                <button class="admin-btn ghost" id="admin-logout-btn" style="width:100%;">Log Out</button>
+            </div>
+        </aside>
+
+        <main id="admin-content">
+
+            <!-- DASHBOARD -->
+            <section class="tab-panel active" id="tab-dashboard">
+                <div class="admin-panel-header"><h1>Dashboard</h1></div>
+                <div class="stat-grid" id="stat-grid"></div>
+                <h3>Low stock (under 5 units)</h3>
+                <ul class="low-stock-list" id="low-stock-list"></ul>
+            </section>
+
+            <!-- PRODUCTS -->
+            <section class="tab-panel" id="tab-products">
+                <div class="admin-panel-header">
+                    <h1>Products</h1>
+                    <button class="admin-btn gold" id="new-product-btn">+ Add Product</button>
+                </div>
+                <div class="admin-form-card" id="product-form-card" style="display:none;">
+                    <div class="admin-form-row">
+                        <div class="admin-field"><label>Product ID (slug)</label><input id="pf-id"></div>
+                        <div class="admin-field"><label>Title</label><input id="pf-title"></div>
+                        <div class="admin-field"><label>Category</label><input id="pf-category"></div>
+                        <div class="admin-field"><label>Price</label><input id="pf-price" type="number" step="0.01"></div>
+                        <div class="admin-field"><label>Stock Qty</label><input id="pf-stock" type="number"></div>
+                        <div class="admin-field"><label>Image URL</label><input id="pf-image"></div>
+                    </div>
+                    <div class="admin-field"><label>Description</label><textarea id="pf-description" rows="2"></textarea></div>
+                    <button class="admin-btn" id="product-save-btn">Save Product</button>
+                    <button class="admin-btn ghost" id="product-cancel-btn">Cancel</button>
+                </div>
+                <table class="admin-table">
+                    <thead><tr><th>Image</th><th>Title</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th></th></tr></thead>
+                    <tbody id="products-table-body"></tbody>
+                </table>
+            </section>
+
+            <!-- SCRAPER BOT -->
+            <section class="tab-panel" id="tab-scrape">
+                <div class="admin-panel-header"><h1>Scraper Bot</h1></div>
+                <div class="admin-form-card">
+                    <div class="admin-field">
+                        <label>Vendor product URL</label>
+                        <input id="scrape-url-input" placeholder="https://vendor-site.com/product/...">
+                    </div>
+                    <button class="admin-btn gold" id="scrape-submit-btn">Queue Scrape Job</button>
+                    <p style="color:var(--admin-muted); font-size:13px; margin-top:10px;">
+                        Jobs sit here until your bot worker picks them up. Run <code>node product_scraper.py --bot</code>
+                        (or however you're running the Python bot) to have it poll and fulfill these automatically.
+                    </p>
+                </div>
+                <table class="admin-table">
+                    <thead><tr><th>Vendor URL</th><th>Status</th><th>Result</th><th>Requested</th></tr></thead>
+                    <tbody id="scrape-table-body"></tbody>
+                </table>
+            </section>
+
+            <!-- ORDERS -->
+            <section class="tab-panel" id="tab-orders">
+                <div class="admin-panel-header">
+                    <h1>Orders</h1>
+                    <select id="order-status-filter">
+                        <option value="">All statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <table class="admin-table">
+                    <thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th><th>Placed</th><th></th></tr></thead>
+                    <tbody id="orders-table-body"></tbody>
+                </table>
+            </section>
+
+            <!-- COUPONS -->
+            <section class="tab-panel" id="tab-coupons">
+                <div class="admin-panel-header"><h1>Coupons</h1></div>
+                <div class="admin-form-card">
+                    <div class="admin-form-row">
+                        <div class="admin-field"><label>Code</label><input id="cf-code" placeholder="SUMMER20"></div>
+                        <div class="admin-field"><label>% Discount</label><input id="cf-percent" type="number" step="0.01" placeholder="e.g. 20"></div>
+                        <div class="admin-field"><label>OR $ Discount</label><input id="cf-amount" type="number" step="0.01" placeholder="e.g. 10.00"></div>
+                        <div class="admin-field"><label>Expires (optional)</label><input id="cf-expires" type="date"></div>
+                    </div>
+                    <button class="admin-btn gold" id="coupon-save-btn">Create Coupon</button>
+                </div>
+                <table class="admin-table">
+                    <thead><tr><th>Code</th><th>Discount</th><th>Status</th><th>Expires</th><th></th></tr></thead>
+                    <tbody id="coupons-table-body"></tbody>
+                </table>
+            </section>
+
+            <!-- CUSTOMERS -->
+            <section class="tab-panel" id="tab-customers">
+                <div class="admin-panel-header"><h1>Customers</h1></div>
+                <table class="admin-table">
+                    <thead><tr><th>Email</th><th>Name</th><th>Location</th><th>Joined</th></tr></thead>
+                    <tbody id="customers-table-body"></tbody>
+                </table>
+            </section>
+
+            <!-- TEAM (owner only) -->
+            <section class="tab-panel" id="tab-team">
+                <div class="admin-panel-header"><h1>Team</h1></div>
+                <div class="admin-form-card" id="team-form-card">
+                    <div class="admin-form-row">
+                        <div class="admin-field"><label>Email</label><input id="tf-email"></div>
+                        <div class="admin-field"><label>Name</label><input id="tf-name"></div>
+                        <div class="admin-field"><label>Temporary Password</label><input id="tf-password" type="text"></div>
+                        <div class="admin-field">
+                            <label>Role</label>
+                            <select id="tf-role"><option value="associate">Associate</option><option value="owner">Owner</option></select>
+                        </div>
+                    </div>
+                    <button class="admin-btn gold" id="team-add-btn">Add Team Member</button>
+                </div>
+                <table class="admin-table">
+                    <thead><tr><th>Email</th><th>Name</th><th>Role</th><th>Status</th><th></th></tr></thead>
+                    <tbody id="team-table-body"></tbody>
+                </table>
+            </section>
+
+            <!-- AUDIT LOG (owner only) -->
+            <section class="tab-panel" id="tab-audit">
+                <div class="admin-panel-header"><h1>Audit Log</h1></div>
+                <table class="admin-table">
+                    <thead><tr><th>When</th><th>Admin</th><th>Action</th><th>Details</th></tr></thead>
+                    <tbody id="audit-table-body"></tbody>
+                </table>
+            </section>
+
+        </main>
+    </div>
+</div>
+
+<div class="admin-toast" id="admin-toast"></div>
+
+<script src="config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

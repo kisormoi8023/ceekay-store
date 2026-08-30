@@ -1,35 +1,35 @@
-// Base URL pointing to your Express backend API
-const API_BASE_URL = 'https://api.ceekaystore.com'; // Change to your server URL or 'http://localhost:3000' during local testing
-
-// State tracker
+// Global User State Tracker
 window.currentUser = null;
 
-// Helper function for sending authenticated requests with cookies enabled
-async function apiFetch(endpoint, options = {}) {
-    options.credentials = 'include'; // Required to send httpOnly cookies across origins
-    options.headers = {
-        'Content-Type': 'application/json',
-        ...options.headers
-    };
+// Global Auth Modal Helper Functions
+window.openAuthModal = function(view = 'login') {
+    const modal = document.getElementById('auth-modal');
+    const signupForm = document.getElementById('signup-form') || document.getElementById('register-view');
+    const loginForm = document.getElementById('login-form') || document.getElementById('login-view');
+    if (!modal) return;
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-        throw new Error(data.error || 'API Request failed');
+    modal.style.display = 'flex';
+    if (view === 'login') {
+        if (signupForm) signupForm.style.display = 'none';
+        if (loginForm) loginForm.style.display = 'flex';
+    } else {
+        if (signupForm) signupForm.style.display = 'flex';
+        if (loginForm) loginForm.style.display = 'none';
     }
+};
 
-    return data;
-}
+window.closeAuthModal = function() {
+    const modal = document.getElementById('auth-modal');
+    if (modal) modal.style.display = 'none';
+};
 
-// Check current user session on page load
+// Check active user session state on page load
 async function checkAuthStatus() {
     try {
         const data = await apiFetch('/api/me');
         window.currentUser = data.user;
         updateAuthUI(data.user);
-        
-        // Sync API cart to frontend
+
         if (typeof window.syncCartWithServer === 'function') {
             window.syncCartWithServer();
         }
@@ -39,77 +39,30 @@ async function checkAuthStatus() {
     }
 }
 
-// Update Navigation / Auth UI depending on login state
+// Dynamically update Header Navigation & Footer links based on login status
 function updateAuthUI(user) {
-    const loginBtn = document.getElementById('login-modal-btn');
-    const userDisplay = document.getElementById('user-display-name');
+    const displayName = document.getElementById('user-display-name');
+    const statusDot = document.getElementById('user-logged-in-dot');
+    const footerBtn = document.getElementById('footer-login-btn');
 
     if (user) {
-        if (loginBtn) loginBtn.innerText = 'Logout';
-        if (userDisplay) userDisplay.innerText = `Hello, ${user.name || user.email}`;
+        if (displayName) displayName.innerText = user.name || 'Account';
+        if (statusDot) statusDot.style.display = 'inline-block';
+        if (footerBtn) footerBtn.innerText = 'Log Out';
     } else {
-        if (loginBtn) loginBtn.innerText = 'Sign In';
-        if (userDisplay) userDisplay.innerText = '';
+        if (displayName) displayName.innerText = 'Log In';
+        if (statusDot) statusDot.style.display = 'none';
+        if (footerBtn) footerBtn.innerText = 'Log In / Sign Up';
     }
 }
 
-// Handle Customer Registration Form Submission
-document.getElementById('signup-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('reg-email').value;
-    const password = document.getElementById('reg-password').value;
-    const name = document.getElementById('reg-name').value;
-
-    try {
-        const data = await apiFetch('/api/auth/register', {
-            method: 'POST',
-            body: JSON.stringify({ email, password, name })
-        });
-
-        window.currentUser = data.user;
-        alert('Account created successfully!');
-        
-        // Merge guest localStorage cart to newly created account database
-        await mergeGuestCartToServer();
-
-        document.getElementById('auth-modal').style.display = 'none';
-        checkAuthStatus();
-    } catch (error) {
-        alert(error.message);
-    }
-});
-
-// Handle Customer Login Form Submission
-document.getElementById('login-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-
-    try {
-        const data = await apiFetch('/api/auth/login', {
-            method: 'POST',
-            body: JSON.stringify({ email, password })
-        });
-
-        window.currentUser = data.user;
-        alert('Logged in successfully!');
-
-        // Merge guest localStorage cart items to backend database
-        await mergeGuestCartToServer();
-
-        document.getElementById('auth-modal').style.display = 'none';
-        checkAuthStatus();
-    } catch (error) {
-        alert(error.message);
-    }
-});
-
-// Handle Logout
+// Handle Customer Logout
 async function logoutUser() {
     try {
         await apiFetch('/api/auth/logout', { method: 'POST' });
         window.currentUser = null;
         localStorage.removeItem('ceekay_cart');
+        localStorage.removeItem('cart');
         alert('Logged out successfully.');
         window.location.reload();
     } catch (err) {
@@ -117,18 +70,19 @@ async function logoutUser() {
     }
 }
 
-// Helper: Merge guest local storage items to server upon login
+// Helper: Sync offline LocalStorage cart items to MySQL database upon login
 async function mergeGuestCartToServer() {
-    const localCart = JSON.parse(localStorage.getItem('ceekay_cart') || '[]');
-    if (localCart.length === 0) return;
+    const rawLocalCart = localStorage.getItem('ceekay_cart') || localStorage.getItem('cart') || '[]';
+    const localCart = JSON.parse(rawLocalCart);
+    if (!Array.isArray(localCart) || localCart.length === 0) return;
 
     try {
         const formattedItems = localCart.map(item => ({
-            productId: String(item.id),
-            productName: item.name,
+            productId: String(item.id || item.productId || item.product_id),
+            productName: item.name || item.title || item.productName || item.product_name,
             price: Number(item.price),
-            imageUrl: item.image,
-            quantity: Number(item.quantity)
+            imageUrl: item.image || item.imageUrl || item.image_url,
+            quantity: Number(item.quantity || item.qty || 1)
         }));
 
         await apiFetch('/api/cart/merge', {
@@ -136,34 +90,136 @@ async function mergeGuestCartToServer() {
             body: JSON.stringify({ items: formattedItems })
         });
 
-        // Clear local storage cart once merged into user database
         localStorage.removeItem('ceekay_cart');
+        localStorage.removeItem('cart');
     } catch (err) {
         console.error('Failed to merge guest cart:', err);
     }
 }
 
-// Run auth check when DOM is ready
-document.addEventListener('DOMContentLoaded', checkAuthStatus);     
-// Toggle between Sign Up and Login forms inside the modal
-document.getElementById('show-login-link')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    document.getElementById('signup-form').style.display = 'none';
-    document.getElementById('login-form').style.display = 'flex';
-});
+// Main Initialization & DOM Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    checkAuthStatus();
 
-document.getElementById('show-signup-link')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    document.getElementById('login-form').style.display = 'none';
-    document.getElementById('signup-form').style.display = 'flex';
-});
+    // Toggle Modal Views
+    document.getElementById('show-login-link')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.openAuthModal('login');
+    });
 
-// Open modal button action
-document.getElementById('login-modal-btn')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (window.currentUser) {
-        logoutUser();
-    } else {
-        document.getElementById('auth-modal').style.display = 'flex';
-    }
+    document.getElementById('show-signup-link')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.openAuthModal('register');
+    });
+
+    document.getElementById('show-register-link')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.openAuthModal('register');
+    });
+
+    // Close Button Event
+    document.getElementById('close-auth-modal')?.addEventListener('click', window.closeAuthModal);
+
+    // Header & Footer Login/Logout Triggers
+    const loginTriggerBtns = ['login-modal-btn', 'footer-login-btn', 'login-header-btn'];
+    loginTriggerBtns.forEach(id => {
+        document.getElementById(id)?.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (window.currentUser) {
+                logoutUser();
+            } else {
+                window.openAuthModal('login');
+            }
+        });
+    });
+
+    // Handle Registration Form Submission
+    const signupForm = document.getElementById('signup-form') || document.getElementById('register-form');
+    signupForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('reg-email')?.value.trim() || '';
+        const password = document.getElementById('reg-password')?.value || '';
+        const name = document.getElementById('reg-name')?.value.trim() || '';
+
+        const street = document.getElementById('reg-street')?.value.trim() || '';
+        const city = document.getElementById('reg-city')?.value.trim() || '';
+        const state = document.getElementById('reg-state')?.value.trim() || '';
+        const postcode = document.getElementById('reg-postcode')?.value.trim() || '';
+
+        if (!email || !password || !name) {
+            alert('Please fill in your name, email, and password.');
+            return;
+        }
+
+        try {
+            // Explicitly stringify the body object so apiFetch sends valid JSON
+            const data = await apiFetch('/api/auth/register', {
+                method: 'POST',
+                body: JSON.stringify({
+                    email,
+                    password,
+                    name,
+                    street,
+                    city,
+                    state,
+                    postcode,
+                    address: { street, city, state, postcode }
+                })
+            });
+
+            window.currentUser = data.user;
+            alert('Account created successfully!');
+            await mergeGuestCartToServer();
+            if (typeof window.closeAuthModal === 'function') window.closeAuthModal();
+            window.location.reload();
+        } catch (error) {
+            alert(error.message || 'Registration failed');
+        }
+    });
+
+    // Handle Login Form Submission
+    const loginForm = document.getElementById('login-form');
+    loginForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email')?.value.trim() || '';
+        const password = document.getElementById('login-password')?.value || '';
+
+        if (!email || !password) {
+            alert('Please enter both email and password.');
+            return;
+        }
+
+        try {
+            // Explicitly stringify the body object so apiFetch sends valid JSON
+            const data = await apiFetch('/api/auth/login', {
+                method: 'POST',
+                body: JSON.stringify({ email, password })
+            });
+
+            window.currentUser = data.user;
+            alert('Logged in successfully!');
+            await mergeGuestCartToServer();
+            if (typeof window.closeAuthModal === 'function') window.closeAuthModal();
+            window.location.reload();
+        } catch (error) {
+            alert(error.message || 'Login failed. Please check your credentials.');
+        }
+    });
+
+    // Handle Proceed to Checkout Button (Guest Gatekeeper)
+    const checkoutBtn = document.getElementById('proceed-to-checkout-btn');
+    checkoutBtn?.addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+            const res = await fetch('/api/me', { credentials: 'include' });
+            if (res.ok) {
+                window.location.href = '/checkout.html';
+            } else {
+                alert('Please log in or create an account to complete your order.');
+                window.openAuthModal('login');
+            }
+        } catch (err) {
+            console.error('Auth verification error:', err);
+        }
+    });
 });

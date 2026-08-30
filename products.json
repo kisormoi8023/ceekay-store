@@ -2,6 +2,7 @@
   {
     "id": "xpluswear-gold-maxi-dress",
     "title": "Design Plus Size Formal Gold Oblique Collar Maxi Dress",
+    "category": "women",
     "vendor_url": "https://www.xpluswear.com/...",
     "default_image": "img/xpluswear_design_plus_size_for_4.jpg",
     "base_retail_price": 177.2,
@@ -83,12 +84,13 @@
   {
     "id": "p004",
     "title": "Plus Size Vacation Elegant Multicolor All Over Print Halter Collar Ruffle Pocket Chiffon Two Piece Pant Sets",
-    "vendor_url": "https://www.ninafresa.com/products/plus-size-vacation-elegant-multicolor-all-over-print-halter-collar-ruffle-pocket-chiffon-two-piece-pant-sets?spm=..collection_57b5ebfd-5f9b-429a-af23-a5c12417682b.collection_detail_1.5r_1.1",
+    "category": "women",
+    "vendor_url": "https://www.ninafresa.com/products/plus-size-vacation-elegant-multicolor-all-over-print-halter-collar-ruffle-pocket-chiffon-two-piece-pant-sets",
     "base_retail_price": 176.4,
     "default_image": "img/p006_1.png",
     "variants": [
       {
-        "sku": "P006-MULTICOLOR-L",
+        "sku": "P004-MULTICOLOR-L",
         "size": "L/10-12",
         "color": "Multicolor",
         "vendor_price": 126.0,
@@ -96,7 +98,7 @@
         "image": "img/p006_1.png"
       },
       {
-        "sku": "P006-MULTICOLOR-XL",
+        "sku": "P004-MULTICOLOR-XL",
         "size": "XL/14-16",
         "color": "Multicolor",
         "vendor_price": 126.0,
@@ -104,7 +106,7 @@
         "image": "img/p006_2.jpg"
       },
       {
-        "sku": "P006-MULTICOLOR-2XL",
+        "sku": "P004-MULTICOLOR-2XL",
         "size": "2XL/18-20",
         "color": "Multicolor",
         "vendor_price": 126.0,
@@ -112,7 +114,7 @@
         "image": "img/p006_3.jpg"
       },
       {
-        "sku": "P006-MULTICOLOR-3XL",
+        "sku": "P004-MULTICOLOR-3XL",
         "size": "3XL/22-24",
         "color": "Multicolor",
         "vendor_price": 126.0,
@@ -120,7 +122,7 @@
         "image": "img/p006_4.jpg"
       },
       {
-        "sku": "P006-MULTICOLOR-4XL",
+        "sku": "P004-MULTICOLOR-4XL",
         "size": "4XL/26",
         "color": "Multicolor",
         "vendor_price": 126.0,
@@ -128,7 +130,7 @@
         "image": "img/p006_5.jpg"
       },
       {
-        "sku": "P006-MULTICOLOR-5XL",
+        "sku": "P004-MULTICOLOR-5XL",
         "size": "5XL/28",
         "color": "Multicolor",
         "vendor_price": 126.0,
@@ -140,7 +142,8 @@
   {
     "id": "p005",
     "title": "Design Plus Size Daily Orange Round Neck 3/4 Sleeve Blouses [Pre-Order]",
-    "vendor_url": "https://www.xpluswear.com/au/collections/new-in/products/xpluswear-design-plus-size-daily-orange-round-neck-3-4-sleeve-blouses-pre-order?spm=..collection_59cdf688-5060-4167-80f0-876a964f5667.collection_1.23&spm_prev=..product_a9616678-c0f6-4ec5-bd24-d8ccf33159f3.header_1.1",
+    "category": "women",
+    "vendor_url": "https://www.xpluswear.com/au/collections/new-in/products/xpluswear-design-plus-size-daily-orange-round-neck-3-4-sleeve-blouses-pre-order",
     "base_retail_price": 176.4,
     "default_image": "img/p005_2.jpg",
     "variants": [

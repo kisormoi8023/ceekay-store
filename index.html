@@ -20,13 +20,21 @@
                 <li><a href="shop.html">Shop</a></li>
                 <li><a href="blog.html">Blog</a></li>
                 <li><a href="about.html">About</a></li>
+                <!-- Dynamic User Account Status Badge -->
+                <li>
+                    <a href="#" id="login-modal-btn">
+                        <i class="far fa-user"></i>
+                        <span id="user-display-name">Log In</span>
+                        <span id="user-logged-in-dot" class="status-dot" style="display: none;"></span>
+                    </a>
+                </li>
                 <li id="lg-bag">
-    <a href="cart.html">
-        <i class="fas fa-shopping-bag"></i>
-        <span id="cart-count">0</span>
-    </a>
-</li>
-<a href="index.html" id="close"><i class="far fa-times"></i></a>
+                    <a href="cart.html">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span id="cart-count">0</span>
+                    </a>
+                </li>
+                <a href="#" id="close"><i class="far fa-times"></i></a>
             </ul>
         </div>
         <div id="mobile">
@@ -35,6 +43,7 @@
         </div>
     </section>
 
+    <!-- HERO SECTION -->
     <section id="hero" class="bg-1">
         <h4>Free Shipping!</h4>
         <h2>Where Culture Meets Fashion</h2>
@@ -62,33 +71,36 @@
         <div class="pro-container" id="new-arrivals"></div>
     </section>
 
+    <!-- CATEGORY COLLECTION BUTTONS (SMALL BANNERS) -->
     <section id="sm-banner" class="section-p1">
         <div class="banner-box">
-            <button class="white" onclick="window.location.href='shop.html';">Men</button>
+            <button class="white" onclick="window.location.href='shop.html?category=men';">Men</button>
         </div>
         <div class="banner-box banner-box2">
-            <button class="white" onclick="window.location.href='shop.html';">Women</button>
+            <button class="white" onclick="window.location.href='shop.html?category=women';">Women</button>
         </div>
         <div class="banner-box banner-box3">
-            <button class="white" onclick="window.location.href='shop.html';">Accessories</button>
+            <button class="white" onclick="window.location.href='shop.html?category=accessories';">Accessories</button>
         </div>
     </section>
 
+    <!-- CATEGORY COLLECTION BANNERS -->
     <section id="banner3" class="section-p1">
-        <div class="banner-box">
+        <div class="banner-box" onclick="window.location.href='shop.html?category=men';" style="cursor: pointer;">
             <h2>Men's Collection</h2>
             <h3>Modern Cultural Attire</h3>
         </div>
-        <div class="banner-box banner-box2">
+        <div class="banner-box banner-box2" onclick="window.location.href='shop.html?category=women';" style="cursor: pointer;">
             <h2>Women's Collection</h2>
             <h3>Heritage & Elegance</h3>
         </div>
-        <div class="banner-box banner-box3">
+        <div class="banner-box banner-box3" onclick="window.location.href='shop.html?category=accessories';" style="cursor: pointer;">
             <h2>Accessories</h2>
             <h3>Complete Your Look</h3>
         </div>
     </section>
 
+    <!-- NEWSLETTER SECTION -->
     <section id="newsletter" class="section-p1 section-m1">
         <div class="newstext">
             <h4>Sign Up For Newsletters</h4>
@@ -96,62 +108,24 @@
         </div>
         <div class="form">
             <input type="text" placeholder="Your email address">
-            <button class="normal">Sign Up</button>
+            <button class="normal" id="newsletter-btn">Sign Up</button>
         </div>
     </section>
-    <!-- ACCOUNT MODAL -->
-<div id="auth-modal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <span id="close-auth" class="close-btn">&times;</span>
-        
-        <!-- REGISTER FORM -->
-        <form id="signup-form">
-            <h2>Create an Account</h2>
-            <input type="text" id="reg-name" placeholder="Full Name" required>
-            <input type="email" id="reg-email" placeholder="Email Address" required>
-            <input type="password" id="reg-password" placeholder="Password" required>
-            
-            <h4>Shipping Address</h4>
-            <input type="text" id="reg-street" placeholder="Street Address" required>
-            <input type="text" id="reg-city" placeholder="City / Suburb" required>
-            <input type="text" id="reg-state" placeholder="State / Province" required>
-            <input type="text" id="reg-postcode" placeholder="Postcode / ZIP" required>
-            
-            <button type="submit" class="normal">Create Account</button>
-            <p>Already have an account? <a href="#" id="show-login">Log In</a></p>
-        </form>
 
-        <!-- LOGIN FORM -->
-        <form id="login-form" style="display: none;">
-            <h2>Customer Login</h2>
-            <input type="email" id="login-email" placeholder="Email Address" required>
-            <input type="password" id="login-password" placeholder="Password" required>
-            <button type="submit" class="normal">Sign In</button>
-            <p>Don't have an account? <a href="#" id="show-signup">Sign Up</a></p>
-        </form>
-    </div>
-</div>
-<footer class="section-p1">
+    <!-- FOOTER SECTION -->
+    <footer class="section-p1">
         <div class="col">
             <img class="logo" src="img/High-Resolution-Logo-Black-on-White-Background.png" alt="Ceekay Logo">
             <h4>Contact</h4>
-            <p>Email: <a href="https://mail.google.com/mail/?view=cm&fs=1&to=ceekay.customersupport@gmail.com" target="_blank" rel="noopener noreferrer">ceekay.customersupport@gmail.com</a></p>
+            <p>Email: <a href="mailto:ceekay.customersupport@gmail.com">ceekay.customersupport@gmail.com</a></p>
             <p><strong>Whatsapp:</strong> +61420336538</p>
             <div class="follow">
                 <h4>Follow Us</h4>
                 <div class="icon">
-                    <a href="https://www.facebook.com/61584724989714" target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="https://www.instagram.com/ceekaystore/" target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="https://www.pinterest.com/CeeKayStore/" target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-pinterest-p"></i>
-                    </a>
-                    <a href="https://www.tiktok.com/@ceekaystore?lang=en-GB" target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-tiktok"></i>
-                    </a>
+                    <a href="https://www.facebook.com/61584724989714" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/ceekaystore/" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.pinterest.com/CeeKayStore/" target="_blank" rel="noopener noreferrer"><i class="fab fa-pinterest-p"></i></a>
+                    <a href="https://www.tiktok.com/@ceekaystore?lang=en-GB" target="_blank" rel="noopener noreferrer"><i class="fab fa-tiktok"></i></a>
                 </div>
             </div>
         </div>
@@ -166,11 +140,10 @@
 
         <div class="col">
             <h4>My Account</h4>
-            <a href="index.html">Sign In</a>
+            <a href="#" id="footer-login-btn">Sign In / Register</a>
             <a href="cart.html">View Cart</a>
-            <a href="index.html">My Wishlist</a>
-            <a href="index.html">Track My Order</a>
-            <a href="about.html#return-refund-policy">Help</a>
+            <a href="#" onclick="document.getElementById('footer-login-btn').click(); return false;">My Wishlist</a>
+            <a href="about.html#return-refund-policy">Help & Support</a>
         </div>
 
         <div class="col install">
@@ -188,6 +161,7 @@
             <p>© 2026, Ceekay Store</p>
         </div>
     </footer>
+
     <!-- Visual Slide-in Toast Notification Container -->
     <div id="cart-toast" class="cart-toast">
         <div class="toast-content">
@@ -203,35 +177,84 @@
         </div>
     </div>
 
+    <!-- ACCOUNT AUTHENTICATION MODAL -->
+    <div id="auth-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span id="close-auth" class="close-btn" onclick="document.getElementById('auth-modal').style.display='none'">&times;</span>
+            
+            <!-- REGISTRATION FORM -->
+            <form id="signup-form">
+                <h2>Create an Account</h2>
+                <input type="text" id="reg-name" placeholder="Full Name" required>
+                <input type="email" id="reg-email" placeholder="Email Address" required>
+                <input type="password" id="reg-password" placeholder="Password (min 8 chars)" minlength="8" required>
+                
+                <h4>Shipping Address</h4>
+                <input type="text" id="reg-street" placeholder="Street Address" required>
+                <input type="text" id="reg-city" placeholder="City / Suburb" required>
+                <input type="text" id="reg-state" placeholder="State / Province" required>
+                <input type="text" id="reg-postcode" placeholder="Postcode / ZIP" required>
+
+                <button type="submit" class="normal">Sign Up</button>
+                <p>Already have an account? <a href="#" id="show-login-link">Log In</a></p>
+            </form>
+
+            <!-- LOGIN FORM -->
+            <form id="login-form" style="display: none;">
+                <h2>Customer Login</h2>
+                <input type="email" id="login-email" placeholder="Email Address" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit" class="normal">Sign In</button>
+                <p>Don't have an account? <a href="#" id="show-signup-link">Sign Up</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
     <script src="script.js"></script>
-    <!-- Firebase App & Auth SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-<!-- ACCOUNT AUTHENTICATION MODAL -->
+<!-- AUTH MODAL (Hidden by default so users can browse freely) -->
 <div id="auth-modal" class="modal" style="display: none;">
     <div class="modal-content">
-        <span id="close-auth" class="close-btn" onclick="document.getElementById('auth-modal').style.display='none'">&times;</span>
-        
-        <!-- REGISTRATION FORM -->
-        <form id="signup-form">
-            <h2>Create an Account</h2>
-            <input type="text" id="reg-name" placeholder="Full Name" required>
-            <input type="email" id="reg-email" placeholder="Email Address" required>
-            <input type="password" id="reg-password" placeholder="Password (min 8 chars)" minlength="8" required>
-            <button type="submit" class="normal">Sign Up</button>
-            <p>Already have an account? <a href="#" id="show-login-link">Log In</a></p>
-        </form>
+        <span class="close-btn" id="close-auth-modal">&times;</span>
 
-        <!-- LOGIN FORM -->
-        <form id="login-form" style="display: none;">
-            <h2>Customer Login</h2>
-            <input type="email" id="login-email" placeholder="Email Address" required>
-            <input type="password" id="login-password" placeholder="Password" required>
-            <button type="submit" class="normal">Sign In</button>
-            <p>Don't have an account? <a href="#" id="show-signup-link">Sign Up</a></p>
-        </form>
+        <!-- REGISTER VIEW -->
+        <div id="register-view">
+            <h2>Create an Account</h2>
+            <form id="register-form">
+                <input type="text" id="reg-name" placeholder="Full Name" required />
+                <input type="email" id="reg-email" placeholder="Email Address" required />
+                <input type="password" id="reg-password" placeholder="Password (min 8 chars)" required />
+                <input type="text" id="reg-street" placeholder="Street Address" />
+                <input type="text" id="reg-city" placeholder="City / Suburb" />
+                <input type="text" id="reg-state" placeholder="State / Province" />
+                <input type="text" id="reg-postcode" placeholder="Postcode / ZIP" />
+                <button type="submit" class="btn">SIGN UP</button>
+            </form>
+            <p>Already have an account? <a href="#" id="show-login-link">Log In</a></p>
+        </div>
+
+        <!-- LOGIN VIEW -->
+        <div id="login-view" style="display: none;">
+            <h2>Log In</h2>
+            <form id="login-form">
+                <input type="email" id="login-email" placeholder="Email Address" required />
+                <input type="password" id="login-password" placeholder="Password" required />
+                <button type="submit" class="btn">LOG IN</button>
+            </form>
+            <p>Don't have an account? <a href="#" id="show-register-link">Sign Up</a></p>
+        </div>
     </div>
+</div>
+    <div id="login-view" style="display: none;">
+    <h2>Log In</h2>
+    <form id="login-form">
+        <input type="email" id="login-email" placeholder="Email Address" required />
+        <input type="password" id="login-password" placeholder="Password" required />
+        <button type="submit" class="btn">LOG IN</button>
+    </form>
+    <p>Don't have an account? <a href="#" id="show-register-link">Sign Up</a></p>
 </div>
 </body>
 

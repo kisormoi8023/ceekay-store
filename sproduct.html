@@ -6,7 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ceekay - Product Details</title>
-    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <!-- Swiper Slider CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -21,13 +24,21 @@
                 <li><a class="active" href="shop.html">Shop</a></li>
                 <li><a href="blog.html">Blog</a></li>
                 <li><a href="about.html">About</a></li>
+                <!-- Dynamic User Account Status Badge -->
+                <li>
+                    <a href="#" id="login-modal-btn">
+                        <i class="far fa-user"></i>
+                        <span id="user-display-name">Log In</span>
+                        <span id="user-logged-in-dot" class="status-dot" style="display: none;"></span>
+                    </a>
+                </li>
                 <li id="lg-bag">
                     <a href="cart.html">
-                        <i class="far fa-shopping-bag"></i>
+                        <i class="fas fa-shopping-bag"></i>
                         <span id="cart-count">0</span>
                     </a>
                 </li>
-                <a href="index.html" id="close"><i class="far fa-times"></i></a>
+                <a href="#" id="close"><i class="far fa-times"></i></a>
             </ul>
         </div>
         <div id="mobile">
@@ -40,6 +51,17 @@
     <section id="prodetails" class="section-p1">
         <div class="single-pro-image">
             <img src="img/p2black.webp" width="100%" id="MainImg" alt="Product Image">
+            
+            <!-- Product Image Slider HTML Structure -->
+            <div class="swiper product-slider">
+                <div class="swiper-wrapper" id="slider-wrapper">
+                    <!-- Slides dynamically populate here via script.js -->
+                </div>
+                <!-- Navigation Controls -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination"></div>
+            </div>
         </div>
 
         <div class="single-pro-details">
@@ -72,35 +94,32 @@
         <div class="pro-container" id="featured-products"></div>
     </section>
 
+    <!-- NEWSLETTER SECTION -->
     <section id="newsletter" class="section-p1 section-m1">
         <div class="newstext">
             <h4>Sign Up For Newsletters</h4>
-            <p>Get E-mail updates about our latest shop and <span>special offers.</span> </p>
+            <p>Get E-mail updates about our latest shop and <span>special offers.</span></p>
         </div>
         <div class="form">
             <input type="text" placeholder="Your email address">
-            <button class="normal">Sign Up</button>
+            <button class="normal" id="newsletter-btn">Sign Up</button>
         </div>
     </section>
 
+    <!-- FOOTER SECTION -->
     <footer class="section-p1">
         <div class="col">
             <img class="logo" src="img/High-Resolution-Logo-Black-on-White-Background.png" alt="Ceekay Logo">
             <h4>Contact</h4>
-            <p>Email: acekipngetichrotich@gmail.com</p>
+            <p>Email: <a href="mailto:ceekay.customersupport@gmail.com">ceekay.customersupport@gmail.com</a></p>
             <p><strong>Whatsapp:</strong> +61420336538</p>
             <div class="follow">
                 <h4>Follow Us</h4>
                 <div class="icon">
-                    <a href="https://www.facebook.com/61584724989714" target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="https://instagram.com/your-profile" target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="https://pinterest.com/your-profile" target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-pinterest-p"></i>
-                    </a>
+                    <a href="https://www.facebook.com/61584724989714" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/ceekaystore/" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.pinterest.com/CeeKayStore/" target="_blank" rel="noopener noreferrer"><i class="fab fa-pinterest-p"></i></a>
+                    <a href="https://www.tiktok.com/@ceekaystore?lang=en-GB" target="_blank" rel="noopener noreferrer"><i class="fab fa-tiktok"></i></a>
                 </div>
             </div>
         </div>
@@ -108,18 +127,17 @@
         <div class="col">
             <h4>About</h4>
             <a href="about.html">About Us</a>
-            <a href="index.html">Delivery Information</a>
-            <a href="index.html">Privacy Policy</a>
-            <a href="index.html">Terms & Conditions</a>
+            <a href="about.html#return-refund-policy">Delivery Information</a>
+            <a href="about.html#return-refund-policy">Privacy Policy</a>
+            <a href="about.html#return-refund-policy">Terms & Conditions</a>
         </div>
 
         <div class="col">
             <h4>My Account</h4>
-            <a href="index.html">Sign In</a>
+            <a href="#" id="footer-login-btn">Sign In / Register</a>
             <a href="cart.html">View Cart</a>
-            <a href="index.html">My Wishlist</a>
-            <a href="index.html">Track My Order</a>
-            <a href="index.html">Help</a>
+            <a href="#" onclick="document.getElementById('footer-login-btn').click(); return false;">My Wishlist</a>
+            <a href="about.html#return-refund-policy">Help & Support</a>
         </div>
 
         <div class="col install">
@@ -129,12 +147,12 @@
                 <img src="img/pay/app.jpg" alt="">
                 <img src="img/pay/play.jpg" alt="">
             </div>
-            <p>Secured Payment Gateways </p>
+            <p>Secured Payment Gateways</p>
             <img src="img/pay/pay.png" alt="">
         </div>
 
         <div class="copyright">
-            <p>© 2021, Tech2 etc - HTML CSS Ecommerce Template</p>
+            <p>© 2026, Ceekay Store</p>
         </div>
     </footer>
 
@@ -153,6 +171,43 @@
         </div>
     </div>
 
+    <!-- ACCOUNT AUTHENTICATION MODAL -->
+    <div id="auth-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span id="close-auth" class="close-btn" onclick="document.getElementById('auth-modal').style.display='none'">&times;</span>
+            
+            <!-- REGISTRATION FORM -->
+            <form id="signup-form">
+                <h2>Create an Account</h2>
+                <input type="text" id="reg-name" placeholder="Full Name" required>
+                <input type="email" id="reg-email" placeholder="Email Address" required>
+                <input type="password" id="reg-password" placeholder="Password (min 8 chars)" minlength="8" required>
+                
+                <h4>Shipping Address</h4>
+                <input type="text" id="reg-street" placeholder="Street Address" required>
+                <input type="text" id="reg-city" placeholder="City / Suburb" required>
+                <input type="text" id="reg-state" placeholder="State / Province" required>
+                <input type="text" id="reg-postcode" placeholder="Postcode / ZIP" required>
+
+                <button type="submit" class="normal">Sign Up</button>
+                <p>Already have an account? <a href="#" id="show-login-link">Log In</a></p>
+            </form>
+
+            <!-- LOGIN FORM -->
+            <form id="login-form" style="display: none;">
+                <h2>Customer Login</h2>
+                <input type="email" id="login-email" placeholder="Email Address" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit" class="normal">Sign In</button>
+                <p>Don't have an account? <a href="#" id="show-signup-link">Sign Up</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Swiper JS Script -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
     <script src="script.js"></script>
 </body>
 

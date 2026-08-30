@@ -1,8 +1,18 @@
+import argparse
 import json
 import os
 import re
+import time
 import requests
 from playwright.sync_api import sync_playwright
+
+# -------------------------------------------------------------
+# Talks to the admin backend added in server.js. Set these to match
+# your .env (SCRAPER_API_KEY must be the exact same value on both sides).
+# -------------------------------------------------------------
+API_BASE_URL = os.environ.get("API_BASE_URL", "http://localhost:3000")
+SCRAPER_API_KEY = os.environ.get("SCRAPER_API_KEY", "")
+
 
 def get_next_product_id(json_filepath="products.json"):
     """Determines the next product number (e.g., p001, p002) based on products.json."""
@@ -12,7 +22,7 @@ def get_next_product_id(json_filepath="products.json"):
     try:
         with open(json_filepath, "r", encoding="utf-8") as f:
             products = json.load(f)
-            
+
         existing_ids = []
         for p in products:
             p_id = p.get("id", "")
@@ -24,6 +34,7 @@ def get_next_product_id(json_filepath="products.json"):
         return f"p{next_num:03d}", next_num
     except Exception:
         return "p001", 1
+
 
 def download_image(url, product_code, img_index, img_dir="img"):
     """Downloads a product image using p001_1, p001_2 naming schema."""
@@ -55,6 +66,7 @@ def download_image(url, product_code, img_index, img_dir="img"):
 
     return "img/default.jpg"
 
+
 def scrape_vendor_product_with_variants(vendor_url):
     product_code, _ = get_next_product_id("products.json")
 
@@ -64,7 +76,7 @@ def scrape_vendor_product_with_variants(vendor_url):
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
             viewport={"width": 1280, "height": 800}
         )
-        
+
         page = context.new_page()
         page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
@@ -78,9 +90,9 @@ def scrape_vendor_product_with_variants(vendor_url):
         # 2. Strict Filtered Image Selector (Targeting Product Gallery specifically)
         raw_image_urls = []
         gallery_selectors = [
-            ".product-gallery img", 
-            ".product-single__photos img", 
-            ".product__media img", 
+            ".product-gallery img",
+            ".product-single__photos img",
+            ".product__media img",
             "div[class*='slider'] img",
             "div[class*='gallery'] img",
             ".product-form img"
@@ -93,14 +105,12 @@ def scrape_vendor_product_with_variants(vendor_url):
                 found_images = elements
                 break
 
-        # Fallback to general images if gallery container isn't uniquely named
         if not found_images:
             found_images = page.locator("img").all()
 
-        # Keywords to filter out bad non-product images
         bad_keywords = [
-            "logo", "icon", "banner", "footer", "header", "pay", "paypal", 
-            "visa", "mastercard", "trust", "service", "avatar", "size_chart", 
+            "logo", "icon", "banner", "footer", "header", "pay", "paypal",
+            "visa", "mastercard", "trust", "service", "avatar", "size_chart",
             "size-guide", "badge", "50x50", "100x100", "small", "thumb"
         ]
 
@@ -108,7 +118,6 @@ def scrape_vendor_product_with_variants(vendor_url):
             src = img.get_attribute("src") or img.get_attribute("data-src") or ""
             src_lower = src.lower()
 
-            # Confirm it's a high-res product photo CDN URL
             if any(cdn in src_lower for cdn in ["staticdj.com", "img.staticdj", "cdn.shopify.com", "myshopify.com"]):
                 if not any(bad in src_lower for bad in bad_keywords):
                     full_src = "https:" + src if src.startswith("//") else src
@@ -120,8 +129,8 @@ def scrape_vendor_product_with_variants(vendor_url):
         sizes = []
         try:
             size_selectors = [
-                "div[class*='variant'] label", 
-                "div[class*='size'] label", 
+                "div[class*='variant'] label",
+                "div[class*='size'] label",
                 ".product-form__option-value",
                 "span[class*='size']"
             ]
@@ -151,7 +160,7 @@ def scrape_vendor_product_with_variants(vendor_url):
         unique_sizes = list(dict.fromkeys(sizes))
         for idx, size in enumerate(unique_sizes, start=1):
             variant_image = downloaded_gallery[(idx - 1) % len(downloaded_gallery)] if downloaded_gallery else "img/default.jpg"
-            
+
             vendor_price = base_vendor_price
             retail_price = round(vendor_price * 1.4, 2)
 
@@ -173,9 +182,10 @@ def scrape_vendor_product_with_variants(vendor_url):
             "variants": variants
         }
 
+
 def save_to_local_catalog(product_data, json_filepath="products.json"):
     products = []
-    
+
     if os.path.exists(json_filepath):
         with open(json_filepath, "r", encoding="utf-8") as f:
             try:
@@ -197,8 +207,122 @@ def save_to_local_catalog(product_data, json_filepath="products.json"):
 
     print(f"\n--- SUCCESS! Saved as {product_data['id']} in {json_filepath} ---")
 
-if __name__ == "__main__":
-    vendor_link = "https://www.ninafresa.com/products/plus-size-vacation-elegant-multicolor-all-over-print-halter-collar-ruffle-pocket-chiffon-two-piece-pant-sets?spm=..collection_57b5ebfd-5f9b-429a-af23-a5c12417682b.collection_detail_1.5r_1.1"
 
-    product_data = scrape_vendor_product_with_variants(vendor_link)
-    save_to_local_catalog(product_data, "products.json")
+def push_product_to_store(product_data):
+    """Sends a scraped product to the live database via server.js's admin API."""
+    if not SCRAPER_API_KEY:
+        raise RuntimeError("SCRAPER_API_KEY is not set — export it (must match the server's .env value).")
+
+    payload = {
+        "productId": product_data["id"],
+        "productName": product_data["title"],
+        "price": product_data["base_retail_price"],
+        "imageUrl": product_data["default_image"],
+        "category": product_data.get("category"),
+        "description": product_data.get("description"),
+        "variants": product_data["variants"],
+        "stockQuantity": product_data.get("stock_quantity", 20)
+    }
+
+    resp = requests.post(
+        f"{API_BASE_URL}/api/admin/products",
+        json=payload,
+        headers={"X-API-Key": SCRAPER_API_KEY},
+        timeout=20
+    )
+    resp.raise_for_status()
+    print(f"Pushed {payload['productId']} to {API_BASE_URL}")
+    return payload["productId"]
+
+
+def run_bot_loop(poll_interval=15):
+    """Continuously polls the admin dashboard's scrape job queue and fulfills jobs
+    as they're created (via admin.html -> Scraper Bot -> Queue Scrape Job)."""
+    if not SCRAPER_API_KEY:
+        print("SCRAPER_API_KEY is not set. Export it to match your server's .env value, then re-run.")
+        return
+
+    print(f"Scraper bot started. Polling {API_BASE_URL} every {poll_interval}s. Ctrl+C to stop.")
+    headers = {"X-API-Key": SCRAPER_API_KEY}
+
+    while True:
+        try:
+            resp = requests.get(f"{API_BASE_URL}/api/admin/scrape-jobs/next", headers=headers, timeout=15)
+            resp.raise_for_status()
+            job = resp.json().get("job")
+
+            if not job:
+                time.sleep(poll_interval)
+                continue
+
+            print(f"\nClaimed job #{job['id']}: {job['vendor_url']}")
+            try:
+                product_data = scrape_vendor_product_with_variants(job["vendor_url"])
+                save_to_local_catalog(product_data, "products.json")
+                product_id = push_product_to_store(product_data)
+
+                requests.post(
+                    f"{API_BASE_URL}/api/admin/scrape-jobs/{job['id']}/complete",
+                    json={"success": True, "productId": product_id},
+                    headers=headers, timeout=15
+                )
+                print(f"Job #{job['id']} complete -> {product_id}")
+            except Exception as job_err:
+                print(f"Job #{job['id']} failed: {job_err}")
+                requests.post(
+                    f"{API_BASE_URL}/api/admin/scrape-jobs/{job['id']}/complete",
+                    json={"success": False, "errorMessage": str(job_err)},
+                    headers=headers, timeout=15
+                )
+        except KeyboardInterrupt:
+            print("\nStopping bot.")
+            break
+        except Exception as loop_err:
+            print(f"Bot loop error (will retry): {loop_err}")
+            time.sleep(poll_interval)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Ceekay product scraper")
+    parser.add_argument("--bot", action="store_true",
+                         help="Run continuously, polling the admin dashboard's scrape job queue")
+    parser.add_argument("--url", type=str,
+                         help="Scrape a single vendor URL directly, save it locally, and push it to the store")
+    parser.add_argument("--interval", type=int, default=15,
+                         help="Seconds between polls in --bot mode (default 15)")
+    args = parser.parse_args()
+
+    if args.bot:
+        run_bot_loop(args.interval)
+    elif args.url:
+        data = scrape_vendor_product_with_variants(args.url)
+        save_to_local_catalog(data, "products.json")
+        push_product_to_store(data)
+    else:
+        print(
+            "Usage:\n"
+            "  python product_scraper.py --url <vendor product URL>   (one-off scrape + push)\n"
+            "  python product_scraper.py --bot                        (poll admin dashboard queue continuously)\n"
+        )
+
+
+class ApiPipeline:
+    """Optional Scrapy pipeline hook, if you're running this as part of a Scrapy spider
+    instead of the Playwright function above. Sends each scraped item to the same
+    admin endpoint the bot uses."""
+
+    def process_item(self, item, spider):
+        payload = {
+            "productId": item["id"],
+            "productName": item["title"],
+            "price": float(item.get("base_retail_price", 0)),
+            "imageUrl": item["images"][0] if item.get("images") else None,
+            "variants": item.get("variants", [])
+        }
+        requests.post(
+            f"{API_BASE_URL}/api/admin/products",
+            json=payload,
+            headers={"X-API-Key": SCRAPER_API_KEY},
+            timeout=20
+        )
+        return item
