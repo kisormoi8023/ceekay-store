@@ -1,44 +1,47 @@
-// Handle Registration Form Submission
-const signupForm = document.getElementById('signup-form') || document.getElementById('register-form');
-signupForm?.addEventListener('submit', async (e) => {
-    e.preventDefault();
+// -------------------------------------------------------------
+// Global API configuration + fetch helper.
+// This file is loaded FIRST (before auth.js and script.js), which
+// both rely on window.API_BASE_URL and window.apiFetch defined here.
+// -------------------------------------------------------------
 
-    const name = document.getElementById('reg-name')?.value.trim() || '';
-    const email = document.getElementById('reg-email')?.value.trim() || '';
-    const password = document.getElementById('reg-password')?.value || '';
+// When the page is opened through VS Code Live Server (:5500 / :5501) the
+// Express API is NOT on that port, so talk to the API server directly.
+// When the page is served by server.js itself every request is same-origin.
+//
+// NOTE: this project's API server runs on port 3007 (port 3000 is taken by a
+// separate process on this machine). Start it with:  npm start   (or:
+// PORT=3007 node server.js). Change API_PORT here if you run it elsewhere.
+(function () {
+    const API_PORT = '3007';
+    const STATIC_DEV_PORTS = ['5500', '5501'];
+    window.API_BASE_URL = STATIC_DEV_PORTS.includes(window.location.port)
+        ? `${window.location.protocol}//${window.location.hostname}:${API_PORT}`
+        : window.location.origin;
+})();
 
-    const street = document.getElementById('reg-street')?.value.trim() || '';
-    const city = document.getElementById('reg-city')?.value.trim() || '';
-    const state = document.getElementById('reg-state')?.value.trim() || '';
-    const postcode = document.getElementById('reg-postcode')?.value.trim() || '';
+/**
+ * Thin wrapper around fetch for the Ceekay JSON API.
+ *  - prefixes window.API_BASE_URL
+ *  - always sends cookies (credentials: 'include')
+ *  - JSON-encodes a plain-object body and sets Content-Type
+ *  - parses the JSON response and throws Error(payload.error) on non-2xx
+ */
+window.apiFetch = async function apiFetch(path, options = {}) {
+    const opts = { credentials: 'include', ...options };
+    opts.headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
 
-    if (!name || !email || !password) {
-        alert('Please fill in your name, email, and password.');
-        return;
+    if (opts.body && typeof opts.body !== 'string') {
+        opts.body = JSON.stringify(opts.body);
     }
 
-    try {
-        // Pass plain object (config.js will stringify it automatically)
-        const data = await apiFetch('/api/auth/register', {
-            method: 'POST',
-            body: {
-                name,
-                email,
-                password,
-                street,
-                city,
-                state,
-                postcode,
-                address: { street, city, state, postcode }
-            }
-        });
+    const res = await fetch(`${window.API_BASE_URL}${path}`, opts);
 
-        window.currentUser = data.user;
-        alert('Account created successfully!');
-        if (typeof mergeGuestCartToServer === 'function') await mergeGuestCartToServer();
-        if (typeof window.closeAuthModal === 'function') window.closeAuthModal();
-        window.location.reload();
-    } catch (error) {
-        alert(error.message || 'Registration failed');
+    let data = null;
+    try { data = await res.json(); } catch (_) { /* empty / non-JSON body */ }
+
+    if (!res.ok) {
+        const message = (data && (data.error || data.message)) || `Request failed (${res.status})`;
+        throw new Error(message);
     }
-});
+    return data;
+};

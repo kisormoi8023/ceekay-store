@@ -168,3 +168,18 @@ CREATE TABLE IF NOT EXISTS coupons (
     expires_at DATETIME NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------
+-- Password reset tokens ("Forgot password?" flow, customer + admin)
+-- ---------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS password_resets (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    user_type   ENUM('customer', 'admin') NOT NULL,
+    user_id     INT NOT NULL,
+    token_hash  CHAR(64) NOT NULL,
+    expires_at  DATETIME NOT NULL,
+    used_at     DATETIME NULL,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_password_resets_token (token_hash),
+    INDEX idx_password_resets_user (user_type, user_id)
+) ENGINE=InnoDB;

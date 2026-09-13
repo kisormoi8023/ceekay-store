@@ -50,6 +50,45 @@ document.getElementById('admin-logout-btn').addEventListener('click', async () =
     window.location.reload();
 });
 
+// --- Forgot password (admin) ---
+const adminLoginFormEl = document.getElementById('admin-login-form');
+const adminForgotFormEl = document.getElementById('admin-forgot-form');
+
+document.getElementById('admin-show-forgot')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    adminLoginFormEl.style.display = 'none';
+    adminForgotFormEl.style.display = 'block';
+});
+document.getElementById('admin-forgot-back')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    adminForgotFormEl.style.display = 'none';
+    adminLoginFormEl.style.display = 'block';
+});
+
+adminForgotFormEl?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('admin-forgot-email').value.trim();
+    const msgEl = document.getElementById('admin-forgot-msg');
+    if (!email) return;
+    msgEl.style.color = '';
+    msgEl.textContent = 'Sending…';
+    try {
+        const data = await apiFetch('/api/admin/forgot-password', { method: 'POST', body: JSON.stringify({ email }) });
+        msgEl.style.color = 'var(--admin-success, green)';
+        msgEl.textContent = data.message || "If an admin account exists for that email, we've sent a reset link.";
+        if (data.resetUrl) {
+            const a = document.createElement('a');
+            a.href = data.resetUrl;
+            a.textContent = 'Open reset link';
+            msgEl.appendChild(document.createElement('br'));
+            msgEl.appendChild(a);
+        }
+    } catch (err) {
+        msgEl.style.color = 'var(--admin-danger, crimson)';
+        msgEl.textContent = err.message || 'Request failed.';
+    }
+});
+
 function enterDashboard() {
     document.getElementById('admin-login-screen').style.display = 'none';
     document.getElementById('admin-shell').style.display = 'block';
@@ -111,84 +150,68 @@ async function loadDashboardStats() {
 }
 
 // -------------------------------------------------------------
-// PRODUCTS
+// PRODUCTS — list view
 // -------------------------------------------------------------
+const $ = (id) => document.getElementById(id);
 let editingProductId = null;
 
 async function loadProducts() {
-    const tbody = document.getElementById('products-table-body');
+    const tbody = $('products-table-body');
+    showProductList();
     try {
         const products = await apiFetch('/api/admin/products');
         tbody.innerHTML = products.length ? products.map(p => `
-            <tr>
-                <td><img src="${p.default_image || ''}" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:4px;"></td>
+            <tr class="row-clickable" onclick="openProductDetail('${p.product_id}')">
+                <td><img src="${p.default_image || ''}" alt=""></td>
                 <td>${p.title}</td>
                 <td>${p.category || '—'}</td>
                 <td>${money(p.base_retail_price)}</td>
-                <td>${p.stock_quantity}</td>
+                <td>${p.stock_quantity}${Number(p.stock_quantity) < 5 ? ' <span class="badge pending">low</span>' : ''}</td>
+                <td>${p.units_sold ?? 0}</td>
                 <td><span class="badge ${p.active ? 'active' : 'inactive'}">${p.active ? 'Active' : 'Hidden'}</span></td>
-                <td>
-                    <button class="admin-btn small ghost" onclick="editProduct('${p.product_id}')">Edit</button>
+                <td onclick="event.stopPropagation()">
+                    <button class="admin-btn small ghost" onclick="openProductDetail('${p.product_id}')">Open</button>
                     <button class="admin-btn small danger" onclick="deleteProduct('${p.product_id}')">Delete</button>
                 </td>
             </tr>
-        `).join('') : `<tr><td colspan="7" class="admin-empty">No products yet — add one, or queue a scrape job.</td></tr>`;
-
+        `).join('') : `<tr><td colspan="8" class="admin-empty">No products yet — add one, or queue a scrape job.</td></tr>`;
         window._adminProducts = products;
     } catch (err) {
         showToast(err.message);
     }
 }
 
-document.getElementById('new-product-btn').addEventListener('click', () => {
+function showProductList() {
+    $('products-list-view').style.display = 'block';
+    $('product-detail-view').style.display = 'none';
+}
+
+$('new-product-btn').addEventListener('click', () => {
     editingProductId = null;
-    ['pf-id', 'pf-title', 'pf-category', 'pf-price', 'pf-stock', 'pf-image', 'pf-description'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('pf-id').disabled = false;
-    document.getElementById('product-form-card').style.display = 'block';
+    ['pf-id', 'pf-title', 'pf-category', 'pf-price', 'pf-stock', 'pf-image', 'pf-description'].forEach(id => $(id).value = '');
+    $('pf-id').disabled = false;
+    $('product-form-card').style.display = 'block';
 });
+$('product-cancel-btn').addEventListener('click', () => { $('product-form-card').style.display = 'none'; });
 
-document.getElementById('product-cancel-btn').addEventListener('click', () => {
-    document.getElementById('product-form-card').style.display = 'none';
-});
-
-window.editProduct = function (productId) {
-    const p = (window._adminProducts || []).find(x => x.product_id === productId);
-    if (!p) return;
-    editingProductId = productId;
-    document.getElementById('pf-id').value = p.product_id;
-    document.getElementById('pf-id').disabled = true;
-    document.getElementById('pf-title').value = p.title || '';
-    document.getElementById('pf-category').value = p.category || '';
-    document.getElementById('pf-price').value = p.base_retail_price || 0;
-    document.getElementById('pf-stock').value = p.stock_quantity || 0;
-    document.getElementById('pf-image').value = p.default_image || '';
-    document.getElementById('pf-description').value = p.description || '';
-    document.getElementById('product-form-card').style.display = 'block';
-};
-
-document.getElementById('product-save-btn').addEventListener('click', async () => {
-    const productId = document.getElementById('pf-id').value.trim();
-    const productName = document.getElementById('pf-title').value.trim();
+$('product-save-btn').addEventListener('click', async () => {
+    const productId = $('pf-id').value.trim();
+    const productName = $('pf-title').value.trim();
     if (!productId || !productName) { showToast('Product ID and title are required'); return; }
-
     const payload = {
-        productId,
-        productName,
-        category: document.getElementById('pf-category').value,
-        price: parseFloat(document.getElementById('pf-price').value) || 0,
-        stockQuantity: parseInt(document.getElementById('pf-stock').value) || 0,
-        imageUrl: document.getElementById('pf-image').value,
-        description: document.getElementById('pf-description').value
+        productId, productName,
+        category: $('pf-category').value,
+        price: parseFloat($('pf-price').value) || 0,
+        stockQuantity: parseInt($('pf-stock').value) || 0,
+        imageUrl: $('pf-image').value,
+        description: $('pf-description').value
     };
-
     try {
         await apiFetch('/api/admin/products', { method: 'POST', body: JSON.stringify(payload) });
-        showToast(editingProductId ? 'Product updated' : 'Product added');
-        document.getElementById('product-form-card').style.display = 'none';
+        showToast('Product added');
+        $('product-form-card').style.display = 'none';
         loadProducts();
-    } catch (err) {
-        showToast(err.message);
-    }
+    } catch (err) { showToast(err.message); }
 });
 
 window.deleteProduct = async function (productId) {
@@ -197,10 +220,219 @@ window.deleteProduct = async function (productId) {
         await apiFetch(`/api/admin/products/${encodeURIComponent(productId)}`, { method: 'DELETE' });
         showToast('Product deleted');
         loadProducts();
-    } catch (err) {
-        showToast(err.message);
-    }
+    } catch (err) { showToast(err.message); }
 };
+
+// -------------------------------------------------------------
+// PRODUCTS — detail view
+// -------------------------------------------------------------
+let pdCurrent = null; // { product, images, stats }
+
+window.openProductDetail = async function (productId) {
+    try {
+        pdCurrent = await apiFetch(`/api/admin/products/${encodeURIComponent(productId)}`);
+    } catch (err) { showToast(err.message); return; }
+
+    const { product: p, images, stats } = pdCurrent;
+    $('products-list-view').style.display = 'none';
+    $('product-detail-view').style.display = 'block';
+    window.scrollTo(0, 0);
+
+    $('pd-title-h').innerText = p.title || p.product_id;
+    $('pd-meta').innerText = `ID ${p.product_id}  ·  updated ${dateFmt(p.updated_at)}`;
+    $('pd-toggle-active').innerText = p.active ? 'Hide from store' : 'Publish to store';
+
+    // stats
+    const stockValue = Number(p.stock_quantity || 0) * Number(p.base_retail_price || 0);
+    $('pd-stats').innerHTML = [
+        ['Units sold', stats.units_sold ?? 0],
+        ['Gross revenue', money(stats.gross_revenue)],
+        ['Orders', stats.order_count ?? 0],
+        ['Last sold', stats.last_ordered ? dateFmt(stats.last_ordered) : '—'],
+        ['In stock', p.stock_quantity ?? 0],
+        ['Stock value', money(stockValue)],
+        ['Variants', (p.variants || []).length],
+        ['Status', p.active ? 'Active' : 'Hidden']
+    ].map(([label, value]) => `<div class="stat-card"><span class="label">${label}</span><span class="value">${value}</span></div>`).join('');
+
+    // core
+    $('pd-title').value = p.title || '';
+    $('pd-category').value = p.category || '';
+    $('pd-price').value = p.base_retail_price ?? '';
+    $('pd-stock').value = p.stock_quantity ?? '';
+    $('pd-vendor-url').value = p.vendor_url || '';
+    $('pd-description').value = p.description || '';
+
+    renderPdImages(images);
+    renderPdVariants(p.variants || []);
+};
+
+function renderPdImages(images) {
+    const strip = $('pd-image-strip');
+    strip.innerHTML = (images && images.length)
+        ? images.map((src, i) => `<figure><img src="${src}" alt="">${i === 0 ? '<figcaption>main</figcaption>' : ''}</figure>`).join('')
+        : '<p class="pd-meta">No images yet — click “Edit images”.</p>';
+}
+
+function renderPdVariants(variants) {
+    const body = $('pd-variants-body');
+    const empty = $('pd-variants-empty');
+    if (!variants.length) {
+        body.innerHTML = '';
+        empty.style.display = 'block';
+        $('pd-save-variants').style.display = 'none';
+        return;
+    }
+    empty.style.display = 'none';
+    $('pd-save-variants').style.display = '';
+    body.innerHTML = variants.map((v, i) => `
+        <tr data-i="${i}">
+            <td>${v.image ? `<img src="${v.image}" alt="">` : '—'}</td>
+            <td>${v.color || '—'}</td>
+            <td>${v.size || '—'}</td>
+            <td>${v.sku || '—'}</td>
+            <td><input type="number" step="0.01" class="pd-cell v-cost" value="${v.vendor_price ?? ''}"></td>
+            <td><input type="number" step="0.01" class="pd-cell v-retail" value="${v.retail_price ?? ''}"></td>
+            <td class="v-margin">${marginLabel(v.vendor_price, v.retail_price)}</td>
+        </tr>`).join('');
+
+    body.querySelectorAll('tr').forEach(tr => {
+        const recompute = () => {
+            const cost = parseFloat(tr.querySelector('.v-cost').value);
+            const retail = parseFloat(tr.querySelector('.v-retail').value);
+            tr.querySelector('.v-margin').innerText = marginLabel(cost, retail);
+        };
+        tr.querySelector('.v-cost').addEventListener('input', recompute);
+        tr.querySelector('.v-retail').addEventListener('input', recompute);
+    });
+}
+
+function marginLabel(cost, retail) {
+    cost = Number(cost); retail = Number(retail);
+    if (!retail || !cost) return '—';
+    const pct = ((retail - cost) / retail) * 100;
+    return `${money(retail - cost)} (${pct.toFixed(0)}%)`;
+}
+
+$('pd-back').addEventListener('click', (e) => { e.preventDefault(); loadProducts(); });
+
+$('pd-save-core').addEventListener('click', async () => {
+    if (!pdCurrent) return;
+    const body = {
+        title: $('pd-title').value.trim(),
+        category: $('pd-category').value.trim() || null,
+        base_retail_price: parseFloat($('pd-price').value) || 0,
+        stock_quantity: parseInt($('pd-stock').value) || 0,
+        vendor_url: $('pd-vendor-url').value.trim() || null
+    };
+    await savePatch(body, 'Details saved');
+});
+
+$('pd-save-desc').addEventListener('click', async () => {
+    if (!pdCurrent) return;
+    await savePatch({ description: $('pd-description').value }, 'Description saved');
+});
+
+$('pd-save-variants').addEventListener('click', async () => {
+    if (!pdCurrent) return;
+    const rows = $('pd-variants-body').querySelectorAll('tr');
+    const variants = pdCurrent.product.variants.map((v, i) => {
+        const tr = rows[i];
+        if (!tr) return v;
+        return {
+            ...v,
+            vendor_price: parseFloat(tr.querySelector('.v-cost').value) || 0,
+            retail_price: parseFloat(tr.querySelector('.v-retail').value) || 0
+        };
+    });
+    await savePatch({ variants }, 'Variant prices saved');
+});
+
+$('pd-toggle-active').addEventListener('click', async () => {
+    if (!pdCurrent) return;
+    await savePatch({ active: pdCurrent.product.active ? 0 : 1 }, pdCurrent.product.active ? 'Hidden from store' : 'Published');
+});
+
+$('pd-delete').addEventListener('click', async () => {
+    if (!pdCurrent) return;
+    if (!confirm(`Delete "${pdCurrent.product.title}"? This cannot be undone.`)) return;
+    try {
+        await apiFetch(`/api/admin/products/${encodeURIComponent(pdCurrent.product.product_id)}`, { method: 'DELETE' });
+        showToast('Product deleted');
+        loadProducts();
+    } catch (err) { showToast(err.message); }
+});
+
+async function savePatch(body, okMsg) {
+    try {
+        await apiFetch(`/api/admin/products/${encodeURIComponent(pdCurrent.product.product_id)}`, {
+            method: 'PATCH', body: JSON.stringify(body)
+        });
+        showToast(okMsg);
+        openProductDetail(pdCurrent.product.product_id); // reload
+    } catch (err) { showToast(err.message); }
+}
+
+// -------------------------------------------------------------
+// PRODUCTS — image manager modal
+// -------------------------------------------------------------
+let imgModalList = [];
+
+$('pd-edit-images').addEventListener('click', () => {
+    if (!pdCurrent) return;
+    imgModalList = [...(pdCurrent.images || [])];
+    renderImgModal();
+    $('image-modal').style.display = 'flex';
+});
+function closeImgModal() { $('image-modal').style.display = 'none'; }
+$('image-modal-close').addEventListener('click', closeImgModal);
+$('image-modal-cancel').addEventListener('click', closeImgModal);
+
+function renderImgModal() {
+    const list = $('image-edit-list');
+    list.innerHTML = imgModalList.length ? imgModalList.map((src, i) => `
+        <li>
+            <img src="${src}" alt="">
+            <span class="ie-url">${src}</span>
+            ${i === 0 ? '<span class="badge active">main</span>' : ''}
+            <span class="ie-actions">
+                <button class="admin-btn small ghost" ${i === 0 ? 'disabled' : ''} data-act="up" data-i="${i}">↑</button>
+                <button class="admin-btn small ghost" ${i === imgModalList.length - 1 ? 'disabled' : ''} data-act="down" data-i="${i}">↓</button>
+                <button class="admin-btn small danger" data-act="del" data-i="${i}">Remove</button>
+            </span>
+        </li>`).join('') : '<li class="pd-meta">No images. Add one below.</li>';
+
+    list.querySelectorAll('button[data-act]').forEach(b => {
+        b.addEventListener('click', () => {
+            const i = Number(b.dataset.i);
+            if (b.dataset.act === 'del') imgModalList.splice(i, 1);
+            if (b.dataset.act === 'up' && i > 0) [imgModalList[i - 1], imgModalList[i]] = [imgModalList[i], imgModalList[i - 1]];
+            if (b.dataset.act === 'down' && i < imgModalList.length - 1) [imgModalList[i + 1], imgModalList[i]] = [imgModalList[i], imgModalList[i + 1]];
+            renderImgModal();
+        });
+    });
+}
+
+$('image-add-btn').addEventListener('click', () => {
+    const url = $('image-add-url').value.trim();
+    if (!url) return;
+    imgModalList.push(url);
+    $('image-add-url').value = '';
+    renderImgModal();
+});
+$('image-add-url').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('image-add-btn').click(); } });
+
+$('image-modal-save').addEventListener('click', async () => {
+    if (!pdCurrent) return;
+    try {
+        await apiFetch(`/api/admin/products/${encodeURIComponent(pdCurrent.product.product_id)}/images`, {
+            method: 'PUT', body: JSON.stringify({ images: imgModalList })
+        });
+        showToast('Photos updated');
+        closeImgModal();
+        openProductDetail(pdCurrent.product.product_id);
+    } catch (err) { showToast(err.message); }
+});
 
 // -------------------------------------------------------------
 // SCRAPER BOT JOBS
@@ -246,11 +478,19 @@ async function loadOrders() {
     try {
         const url = status ? `/api/admin/orders?status=${status}` : '/api/admin/orders';
         const orders = await apiFetch(url);
-        tbody.innerHTML = orders.length ? orders.map(o => `
+        tbody.innerHTML = orders.length ? orders.map(o => {
+            const method = (o.payment_method || '—').replace('_', ' ');
+            const paid = o.payment_status === 'paid';
+            const payCell = paid
+                ? `<span title="${method}">✔ paid <small>(${method})</small></span>`
+                : `<span title="${method}">${method}${o.payment_reference ? ` · ${o.payment_reference}` : ''}</span>
+                   <button class="admin-btn small" onclick="markPaid(${o.id})">Mark paid</button>`;
+            return `
             <tr>
                 <td>#${o.id}</td>
                 <td>${o.customer_name || o.email}</td>
                 <td>${money(o.total_amount)}</td>
+                <td>${payCell}</td>
                 <td>
                     <select onchange="updateOrderStatus(${o.id}, this.value)">
                         ${['pending', 'processing', 'shipped', 'completed', 'cancelled'].map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s}</option>`).join('')}
@@ -258,8 +498,19 @@ async function loadOrders() {
                 </td>
                 <td>${dateFmt(o.created_at)}</td>
                 <td><button class="admin-btn small ghost" onclick="viewOrder(${o.id})">View</button></td>
-            </tr>
-        `).join('') : `<tr><td colspan="6" class="admin-empty">No orders yet.</td></tr>`;
+            </tr>`;
+        }).join('') : `<tr><td colspan="7" class="admin-empty">No orders yet.</td></tr>`;
+    } catch (err) {
+        showToast(err.message);
+    }
+}
+
+async function markPaid(orderId) {
+    if (!confirm(`Mark order #${orderId} as paid?`)) return;
+    try {
+        await apiFetch(`/api/admin/orders/${orderId}/mark-paid`, { method: 'POST' });
+        showToast(`Order #${orderId} marked paid`);
+        loadOrders();
     } catch (err) {
         showToast(err.message);
     }

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ceekay - Shopping Cart</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -133,15 +134,16 @@
             <a href="about.html#return-refund-policy">Help & Support</a>
         </div>
 
-        <div class="col install">
-            <h4>Install App</h4>
-            <p>From App Store or Google Play</p>
-            <div class="row">
-                <img src="img/pay/app.jpg" alt="">
-                <img src="img/pay/play.jpg" alt="">
+        <div class="col payment">
+            <h4>Payment Methods</h4>
+            <p>Secure checkout &mdash; we accept:</p>
+            <div class="payment-icons">
+                <i class="fab fa-cc-visa" title="Visa"></i>
+                <i class="fab fa-cc-mastercard" title="Mastercard"></i>
+                <i class="fab fa-cc-amex" title="American Express"></i>
+                <i class="fab fa-google-pay" title="Google Pay"></i>
+                <i class="fab fa-cc-apple-pay" title="Apple Pay"></i>
             </div>
-            <p>Secured Payment Gateways</p>
-            <img src="img/pay/pay.png" alt="">
         </div>
 
         <div class="copyright">
@@ -201,65 +203,6 @@
     <script src="auth.js"></script>
     <script src="script.js"></script>
     <!-- Checkout Confirmation Modal -->
-<div id="checkout-modal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span class="close-btn" id="close-checkout-modal">&times;</span>
-    <h2>Order Summary</h2>
-    <div id="checkout-summary-items"></div>
-    <div class="checkout-totals">
-      <p>Subtotal: <span id="checkout-subtotal">$0.00</span></p>
-      <p>Discount: <span id="checkout-discount">$0.00</span></p>
-      <h3>Total: <span id="checkout-total">$0.00</span></h3>
-    </div>
-    <button id="confirm-order-btn">Confirm & Place Order</button>
-  </div>
-</div>
-// Example table row rendering:
-tableBody.innerHTML += `
-    <tr>
-        <td><a href="#" onclick="removeFromCart('${item.product_id || item.productId}')"><i class="far fa-times-circle"></i></a></td>
-        <td><img src="${item.image_url || item.imageUrl || item.default_image}" alt="${productName}"></td>
-        <td>${productName}</td>
-        <td>$${itemPrice.toFixed(2)}</td>
-        <td><input type="number" value="1"></td>
-        <td>$${subtotal}</td>
-    </tr>
-    <!-- AUTH MODAL CONTAINER -->
-<div id="auth-modal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeAuthModal()">&times;</span>
-
-        <!-- 1. REGISTER FORM VIEW -->
-        <div id="register-view">
-            <h2>Create an Account</h2>
-            <form id="register-form">
-                <!-- Inputs for Name, Email, Password, Address -->
-                <button type="submit" class="btn">SIGN UP</button>
-            </form>
-            <p>Already have an account? <a href="#" id="show-login-link">Log In</a></p>
-        </div>
-
-        <!-- 2. LOGIN FORM VIEW (Initially Hidden) -->
-        <div id="login-view" style="display: none;">
-            <h2>Log In</h2>
-            <form id="login-form">
-                <input type="email" id="login-email" placeholder="Email Address" required />
-                <input type="password" id="login-password" placeholder="Password" required />
-                <button type="submit" class="btn">LOG IN</button>
-            </form>
-            <p>Don't have an account? <a href="#" id="show-register-link">Sign Up</a></p>
-        </div>
-    </div>
-</div>
-<div id="login-view" style="display: none;">
-    <h2>Log In</h2>
-    <form id="login-form">
-        <input type="email" id="login-email" placeholder="Email Address" required />
-        <input type="password" id="login-password" placeholder="Password" required />
-        <button type="submit" class="btn">LOG IN</button>
-    </form>
-    <p>Don't have an account? <a href="#" id="show-register-link">Sign Up</a></p>
-</div>
 </body>
 
 </html>

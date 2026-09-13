@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Ceekay - Order Complete</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+            font-family: "Poppins", Arial, sans-serif;
+            background:
+                linear-gradient(to right, rgba(184, 138, 68, 0.35), rgba(20, 14, 6, 0.80)),
+                url("img/african fashion.jpg") center / cover no-repeat fixed;
+        }
+        .oc-wrap { width: 100%; max-width: 480px; padding: 44px 34px; color: #fff; text-align: center; }
+        .oc-wrap i.big { color: #fff; font-size: 3rem; margin-bottom: 10px; text-shadow: 0 0 10px rgba(0, 0, 0, .6); }
+        .oc-wrap h1 { color: #fff; font-weight: 600; font-size: 1.5rem; margin: 0 0 8px; text-shadow: 2px 2px 8px rgba(0, 0, 0, .9); }
+        .oc-wrap p { color: #fff; font-size: .9rem; text-shadow: 1px 1px 6px rgba(0, 0, 0, .9); }
+        .oc-wrap a.btn {
+            display: inline-block; margin-top: 20px; border-radius: 30px; padding: 13px 30px;
+            background: var(--gold, #b88a44); color: #fff; font-weight: 600; font-size: 13px;
+            letter-spacing: .5px; text-transform: uppercase; text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .4);
+        }
+        .oc-wrap a.btn:hover { background: #9d7335; }
+    </style>
+</head>
+
+<body>
+    <div class="oc-wrap" id="oc">
+        <i class="fas fa-circle-notch fa-spin big"></i>
+        <h1>Confirming your payment…</h1>
+        <p>One moment.</p>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        (function () {
+            const sessionId = new URLSearchParams(location.search).get('session_id');
+            const oc = document.getElementById('oc');
+
+            function render(icon, title, msg, linkText, linkHref) {
+                oc.innerHTML =
+                    `<i class="fas ${icon} big"></i>` +
+                    `<h1>${title}</h1>` +
+                    `<p>${msg}</p>` +
+                    `<a class="btn" href="${linkHref}">${linkText}</a>`;
+            }
+
+            if (!sessionId) {
+                render('fa-exclamation-circle', 'Missing session', 'We could not find your checkout session.', 'Back to store', 'index.html');
+                return;
+            }
+
+            apiFetch('/api/checkout/stripe/confirm', { method: 'POST', body: { sessionId } })
+                .then(function (data) {
+                    if (data.paid) {
+                        render('fa-check-circle', 'Payment received', `Thanks! Order ${data.reference} is confirmed and now being processed.`, 'Continue shopping', 'shop.html');
+                    } else {
+                        render('fa-clock', 'Payment pending', 'Your payment has not completed yet. If money left your account it will confirm shortly.', 'View store', 'index.html');
+                    }
+                })
+                .catch(function (err) {
+                    render('fa-exclamation-circle', 'Could not confirm', (err && err.message) || 'Please contact support with your order reference.', 'Back to cart', 'cart.html');
+                });
+        })();
+    </script>
+</body>
+
+</html>

@@ -11,7 +11,7 @@
         "sku": "XPW-GOLD-L",
         "size": "L/10-12",
         "color": "Gold",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 177.2,
         "image": "img/xpluswear_design_plus_size_for_4.jpg"
       },
@@ -19,7 +19,7 @@
         "sku": "XPW-GOLD-XL",
         "size": "XL/14-16",
         "color": "Gold",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 177.2,
         "image": "img/xpluswear_design_plus_size_for_4.jpg"
       },
@@ -27,7 +27,7 @@
         "sku": "XPW-GOLD-2XL",
         "size": "2XL/18-20",
         "color": "Gold",
-        "vendor_price": 130.0,
+        "vendor_price": 130,
         "retail_price": 177.2,
         "image": "img/xpluswear_design_plus_size_for_4.jpg"
       },
@@ -35,7 +35,7 @@
         "sku": "XPW-PURPLE-L",
         "size": "L/10-12",
         "color": "Purple",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 177.2,
         "image": "img/xpluswear_design_plus_size_for_3.png"
       },
@@ -43,7 +43,7 @@
         "sku": "XPW-PURPLE-XL",
         "size": "XL/14-16",
         "color": "Purple",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 177.2,
         "image": "img/xpluswear_design_plus_size_for_6.png"
       },
@@ -51,7 +51,7 @@
         "sku": "XPW-PURPLE-2XL",
         "size": "2XL/18-20",
         "color": "Purple",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 177.2,
         "image": "img/xpluswear_design_plus_size_for_6.png"
       },
@@ -59,7 +59,7 @@
         "sku": "XPW-RED-L",
         "size": "L/10-12",
         "color": "Red",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 177.2,
         "image": "img/xpluswear_design_plus_size_for_6.png"
       },
@@ -67,7 +67,7 @@
         "sku": "XPW-RED-XL",
         "size": "XL/14-16",
         "color": "Red",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 177.2,
         "image": "img/xpluswear_design_plus_size_for_6.png"
       },
@@ -75,11 +75,12 @@
         "sku": "XPW-RED-2XL",
         "size": "2XL/18-20",
         "color": "Red",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 177.2,
         "image": "img/xpluswear_design_plus_size_for_6.png"
       }
-    ]
+    ],
+    "description": "A floor-length maxi dress made for occasion wear, with a striking oblique (asymmetric) collar neckline and a smooth, structured bodice that falls into a fluid skirt. Cut for a plus-size fit through the bust, waist and hip. Available in gold, purple and red; sizes L to 2XL (AU 10-20)."
   },
   {
     "id": "p004",
@@ -93,7 +94,7 @@
         "sku": "P004-MULTICOLOR-L",
         "size": "L/10-12",
         "color": "Multicolor",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 176.4,
         "image": "img/p006_1.png"
       },
@@ -101,7 +102,7 @@
         "sku": "P004-MULTICOLOR-XL",
         "size": "XL/14-16",
         "color": "Multicolor",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 176.4,
         "image": "img/p006_2.jpg"
       },
@@ -109,7 +110,7 @@
         "sku": "P004-MULTICOLOR-2XL",
         "size": "2XL/18-20",
         "color": "Multicolor",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 176.4,
         "image": "img/p006_3.jpg"
       },
@@ -117,7 +118,7 @@
         "sku": "P004-MULTICOLOR-3XL",
         "size": "3XL/22-24",
         "color": "Multicolor",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 176.4,
         "image": "img/p006_4.jpg"
       },
@@ -125,7 +126,7 @@
         "sku": "P004-MULTICOLOR-4XL",
         "size": "4XL/26",
         "color": "Multicolor",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 176.4,
         "image": "img/p006_5.jpg"
       },
@@ -133,11 +134,12 @@
         "sku": "P004-MULTICOLOR-5XL",
         "size": "5XL/28",
         "color": "Multicolor",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 176.4,
         "image": "img/p006_1.png"
       }
-    ]
+    ],
+    "description": "A breezy two-piece set in lightweight chiffon with an all-over multicolour print. The halter-collar top is finished with soft ruffle trim, and the wide-leg trousers include practical side pockets. An easy, elegant choice for warm-weather travel and holidays. Multicolour; sizes L to 5XL (AU 10-28)."
   },
   {
     "id": "p005",
@@ -151,7 +153,7 @@
         "sku": "P005-ORANGE-L",
         "size": "L/10-12",
         "color": "Default",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 176.4,
         "image": "img/p005_2.jpg"
       },
@@ -159,7 +161,7 @@
         "sku": "P005-ORANGE-XL",
         "size": "XL/14-16",
         "color": "Default",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 176.4,
         "image": "img/p005_2.jpg"
       },
@@ -167,7 +169,7 @@
         "sku": "P005-ORANGE-2XL",
         "size": "2XL/18-20",
         "color": "Default",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 176.4,
         "image": "img/p005_2.jpg"
       },
@@ -175,7 +177,7 @@
         "sku": "P005-ORANGE-3XL",
         "size": "3XL/22-24",
         "color": "Default",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 176.4,
         "image": "img/p005_2.jpg"
       },
@@ -183,7 +185,7 @@
         "sku": "P005-ORANGE-4XL",
         "size": "4XL/26",
         "color": "Default",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 176.4,
         "image": "img/p005_2.jpg"
       },
@@ -191,10 +193,382 @@
         "sku": "P005-ORANGE-5XL",
         "size": "5XL/28",
         "color": "Default",
-        "vendor_price": 126.0,
+        "vendor_price": 126,
         "retail_price": 176.4,
         "image": "img/p005_2.jpg"
       }
-    ]
+    ],
+    "description": "An everyday blouse in warm orange with a classic round neckline and relaxed 3/4 sleeves - comfortable for work or weekends and easy to layer. Cut for a plus-size fit; sizes L to 5XL (AU 10-28). This item is on pre-order, so please allow extra time for dispatch."
+  },
+  {
+    "id": "p006",
+    "title": "Elysia Contrast-Stitch Linen Two-Piece Set",
+    "category": "women",
+    "vendor_url": "https://ricidress.com/en-au/collections/pants-suit/products/elysia-contrast-stitch-linen-two-piece-set",
+    "default_image": "img/elysia_1.jpg",
+    "base_retail_price": 76.99,
+    "variants": [
+      {
+        "sku": "P006-WHITE-S",
+        "size": "S",
+        "color": "White",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_1.jpg"
+      },
+      {
+        "sku": "P006-WHITE-L",
+        "size": "L",
+        "color": "White",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_1.jpg"
+      },
+      {
+        "sku": "P006-WHITE-XL",
+        "size": "XL",
+        "color": "White",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_1.jpg"
+      },
+      {
+        "sku": "P006-WHITE-2XL",
+        "size": "2XL",
+        "color": "White",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_1.jpg"
+      },
+      {
+        "sku": "P006-WHITE-3XL",
+        "size": "3XL",
+        "color": "White",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_1.jpg"
+      },
+      {
+        "sku": "P006-BLUE-S",
+        "size": "S",
+        "color": "Blue",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_2.jpg"
+      },
+      {
+        "sku": "P006-BLUE-L",
+        "size": "L",
+        "color": "Blue",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_2.jpg"
+      },
+      {
+        "sku": "P006-BLUE-XL",
+        "size": "XL",
+        "color": "Blue",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_2.jpg"
+      },
+      {
+        "sku": "P006-BLUE-2XL",
+        "size": "2XL",
+        "color": "Blue",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_2.jpg"
+      },
+      {
+        "sku": "P006-BLUE-3XL",
+        "size": "3XL",
+        "color": "Blue",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_2.jpg"
+      },
+      {
+        "sku": "P006-BLACK-S",
+        "size": "S",
+        "color": "Black",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_3.jpg"
+      },
+      {
+        "sku": "P006-BLACK-L",
+        "size": "L",
+        "color": "Black",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_3.jpg"
+      },
+      {
+        "sku": "P006-BLACK-XL",
+        "size": "XL",
+        "color": "Black",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_3.jpg"
+      },
+      {
+        "sku": "P006-BLACK-2XL",
+        "size": "2XL",
+        "color": "Black",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_3.jpg"
+      },
+      {
+        "sku": "P006-BLACK-3XL",
+        "size": "3XL",
+        "color": "Black",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_3.jpg"
+      },
+      {
+        "sku": "P006-NAVYBLUE-S",
+        "size": "S",
+        "color": "Navy blue",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_4.jpg"
+      },
+      {
+        "sku": "P006-NAVYBLUE-L",
+        "size": "L",
+        "color": "Navy blue",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_4.jpg"
+      },
+      {
+        "sku": "P006-NAVYBLUE-XL",
+        "size": "XL",
+        "color": "Navy blue",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_4.jpg"
+      },
+      {
+        "sku": "P006-NAVYBLUE-2XL",
+        "size": "2XL",
+        "color": "Navy blue",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_4.jpg"
+      },
+      {
+        "sku": "P006-NAVYBLUE-3XL",
+        "size": "3XL",
+        "color": "Navy blue",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_4.jpg"
+      },
+      {
+        "sku": "P006-PINK-S",
+        "size": "S",
+        "color": "Pink",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_5.jpg"
+      },
+      {
+        "sku": "P006-PINK-L",
+        "size": "L",
+        "color": "Pink",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_5.jpg"
+      },
+      {
+        "sku": "P006-PINK-XL",
+        "size": "XL",
+        "color": "Pink",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_5.jpg"
+      },
+      {
+        "sku": "P006-PINK-2XL",
+        "size": "2XL",
+        "color": "Pink",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_5.jpg"
+      },
+      {
+        "sku": "P006-PINK-3XL",
+        "size": "3XL",
+        "color": "Pink",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_5.jpg"
+      },
+      {
+        "sku": "P006-GREEN-S",
+        "size": "S",
+        "color": "Green",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_6.jpg"
+      },
+      {
+        "sku": "P006-GREEN-L",
+        "size": "L",
+        "color": "Green",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_6.jpg"
+      },
+      {
+        "sku": "P006-GREEN-XL",
+        "size": "XL",
+        "color": "Green",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_6.jpg"
+      },
+      {
+        "sku": "P006-GREEN-2XL",
+        "size": "2XL",
+        "color": "Green",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_6.jpg"
+      },
+      {
+        "sku": "P006-GREEN-3XL",
+        "size": "3XL",
+        "color": "Green",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_6.jpg"
+      },
+      {
+        "sku": "P006-WINERED-S",
+        "size": "S",
+        "color": "Wine Red",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_7.jpg"
+      },
+      {
+        "sku": "P006-WINERED-L",
+        "size": "L",
+        "color": "Wine Red",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_7.jpg"
+      },
+      {
+        "sku": "P006-WINERED-XL",
+        "size": "XL",
+        "color": "Wine Red",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_7.jpg"
+      },
+      {
+        "sku": "P006-WINERED-2XL",
+        "size": "2XL",
+        "color": "Wine Red",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_7.jpg"
+      },
+      {
+        "sku": "P006-WINERED-3XL",
+        "size": "3XL",
+        "color": "Wine Red",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_7.jpg"
+      },
+      {
+        "sku": "P006-KHAKI-S",
+        "size": "S",
+        "color": "Khaki",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_8.jpg"
+      },
+      {
+        "sku": "P006-KHAKI-L",
+        "size": "L",
+        "color": "Khaki",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_8.jpg"
+      },
+      {
+        "sku": "P006-KHAKI-XL",
+        "size": "XL",
+        "color": "Khaki",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_8.jpg"
+      },
+      {
+        "sku": "P006-KHAKI-2XL",
+        "size": "2XL",
+        "color": "Khaki",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_8.jpg"
+      },
+      {
+        "sku": "P006-KHAKI-3XL",
+        "size": "3XL",
+        "color": "Khaki",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_8.jpg"
+      },
+      {
+        "sku": "P006-OLIVE-S",
+        "size": "S",
+        "color": "Olive",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_1.jpg"
+      },
+      {
+        "sku": "P006-OLIVE-L",
+        "size": "L",
+        "color": "Olive",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_1.jpg"
+      },
+      {
+        "sku": "P006-OLIVE-XL",
+        "size": "XL",
+        "color": "Olive",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_1.jpg"
+      },
+      {
+        "sku": "P006-OLIVE-2XL",
+        "size": "2XL",
+        "color": "Olive",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_1.jpg"
+      },
+      {
+        "sku": "P006-OLIVE-3XL",
+        "size": "3XL",
+        "color": "Olive",
+        "vendor_price": 54.99,
+        "retail_price": 76.99,
+        "image": "img/elysia_1.jpg"
+      }
+    ],
+    "description": "A relaxed sleeveless two-piece set with contrast top-stitch detailing — a longline round-neck top over matching wide-leg trousers. Loose, easy-wear casual fit. Available in nine colourways; sizes S to 3XL. Imported."
   }
 ]

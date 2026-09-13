@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <!-- Swiper Slider CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -50,18 +51,13 @@
     <!-- DYNAMIC MAIN PRODUCT DETAILS -->
     <section id="prodetails" class="section-p1">
         <div class="single-pro-image">
-            <img src="img/p2black.webp" width="100%" id="MainImg" alt="Product Image">
-            
-            <!-- Product Image Slider HTML Structure -->
-            <div class="swiper product-slider">
-                <div class="swiper-wrapper" id="slider-wrapper">
-                    <!-- Slides dynamically populate here via script.js -->
-                </div>
-                <!-- Navigation Controls -->
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-pagination"></div>
+            <div class="main-img-wrap">
+                <button type="button" class="gallery-nav prev" id="img-prev" aria-label="Previous image">&#8249;</button>
+                <img src="img/p2black.webp" id="MainImg" alt="Product Image">
+                <button type="button" class="gallery-nav next" id="img-next" aria-label="Next image">&#8250;</button>
             </div>
+            <!-- Thumbnails for the product's other photos (populated by script.js) -->
+            <div class="small-img-group" id="thumb-strip"></div>
         </div>
 
         <div class="single-pro-details">
@@ -140,15 +136,16 @@
             <a href="about.html#return-refund-policy">Help & Support</a>
         </div>
 
-        <div class="col install">
-            <h4>Install App</h4>
-            <p>From App Store or Google Play</p>
-            <div class="row">
-                <img src="img/pay/app.jpg" alt="">
-                <img src="img/pay/play.jpg" alt="">
+        <div class="col payment">
+            <h4>Payment Methods</h4>
+            <p>Secure checkout &mdash; we accept:</p>
+            <div class="payment-icons">
+                <i class="fab fa-cc-visa" title="Visa"></i>
+                <i class="fab fa-cc-mastercard" title="Mastercard"></i>
+                <i class="fab fa-cc-amex" title="American Express"></i>
+                <i class="fab fa-google-pay" title="Google Pay"></i>
+                <i class="fab fa-cc-apple-pay" title="Apple Pay"></i>
             </div>
-            <p>Secured Payment Gateways</p>
-            <img src="img/pay/pay.png" alt="">
         </div>
 
         <div class="copyright">

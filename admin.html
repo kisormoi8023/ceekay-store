@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ceekay Store — Admin</title>
 <meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="admin.css">
 </head>
 <body class="admin-body">
@@ -25,6 +26,18 @@
             </div>
             <button type="submit" class="admin-btn gold" style="width:100%;">Log In</button>
             <p id="admin-login-error"></p>
+        </form>
+        <p style="margin-top:14px;"><a href="#" id="admin-show-forgot">Forgot password?</a></p>
+
+        <form id="admin-forgot-form" style="display:none; margin-top:14px;">
+            <p class="subtitle">Enter your admin email to get a reset link.</p>
+            <div class="admin-field">
+                <label for="admin-forgot-email">Email</label>
+                <input type="email" id="admin-forgot-email" required autocomplete="username">
+            </div>
+            <button type="submit" class="admin-btn gold" style="width:100%;">Send reset link</button>
+            <p id="admin-forgot-msg"></p>
+            <p><a href="#" id="admin-forgot-back">&larr; Back to log in</a></p>
         </form>
     </div>
 </div>
@@ -62,27 +75,82 @@
 
             <!-- PRODUCTS -->
             <section class="tab-panel" id="tab-products">
-                <div class="admin-panel-header">
-                    <h1>Products</h1>
-                    <button class="admin-btn gold" id="new-product-btn">+ Add Product</button>
-                </div>
-                <div class="admin-form-card" id="product-form-card" style="display:none;">
-                    <div class="admin-form-row">
-                        <div class="admin-field"><label>Product ID (slug)</label><input id="pf-id"></div>
-                        <div class="admin-field"><label>Title</label><input id="pf-title"></div>
-                        <div class="admin-field"><label>Category</label><input id="pf-category"></div>
-                        <div class="admin-field"><label>Price</label><input id="pf-price" type="number" step="0.01"></div>
-                        <div class="admin-field"><label>Stock Qty</label><input id="pf-stock" type="number"></div>
-                        <div class="admin-field"><label>Image URL</label><input id="pf-image"></div>
+
+                <!-- LIST VIEW -->
+                <div id="products-list-view">
+                    <div class="admin-panel-header">
+                        <h1>Products</h1>
+                        <button class="admin-btn gold" id="new-product-btn">+ Add Product</button>
                     </div>
-                    <div class="admin-field"><label>Description</label><textarea id="pf-description" rows="2"></textarea></div>
-                    <button class="admin-btn" id="product-save-btn">Save Product</button>
-                    <button class="admin-btn ghost" id="product-cancel-btn">Cancel</button>
+                    <div class="admin-form-card" id="product-form-card" style="display:none;">
+                        <div class="admin-form-row">
+                            <div class="admin-field"><label>Product ID (slug)</label><input id="pf-id"></div>
+                            <div class="admin-field"><label>Title</label><input id="pf-title"></div>
+                            <div class="admin-field"><label>Category</label><input id="pf-category"></div>
+                            <div class="admin-field"><label>Price</label><input id="pf-price" type="number" step="0.01"></div>
+                            <div class="admin-field"><label>Stock Qty</label><input id="pf-stock" type="number"></div>
+                            <div class="admin-field"><label>Image URL</label><input id="pf-image"></div>
+                        </div>
+                        <div class="admin-field"><label>Description</label><textarea id="pf-description" rows="2"></textarea></div>
+                        <button class="admin-btn" id="product-save-btn">Save Product</button>
+                        <button class="admin-btn ghost" id="product-cancel-btn">Cancel</button>
+                    </div>
+                    <table class="admin-table">
+                        <thead><tr><th>Image</th><th>Title</th><th>Category</th><th>Price</th><th>Stock</th><th>Sold</th><th>Status</th><th></th></tr></thead>
+                        <tbody id="products-table-body"></tbody>
+                    </table>
                 </div>
-                <table class="admin-table">
-                    <thead><tr><th>Image</th><th>Title</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th></th></tr></thead>
-                    <tbody id="products-table-body"></tbody>
-                </table>
+
+                <!-- DETAIL VIEW -->
+                <div id="product-detail-view" style="display:none;">
+                    <div class="admin-panel-header">
+                        <div>
+                            <a href="#" id="pd-back">&larr; All products</a>
+                            <h1 id="pd-title-h">Product</h1>
+                            <span class="pd-meta" id="pd-meta"></span>
+                        </div>
+                        <div class="pd-header-actions">
+                            <button class="admin-btn ghost small" id="pd-toggle-active">Hide</button>
+                            <button class="admin-btn danger small" id="pd-delete">Delete</button>
+                        </div>
+                    </div>
+
+                    <div class="stat-grid" id="pd-stats"></div>
+
+                    <h3>Core details</h3>
+                    <div class="admin-form-card">
+                        <div class="admin-form-row">
+                            <div class="admin-field"><label>Title</label><input id="pd-title"></div>
+                            <div class="admin-field"><label>Category</label><input id="pd-category"></div>
+                            <div class="admin-field"><label>Base retail price ($)</label><input id="pd-price" type="number" step="0.01"></div>
+                            <div class="admin-field"><label>Stock quantity</label><input id="pd-stock" type="number"></div>
+                        </div>
+                        <div class="admin-field"><label>Vendor URL</label><input id="pd-vendor-url" placeholder="https://vendor-site.com/products/..."></div>
+                        <button class="admin-btn gold" id="pd-save-core">Save details</button>
+                    </div>
+
+                    <h3>Description</h3>
+                    <div class="admin-form-card">
+                        <div class="admin-field"><textarea id="pd-description" rows="5"></textarea></div>
+                        <button class="admin-btn gold" id="pd-save-desc">Save description</button>
+                    </div>
+
+                    <h3 class="pd-section-head">
+                        <span>Photos</span>
+                        <button class="admin-btn small" id="pd-edit-images">Edit images</button>
+                    </h3>
+                    <div class="pd-image-strip" id="pd-image-strip"></div>
+
+                    <h3>Variants &amp; pricing</h3>
+                    <div class="admin-form-card">
+                        <table class="admin-table" id="pd-variants-table">
+                            <thead><tr><th>Photo</th><th>Colour</th><th>Size</th><th>SKU</th><th>Cost ($)</th><th>Retail ($)</th><th>Margin</th></tr></thead>
+                            <tbody id="pd-variants-body"></tbody>
+                        </table>
+                        <p class="pd-meta" id="pd-variants-empty" style="display:none;">This product has no variants.</p>
+                        <div style="margin-top:14px;"><button class="admin-btn gold" id="pd-save-variants">Save variant prices</button></div>
+                    </div>
+                </div>
             </section>
 
             <!-- SCRAPER BOT -->
@@ -119,7 +187,7 @@
                     </select>
                 </div>
                 <table class="admin-table">
-                    <thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th><th>Placed</th><th></th></tr></thead>
+                    <thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Payment</th><th>Status</th><th>Placed</th><th></th></tr></thead>
                     <tbody id="orders-table-body"></tbody>
                 </table>
             </section>
@@ -186,6 +254,26 @@
 </div>
 
 <div class="admin-toast" id="admin-toast"></div>
+
+<!-- IMAGE MANAGER MODAL -->
+<div class="admin-modal-overlay" id="image-modal" style="display:none;">
+    <div class="admin-modal">
+        <div class="admin-modal-head">
+            <h2>Edit photos</h2>
+            <button class="admin-modal-x" id="image-modal-close">&times;</button>
+        </div>
+        <p class="pd-meta">The first image is the main product photo. Use a path like <code>img/elysia_1.jpg</code> or a full <code>https://</code> URL.</p>
+        <ul class="image-edit-list" id="image-edit-list"></ul>
+        <div class="image-add-row">
+            <input id="image-add-url" placeholder="img/... or https://...">
+            <button class="admin-btn small gold" id="image-add-btn">Add</button>
+        </div>
+        <div class="admin-modal-foot">
+            <button class="admin-btn ghost" id="image-modal-cancel">Cancel</button>
+            <button class="admin-btn gold" id="image-modal-save">Save photos</button>
+        </div>
+    </div>
+</div>
 
 <script src="config.js"></script>
 <script src="admin.js"></script>

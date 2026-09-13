@@ -6,15 +6,22 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const crypto = require('crypto');
 
 const app = express();
-app.use(express.json());
+
+// Stripe webhooks need the raw request body for signature verification, so the
+// JSON parser must skip that one route.
+app.use((req, res, next) => {
+    if (req.originalUrl === '/api/webhooks/stripe') return next();
+    return express.json()(req, res, next);
+});
 app.use(cookieParser());
 
 // -------------------------------------------------------------
 // CORS Configuration
 // -------------------------------------------------------------
-const allowedOrigins = (process.env.FRONTEND_ORIGIN || 'http://localhost:3000,http://127.0.0.1:3000,http://localhost:5500,http://127.0.0.1:5500')
+const allowedOrigins = (process.env.FRONTEND_ORIGIN || 'http://localhost:3000,http://127.0.0.1:3000,http://localhost:5500,http://127.0.0.1:5500,http://localhost:5501,http://127.0.0.1:5501')
     .split(',')
     .map(o => o.trim());
 
@@ -44,6 +51,89 @@ const JWT_SECRET = process.env.JWT_SECRET || 'ceekay_secret_key_change_in_produc
 const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET || 'ceekay_admin_secret_change_in_production';
 const SCRAPER_API_KEY = process.env.SCRAPER_API_KEY || '';
 
+// Where the frontend is reachable — used to build password-reset links.
+const APP_BASE_URL = (process.env.APP_BASE_URL || `http://localhost:${process.env.PORT || 3007}`).replace(/\/$/, '');
+const RESET_TOKEN_TTL_MIN = 60;
+
+// -------------------------------------------------------------
+// Outbound email (password-reset links, etc.)
+// Configure EITHER  SMTP_URL=smtp://user:pass@host:port
+//         OR the discrete SMTP_HOST / SMTP_PORT / SMTP_USER / SMTP_PASS vars.
+// -------------------------------------------------------------
+const nodemailer = require('nodemailer');
+
+const MAIL = {
+    from: process.env.MAIL_FROM || process.env.SMTP_FROM || process.env.SMTP_USER || 'no-reply@ceekay.local',
+    configured: !!(process.env.SMTP_URL || (process.env.SMTP_HOST && process.env.SMTP_USER))
+};
+
+let mailTransport = null;
+if (MAIL.configured) {
+    try {
+        mailTransport = process.env.SMTP_URL
+            ? nodemailer.createTransport(process.env.SMTP_URL)
+            : nodemailer.createTransport({
+                host: process.env.SMTP_HOST,
+                port: Number(process.env.SMTP_PORT) || 587,
+                secure: process.env.SMTP_SECURE === 'true' || Number(process.env.SMTP_PORT) === 465,
+                auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+            });
+        mailTransport.verify()
+            .then(() => console.log(`✉  Mail transport ready (from: ${MAIL.from})`))
+            .catch((e) => console.warn('✉  Mail transport configured but verify() failed:', e.message));
+    } catch (e) {
+        console.error('✉  Failed to create mail transport:', e.message);
+        mailTransport = null;
+    }
+} else {
+    console.log('✉  No SMTP configured — password-reset emails will be logged to the console instead of sent.');
+}
+
+async function sendMail({ to, subject, text, html }) {
+    if (!mailTransport) return { sent: false, error: 'SMTP not configured' };
+    try {
+        const info = await mailTransport.sendMail({ from: MAIL.from, to, subject, text, html });
+        return { sent: true, id: info.messageId };
+    } catch (err) {
+        console.error(`✉  send to ${to} failed:`, err.message);
+        return { sent: false, error: err.message };
+    }
+}
+
+// -------------------------------------------------------------
+// Payment configuration
+// -------------------------------------------------------------
+const BANK_TRANSFER = {
+    enabled: process.env.BANK_TRANSFER_ENABLED !== 'false',
+    accountName: process.env.BANK_ACC_NAME || '',
+    bsb: process.env.BANK_BSB || '',
+    accountNumber: process.env.BANK_ACC_NUMBER || ''
+};
+const PAYPAL = {
+    enabled: !!process.env.PAYPAL_CLIENT_ID,
+    clientId: process.env.PAYPAL_CLIENT_ID || '',
+    env: process.env.PAYPAL_ENV || 'sandbox'
+};
+const STRIPE = {
+    enabled: !!(process.env.STRIPE_PUBLISHABLE_KEY && process.env.STRIPE_SECRET_KEY),
+    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || '',
+    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || ''
+};
+const STRIPE_CURRENCY = (process.env.STRIPE_CURRENCY || 'aud').toLowerCase();
+const stripe = STRIPE.enabled ? require('stripe')(process.env.STRIPE_SECRET_KEY) : null;
+if (STRIPE.enabled && String(process.env.STRIPE_SECRET_KEY).startsWith('sk_live_')) {
+    console.warn('⚠  Stripe is running with a LIVE key — real cards will be charged.');
+}
+
+// What the checkout UI is allowed to offer. card + googlepay both ride on Stripe.
+function enabledPaymentMethods() {
+    const list = [];
+    if (BANK_TRANSFER.enabled && BANK_TRANSFER.bsb && BANK_TRANSFER.accountNumber) list.push('bank_transfer');
+    if (PAYPAL.enabled) list.push('paypal');
+    if (STRIPE.enabled) { list.push('card'); list.push('googlepay'); }
+    return list;
+}
+
 function authCookieOptions() {
     return {
         httpOnly: true,
@@ -65,6 +155,17 @@ const auth = (req, res, next) => {
     } catch {
         res.status(401).json({ error: 'Invalid token' });
     }
+};
+
+// Populates req.user when a valid session cookie is present, but does NOT
+// reject the request when it isn't — for endpoints that serve both guests
+// and logged-in users (e.g. GET /api/cart).
+const optionalAuth = (req, res, next) => {
+    const token = req.cookies.token;
+    if (token) {
+        try { req.user = jwt.verify(token, JWT_SECRET); } catch { /* ignore invalid/expired token */ }
+    }
+    next();
 };
 
 const requireAdmin = (req, res, next) => {
@@ -105,8 +206,95 @@ async function logAudit(admin, action, details) {
     }
 }
 
+// ===============================================================
+// PASSWORD RESET HELPERS (shared by customer + admin flows)
+// ===============================================================
+const sha256 = (s) => crypto.createHash('sha256').update(String(s)).digest('hex');
+
+// Small in-memory throttle for the forgot-password endpoints:
+// max 5 requests per key (email+ip) per 15 minutes.
+const forgotHits = new Map();
+function forgotRateLimited(key) {
+    const now = Date.now();
+    const windowMs = 15 * 60 * 1000;
+    const recent = (forgotHits.get(key) || []).filter((t) => now - t < windowMs);
+    recent.push(now);
+    forgotHits.set(key, recent);
+    return recent.length > 5;
+}
+
+// Create a single-use reset token, invalidating any earlier unused ones.
+// Returns the raw token (only the sha256 hash is stored).
+async function issuePasswordReset(userType, userId) {
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + RESET_TOKEN_TTL_MIN * 60 * 1000);
+    await pool.query(
+        'UPDATE password_resets SET used_at = NOW() WHERE user_type = ? AND user_id = ? AND used_at IS NULL',
+        [userType, userId]
+    );
+    await pool.query(
+        'INSERT INTO password_resets (user_type, user_id, token_hash, expires_at) VALUES (?, ?, ?, ?)',
+        [userType, userId, sha256(rawToken), expiresAt]
+    );
+    return rawToken;
+}
+
+// Validate + burn a reset token. Returns the user_id, or null if bad/expired/used.
+async function consumePasswordReset(userType, rawToken) {
+    if (!rawToken) return null;
+    const [rows] = await pool.query(
+        'SELECT * FROM password_resets WHERE user_type = ? AND token_hash = ? LIMIT 1',
+        [userType, sha256(rawToken)]
+    );
+    const row = rows[0];
+    if (!row || row.used_at || new Date(row.expires_at) < new Date()) return null;
+    await pool.query('UPDATE password_resets SET used_at = NOW() WHERE id = ?', [row.id]);
+    return row.user_id;
+}
+
+// Optional email delivery. Enabled only when SMTP_URL is set and the
+// `nodemailer` package is installed; otherwise the caller falls back to
+// logging / returning the link in development.
+async function sendResetEmail(to, resetUrl, audience) {
+    const who = audience === 'admin' ? 'Ceekay admin' : 'Ceekay';
+    const result = await sendMail({
+        to,
+        subject: `Reset your ${who} password`,
+        text:
+            `We received a request to reset your ${who} password.\n\n` +
+            `Open this link within ${RESET_TOKEN_TTL_MIN} minutes to choose a new one:\n${resetUrl}\n\n` +
+            `If you didn't request this, you can safely ignore this email.`,
+        html:
+            `<div style="font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;color:#333">
+                <h2 style="color:#b88a44;margin:0 0 12px">Reset your password</h2>
+                <p>We received a request to reset your <strong>${who}</strong> password.</p>
+                <p style="margin:24px 0">
+                    <a href="${resetUrl}" style="background:#b88a44;color:#fff;text-decoration:none;padding:12px 26px;border-radius:24px;display:inline-block;font-weight:bold">Choose a new password</a>
+                </p>
+                <p style="font-size:13px;color:#777">This link expires in ${RESET_TOKEN_TTL_MIN} minutes. If the button doesn't work, paste this URL into your browser:<br>
+                    <span style="word-break:break-all">${resetUrl}</span></p>
+                <p style="font-size:13px;color:#777">If you didn't request this, you can safely ignore this email.</p>
+            </div>`
+    });
+    if (result.sent) console.log(`✉  reset email sent to ${to} (${result.id})`);
+    return result; // { sent, error?, id? }
+}
+
 // Health Check
 app.get('/api/health', (req, res) => res.json({ ok: true }));
+
+// Which payment methods the checkout should show, plus the public bits each needs.
+app.get('/api/payment-config', (req, res) => {
+    const methods = enabledPaymentMethods();
+    res.json({
+        methods,
+        bankTransfer: methods.includes('bank_transfer')
+            ? { accountName: BANK_TRANSFER.accountName, bsb: BANK_TRANSFER.bsb, accountNumber: BANK_TRANSFER.accountNumber }
+            : null,
+        paypal: PAYPAL.enabled ? { clientId: PAYPAL.clientId, env: PAYPAL.env } : null,
+        stripe: STRIPE.enabled ? { publishableKey: STRIPE.publishableKey } : null
+    });
+});
 
 // ===============================================================
 // 1. CUSTOMER AUTHENTICATION
@@ -168,6 +356,59 @@ app.post('/api/auth/logout', (req, res) => {
 
 app.get('/api/me', auth, (req, res) => res.json({ user: req.user }));
 
+// --- Forgot / reset password (customer) ---
+app.post('/api/auth/forgot-password', async (req, res) => {
+    const email = String(req.body.email || '').trim().toLowerCase();
+    if (!email) return res.status(400).json({ error: 'Email is required' });
+    if (forgotRateLimited(`c:${email}:${req.ip}`)) {
+        return res.status(429).json({ error: 'Too many requests. Please wait a few minutes and try again.' });
+    }
+
+    // Same response whether or not the account exists (no user enumeration).
+    const generic = { ok: true, message: "If an account exists for that email, we've sent a reset link." };
+    try {
+        const [users] = await pool.query('SELECT id, email FROM users WHERE email = ?', [email]);
+        const user = users[0];
+        if (!user) return res.json(generic);
+
+        const rawToken = await issuePasswordReset('customer', user.id);
+        const resetUrl = `${APP_BASE_URL}/reset-password.html?token=${rawToken}`;
+        console.log(`[password-reset] customer <${email}>: ${resetUrl}`);
+        const mail = await sendResetEmail(user.email, resetUrl, 'customer');
+
+        const body = { ...generic };
+        if (process.env.NODE_ENV !== 'production') {
+            body.emailSent = mail.sent;
+            if (mail.error) body.emailError = mail.error;
+            if (!mail.sent) body.resetUrl = resetUrl; // dev fallback when no mail delivery
+        }
+        res.json(body);
+    } catch (err) {
+        if (err.code === 'ER_NO_SUCH_TABLE') {
+            return res.status(500).json({ error: 'Run migrations-add-password-resets.sql first.' });
+        }
+        console.error('forgot-password error:', err);
+        res.status(500).json({ error: 'Could not process the request' });
+    }
+});
+
+app.post('/api/auth/reset-password', async (req, res) => {
+    const { token, password } = req.body;
+    if (!token || !password) return res.status(400).json({ error: 'Token and new password are required' });
+    if (String(password).length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    try {
+        const userId = await consumePasswordReset('customer', token);
+        if (!userId) return res.status(400).json({ error: 'This reset link is invalid or has expired. Please request a new one.' });
+
+        const hash = await bcrypt.hash(password, 10);
+        await pool.query('UPDATE users SET password_hash = ? WHERE id = ?', [hash, userId]);
+        res.json({ ok: true, message: 'Password updated. You can now log in.' });
+    } catch (err) {
+        console.error('reset-password error:', err);
+        res.status(500).json({ error: 'Could not reset the password' });
+    }
+});
+
 // ===============================================================
 // 2. PRODUCTS
 // ===============================================================
@@ -225,18 +466,96 @@ app.post('/api/admin/products', requireBotOrAdmin, async (req, res) => {
 
 app.get('/api/admin/products', requireAdmin, async (req, res) => {
     try {
+        let soldByProduct = {};
+        try {
+            const [sold] = await pool.query(
+                `SELECT oi.product_id, SUM(oi.quantity) AS units_sold
+                 FROM order_items oi JOIN orders o ON o.id = oi.order_id
+                 WHERE o.status <> 'cancelled'
+                 GROUP BY oi.product_id`
+            );
+            soldByProduct = Object.fromEntries(sold.map(r => [r.product_id, Number(r.units_sold)]));
+        } catch (_) { /* order tables may not exist yet */ }
+
         const [rows] = await pool.query('SELECT * FROM products ORDER BY updated_at DESC');
-        res.json(rows.map(row => ({ ...row, variants: typeof row.variants === 'string' ? JSON.parse(row.variants) : row.variants })));
+        res.json(rows.map(row => ({
+            ...row,
+            variants: typeof row.variants === 'string' ? JSON.parse(row.variants) : row.variants,
+            units_sold: soldByProduct[row.product_id] || 0
+        })));
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch products' });
     }
 });
 
+// Full detail for one product: row + parsed variants + gallery + sales stats.
+app.get('/api/admin/products/:id', requireAdmin, async (req, res) => {
+    try {
+        const [[product]] = await pool.query('SELECT * FROM products WHERE product_id = ?', [req.params.id]);
+        if (!product) return res.status(404).json({ error: 'Product not found' });
+        product.variants = typeof product.variants === 'string'
+            ? JSON.parse(product.variants || '[]') : (product.variants || []);
+
+        const [imgRows] = await pool.query(
+            'SELECT image_url FROM product_images WHERE product_id = ? ORDER BY display_order ASC', [req.params.id]
+        );
+
+        let stats = { units_sold: 0, gross_revenue: 0, order_count: 0, last_ordered: null };
+        try {
+            const [[s]] = await pool.query(
+                `SELECT COALESCE(SUM(oi.quantity), 0)              AS units_sold,
+                        COALESCE(SUM(oi.quantity * oi.price), 0)   AS gross_revenue,
+                        COUNT(DISTINCT oi.order_id)                AS order_count,
+                        MAX(o.created_at)                          AS last_ordered
+                 FROM order_items oi
+                 JOIN orders o ON o.id = oi.order_id
+                 WHERE oi.product_id = ? AND o.status <> 'cancelled'`,
+                [req.params.id]
+            );
+            stats = s;
+        } catch (_) { /* order tables may not exist yet */ }
+
+        res.json({ product, images: imgRows.map(r => r.image_url), stats });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to fetch product' });
+    }
+});
+
+// Replace a product's whole gallery with an ordered list of URLs.
+app.put('/api/admin/products/:id/images', requireAdmin, async (req, res) => {
+    const images = Array.isArray(req.body.images)
+        ? req.body.images.map(s => String(s).trim()).filter(Boolean) : [];
+    const conn = await pool.getConnection();
+    try {
+        await conn.beginTransaction();
+        await conn.query('DELETE FROM product_images WHERE product_id = ?', [req.params.id]);
+        for (let i = 0; i < images.length; i++) {
+            await conn.query(
+                'INSERT INTO product_images (product_id, image_url, display_order) VALUES (?, ?, ?)',
+                [req.params.id, images[i], i]
+            );
+        }
+        if (images[0]) {
+            await conn.query('UPDATE products SET default_image = ? WHERE product_id = ?', [images[0], req.params.id]);
+        }
+        await conn.commit();
+        await logAudit(req.admin, 'product.images_update', { productId: req.params.id, count: images.length });
+        res.json({ ok: true, images });
+    } catch (err) {
+        await conn.rollback();
+        console.error(err);
+        res.status(500).json({ error: 'Failed to update images' });
+    } finally {
+        conn.release();
+    }
+});
+
 app.patch('/api/admin/products/:id', requireAdmin, async (req, res) => {
-    const { title, category, description, base_retail_price, default_image, stock_quantity, active, variants } = req.body;
+    const { title, category, description, vendor_url, base_retail_price, default_image, stock_quantity, active, variants } = req.body;
     const fields = [];
     const values = [];
-    const map = { title, category, description, base_retail_price, default_image, stock_quantity, active };
+    const map = { title, category, description, vendor_url, base_retail_price, default_image, stock_quantity, active };
     for (const [key, val] of Object.entries(map)) {
         if (val !== undefined) { fields.push(`${key} = ?`); values.push(val); }
     }
@@ -336,7 +655,7 @@ async function getOrCreateCart(userId) {
     return result.insertId;
 }
 
-app.get('/api/cart', async (req, res) => {
+app.get('/api/cart', optionalAuth, async (req, res) => {
     try {
         const userId = req.user?.id || req.session?.userId;
         if (!userId) {
@@ -438,6 +757,17 @@ app.post('/api/cart/apply-coupon', auth, async (req, res) => {
 // 5. CHECKOUT & ORDERS
 // ===============================================================
 app.post('/api/orders/checkout', auth, async (req, res) => {
+    const paymentMethod = String(req.body.paymentMethod || 'card');
+    if (!enabledPaymentMethods().includes(paymentMethod)) {
+        return res.status(400).json({
+            error: paymentMethod === 'paypal'
+                ? 'PayPal is not connected yet. Add PAYPAL_CLIENT_ID to enable it.'
+                : (paymentMethod === 'card' || paymentMethod === 'googlepay')
+                    ? 'Card / Google Pay is not connected yet. Add your Stripe keys to enable it.'
+                    : 'That payment method is not available.'
+        });
+    }
+
     const connection = await pool.getConnection();
     try {
         await connection.beginTransaction();
@@ -466,33 +796,181 @@ app.post('/api/orders/checkout', auth, async (req, res) => {
         }
         const total = subtotal - discount;
 
+        const isStripe = paymentMethod === 'card' || paymentMethod === 'googlepay';
+
         const [orderResult] = await connection.query(
-            'INSERT INTO orders (user_id, total_amount, discount_amount, coupon_code, status) VALUES (?, ?, ?, ?, ?)',
-            [req.user.id, total, discount, couponCode, 'pending']
+            `INSERT INTO orders (user_id, total_amount, discount_amount, coupon_code, payment_method, payment_status, status)
+             VALUES (?, ?, ?, ?, ?, 'awaiting_payment', 'pending')`,
+            [req.user.id, total, discount, couponCode, paymentMethod]
         );
+        const orderId = orderResult.insertId;
+        const reference = `CK-${orderId}`;
+        await connection.query('UPDATE orders SET payment_reference = ? WHERE id = ?', [reference, orderId]);
 
         for (const item of items) {
             await connection.query(
                 'INSERT INTO order_items (order_id, product_id, product_name, price, quantity) VALUES (?, ?, ?, ?, ?)',
-                [orderResult.insertId, item.product_id, item.product_name, item.price, item.quantity]
+                [orderId, item.product_id, item.product_name, item.price, item.quantity]
             );
-            await connection.query(
-                'UPDATE products SET stock_quantity = GREATEST(stock_quantity - ?, 0) WHERE product_id = ?',
-                [item.quantity, item.product_id]
-            );
+            // For Stripe the stock is decremented and the cart cleared only once
+            // payment actually succeeds (see finalizePaidOrder).
+            if (!isStripe) {
+                await connection.query(
+                    'UPDATE products SET stock_quantity = GREATEST(stock_quantity - ?, 0) WHERE product_id = ?',
+                    [item.quantity, item.product_id]
+                );
+            }
         }
 
-        await connection.query('DELETE FROM cart_items WHERE cart_id = ?', [carts[0].id]);
-        await connection.query('UPDATE carts SET coupon_code = NULL WHERE id = ?', [carts[0].id]);
+        if (!isStripe) {
+            await connection.query('DELETE FROM cart_items WHERE cart_id = ?', [carts[0].id]);
+            await connection.query('UPDATE carts SET coupon_code = NULL WHERE id = ?', [carts[0].id]);
+        }
 
         await connection.commit();
-        res.json({ ok: true, orderId: orderResult.insertId, total, discount });
+
+        if (isStripe) {
+            const [[userRow]] = await pool.query('SELECT email FROM users WHERE id = ?', [req.user.id]);
+            const session = await stripe.checkout.sessions.create({
+                mode: 'payment',
+                payment_method_types: ['card'], // Google Pay / Apple Pay ride on this automatically
+                customer_email: userRow?.email || undefined,
+                client_reference_id: String(orderId),
+                metadata: { orderId: String(orderId), reference },
+                line_items: [{
+                    quantity: 1,
+                    price_data: {
+                        currency: STRIPE_CURRENCY,
+                        unit_amount: Math.round(total * 100),
+                        product_data: { name: `Ceekay order ${reference}` }
+                    }
+                }],
+                success_url: `${APP_BASE_URL}/order-complete.html?session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: `${APP_BASE_URL}/cart.html?checkout=cancelled`
+            });
+            return res.json({ ok: true, orderId, reference, total, paymentMethod, redirectUrl: session.url });
+        }
+
+        const response = { ok: true, orderId, reference, total, discount, paymentMethod, paymentStatus: 'awaiting_payment' };
+        if (paymentMethod === 'bank_transfer') {
+            response.instructions = {
+                accountName: BANK_TRANSFER.accountName,
+                bsb: BANK_TRANSFER.bsb,
+                accountNumber: BANK_TRANSFER.accountNumber,
+                amount: Number(total.toFixed(2)),
+                reference
+            };
+        }
+        res.json(response);
     } catch (err) {
-        await connection.rollback();
+        try { await connection.rollback(); } catch (_) { /* already committed */ }
         console.error(err);
         res.status(500).json({ error: 'Checkout failed' });
     } finally {
         connection.release();
+    }
+});
+
+// Finalize an order once its payment has actually succeeded: decrement stock,
+// clear the buyer's cart, flip the order to paid/processing. Idempotent.
+async function finalizePaidOrder(orderId) {
+    const conn = await pool.getConnection();
+    try {
+        await conn.beginTransaction();
+        const [[order]] = await conn.query('SELECT * FROM orders WHERE id = ? FOR UPDATE', [orderId]);
+        if (!order) { await conn.rollback(); return { ok: false, reason: 'not_found' }; }
+        if (order.payment_status === 'paid') { await conn.rollback(); return { ok: true, already: true }; }
+
+        const [oitems] = await conn.query('SELECT * FROM order_items WHERE order_id = ?', [orderId]);
+        for (const it of oitems) {
+            await conn.query(
+                'UPDATE products SET stock_quantity = GREATEST(stock_quantity - ?, 0) WHERE product_id = ?',
+                [it.quantity, it.product_id]
+            );
+        }
+        const [carts] = await conn.query('SELECT id FROM carts WHERE user_id = ?', [order.user_id]);
+        if (carts[0]) {
+            await conn.query('DELETE FROM cart_items WHERE cart_id = ?', [carts[0].id]);
+            await conn.query('UPDATE carts SET coupon_code = NULL WHERE id = ?', [carts[0].id]);
+        }
+        await conn.query("UPDATE orders SET payment_status = 'paid', status = 'processing' WHERE id = ?", [orderId]);
+        await conn.commit();
+        return { ok: true };
+    } catch (e) {
+        await conn.rollback();
+        throw e;
+    } finally {
+        conn.release();
+    }
+}
+
+// Called by order-complete.html when Stripe redirects the buyer back.
+// No auth cookie required: the caller supplies the (unguessable) Stripe
+// session id, and we only act if Stripe itself reports the session as paid.
+// The webhook is the authoritative path; this is the belt-and-braces one.
+app.post('/api/checkout/stripe/confirm', async (req, res) => {
+    if (!stripe) return res.status(400).json({ error: 'Stripe is not configured' });
+    const sessionId = String(req.body.sessionId || '');
+    if (!sessionId.startsWith('cs_')) return res.status(400).json({ error: 'A valid sessionId is required' });
+    try {
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        const orderId = Number(session.metadata?.orderId || session.client_reference_id);
+        if (!orderId) return res.status(400).json({ error: 'Unrecognised checkout session' });
+
+        const [[order]] = await pool.query('SELECT payment_reference, total_amount, payment_status FROM orders WHERE id = ?', [orderId]);
+        if (!order) return res.status(404).json({ error: 'Order not found' });
+
+        if (session.payment_status === 'paid') {
+            await finalizePaidOrder(orderId);
+            return res.json({ ok: true, paid: true, orderId, reference: order.payment_reference, total: Number(order.total_amount) });
+        }
+        return res.json({ ok: true, paid: false, orderId, paymentStatus: session.payment_status });
+    } catch (err) {
+        console.error('stripe confirm error:', err.message);
+        res.status(500).json({ error: 'Could not confirm payment' });
+    }
+});
+
+// Stripe webhook — authoritative payment confirmation. Raw body (parser skipped above).
+app.post('/api/webhooks/stripe', express.raw({ type: '*/*' }), async (req, res) => {
+    if (!stripe) return res.status(400).send('stripe not configured');
+    let event;
+    try {
+        if (STRIPE.webhookSecret) {
+            event = stripe.webhooks.constructEvent(req.body, req.headers['stripe-signature'], STRIPE.webhookSecret);
+        } else {
+            event = JSON.parse(req.body.toString('utf8')); // dev only, unverified
+        }
+    } catch (err) {
+        console.error('stripe webhook verification failed:', err.message);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
+        const session = event.data.object;
+        const orderId = Number(session.metadata?.orderId || session.client_reference_id);
+        if (orderId && session.payment_status === 'paid') {
+            try { await finalizePaidOrder(orderId); }
+            catch (e) { console.error('finalize from webhook failed:', e.message); }
+        }
+    }
+    res.json({ received: true });
+});
+
+// Admin: mark a bank-transfer order as paid once the money has landed.
+app.post('/api/admin/orders/:id/mark-paid', requireAdmin, async (req, res) => {
+    const orderId = Number(req.params.id);
+    try {
+        const [result] = await pool.query(
+            "UPDATE orders SET payment_status = 'paid', status = IF(status = 'pending', 'processing', status) WHERE id = ?",
+            [orderId]
+        );
+        if (!result.affectedRows) return res.status(404).json({ error: 'Order not found' });
+        await logAudit(req.admin, 'order.mark_paid', { orderId });
+        res.json({ ok: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to update payment status' });
     }
 });
 
@@ -592,6 +1070,61 @@ app.post('/api/admin/logout', (req, res) => {
 });
 
 app.get('/api/admin/me', requireAdmin, (req, res) => res.json({ admin: req.admin }));
+
+// --- Forgot / reset password (admin) ---
+app.post('/api/admin/forgot-password', async (req, res) => {
+    const email = String(req.body.email || '').trim().toLowerCase();
+    if (!email) return res.status(400).json({ error: 'Email is required' });
+    if (forgotRateLimited(`a:${email}:${req.ip}`)) {
+        return res.status(429).json({ error: 'Too many requests. Please wait a few minutes and try again.' });
+    }
+
+    const generic = { ok: true, message: "If an admin account exists for that email, we've sent a reset link." };
+    try {
+        const [admins] = await pool.query('SELECT id, email, active FROM admin_users WHERE email = ?', [email]);
+        const admin = admins[0];
+        if (!admin || !admin.active) return res.json(generic);
+
+        const rawToken = await issuePasswordReset('admin', admin.id);
+        const resetUrl = `${APP_BASE_URL}/reset-password.html?type=admin&token=${rawToken}`;
+        console.log(`[password-reset] admin <${email}>: ${resetUrl}`);
+        const mail = await sendResetEmail(admin.email, resetUrl, 'admin');
+        await logAudit(admin, 'admin.password_reset_requested', { emailSent: mail.sent });
+
+        const body = { ...generic };
+        if (process.env.NODE_ENV !== 'production') {
+            body.emailSent = mail.sent;
+            if (mail.error) body.emailError = mail.error;
+            if (!mail.sent) body.resetUrl = resetUrl; // dev fallback when no mail delivery
+        }
+        res.json(body);
+    } catch (err) {
+        if (err.code === 'ER_NO_SUCH_TABLE') {
+            return res.status(500).json({ error: 'Run schema.sql / migrations-add-password-resets.sql first.' });
+        }
+        console.error('admin forgot-password error:', err);
+        res.status(500).json({ error: 'Could not process the request' });
+    }
+});
+
+app.post('/api/admin/reset-password', async (req, res) => {
+    const { token, password } = req.body;
+    if (!token || !password) return res.status(400).json({ error: 'Token and new password are required' });
+    if (String(password).length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    try {
+        const adminId = await consumePasswordReset('admin', token);
+        if (!adminId) return res.status(400).json({ error: 'This reset link is invalid or has expired. Please request a new one.' });
+
+        const hash = await bcrypt.hash(password, 10);
+        await pool.query('UPDATE admin_users SET password_hash = ? WHERE id = ?', [hash, adminId]);
+        const [[adminRow]] = await pool.query('SELECT id, email FROM admin_users WHERE id = ?', [adminId]);
+        await logAudit(adminRow, 'admin.password_reset_completed', {});
+        res.json({ ok: true, message: 'Admin password updated. You can now log in.' });
+    } catch (err) {
+        console.error('admin reset-password error:', err);
+        res.status(500).json({ error: 'Could not reset the password' });
+    }
+});
 
 // ===============================================================
 // 8. TEAM MANAGEMENT
@@ -755,5 +1288,7 @@ app.use(express.static(path.join(__dirname)));
 app.use('/api', (req, res) => res.status(404).json({ error: 'Not found' }));
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
-const PORT = process.env.PORT || 3000;
+// Default 3007: port 3000 on this machine is occupied by a separate process.
+// Override with the PORT env var if you need a different one.
+const PORT = process.env.PORT || 3007;
 app.listen(PORT, () => console.log(`Ceekay API + storefront running on http://localhost:${PORT}`));

@@ -2,20 +2,25 @@
 window.currentUser = null;
 
 // Global Auth Modal Helper Functions
-window.openAuthModal = function(view = 'login') {
+// Some pages wrap each form in a *-view <div>; older pages only have the bare
+// <form> elements. Toggle whichever exists.
+window.setAuthView = function (view) {
     const modal = document.getElementById('auth-modal');
-    const signupForm = document.getElementById('signup-form') || document.getElementById('register-view');
-    const loginForm = document.getElementById('login-form') || document.getElementById('login-view');
     if (!modal) return;
-
     modal.style.display = 'flex';
-    if (view === 'login') {
-        if (signupForm) signupForm.style.display = 'none';
-        if (loginForm) loginForm.style.display = 'flex';
-    } else {
-        if (signupForm) signupForm.style.display = 'flex';
-        if (loginForm) loginForm.style.display = 'none';
-    }
+
+    const panels = {
+        register: document.getElementById('register-view') || document.getElementById('signup-form'),
+        login: document.getElementById('login-view') || document.getElementById('login-form'),
+        forgot: document.getElementById('forgot-view')
+    };
+    Object.keys(panels).forEach((name) => {
+        if (panels[name]) panels[name].style.display = name === view ? 'block' : 'none';
+    });
+};
+
+window.openAuthModal = function (view = 'login') {
+    window.setAuthView(view === 'register' ? 'register' : (view === 'forgot' ? 'forgot' : 'login'));
 };
 
 window.closeAuthModal = function() {
@@ -115,6 +120,47 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('show-register-link')?.addEventListener('click', (e) => {
         e.preventDefault();
         window.openAuthModal('register');
+    });
+
+    // Forgot-password view toggles
+    document.getElementById('show-forgot-link')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.openAuthModal('forgot');
+    });
+    document.getElementById('show-login-from-forgot')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.openAuthModal('login');
+    });
+
+    // Forgot-password request
+    const forgotForm = document.getElementById('forgot-form');
+    forgotForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('forgot-email')?.value.trim() || '';
+        const msgEl = document.getElementById('forgot-msg');
+        if (!email) return;
+        if (msgEl) { msgEl.style.color = ''; msgEl.textContent = 'Sending…'; }
+
+        try {
+            const data = await apiFetch('/api/auth/forgot-password', {
+                method: 'POST',
+                body: JSON.stringify({ email })
+            });
+            if (msgEl) {
+                msgEl.style.color = '#cdeecb';
+                msgEl.textContent = data.message || "If an account exists for that email, we've sent a reset link.";
+                // Dev builds return the link directly (no email service configured).
+                if (data.resetUrl) {
+                    const a = document.createElement('a');
+                    a.href = data.resetUrl;
+                    a.textContent = 'Open reset link';
+                    msgEl.appendChild(document.createElement('br'));
+                    msgEl.appendChild(a);
+                }
+            }
+        } catch (err) {
+            if (msgEl) { msgEl.style.color = '#ffb4a3'; msgEl.textContent = err.message || 'Request failed.'; }
+        }
     });
 
     // Close Button Event

@@ -180,9 +180,48 @@ function loadSingleProductPage(products) {
 
     if (titleEl) titleEl.innerText = product.title || product.product_name;
     if (descEl && product.description) descEl.innerText = product.description;
-    if (mainImg) mainImg.src = product.default_image || product.image_url || product.image;
 
     const variants = product.variants || [];
+
+    // --- Photo gallery: main image + thumbnail strip + prev/next controls ---
+    const gallery = [...new Set([
+        product.default_image || product.image_url || product.image,
+        ...variants.map(v => v.image)
+    ].filter(Boolean))];
+    let galleryIndex = 0;
+
+    const thumbStrip = document.getElementById('thumb-strip');
+    const imgPrev = document.getElementById('img-prev');
+    const imgNext = document.getElementById('img-next');
+    const hasGallery = gallery.length > 1;
+
+    function showImage(i) {
+        if (!gallery.length) return;
+        galleryIndex = (i + gallery.length) % gallery.length;
+        if (mainImg) mainImg.src = gallery[galleryIndex];
+        if (thumbStrip) {
+            Array.from(thumbStrip.children).forEach((el, idx) =>
+                el.classList.toggle('active', idx === galleryIndex));
+        }
+    }
+    function showImageByUrl(url) {
+        const idx = gallery.indexOf(url);
+        if (idx > -1) showImage(idx);
+        else if (mainImg && url) mainImg.src = url;
+    }
+
+    if (thumbStrip) {
+        thumbStrip.innerHTML = gallery.map((src, i) =>
+            `<img src="${src}" class="small-img" alt="View ${i + 1}" data-i="${i}">`
+        ).join('');
+        thumbStrip.querySelectorAll('.small-img').forEach(t =>
+            t.addEventListener('click', () => showImage(Number(t.dataset.i))));
+        thumbStrip.style.display = hasGallery ? '' : 'none';
+    }
+    if (imgPrev) { imgPrev.style.display = hasGallery ? '' : 'none'; imgPrev.onclick = () => showImage(galleryIndex - 1); }
+    if (imgNext) { imgNext.style.display = hasGallery ? '' : 'none'; imgNext.onclick = () => showImage(galleryIndex + 1); }
+
+    showImage(0);
 
     const uniqueColors = [...new Set(variants.map(v => v.color))].filter(Boolean);
     if (colorSelect && uniqueColors.length > 0) {
@@ -212,7 +251,7 @@ function loadSingleProductPage(products) {
         selectedVariant = matchedVariant || null;
 
         if (matchedVariant) {
-            if (mainImg && matchedVariant.image) mainImg.src = matchedVariant.image;
+            if (matchedVariant.image) showImageByUrl(matchedVariant.image);
             if (priceEl && matchedVariant.retail_price) {
                 priceEl.innerText = `$${parseFloat(matchedVariant.retail_price).toFixed(2)}`;
             }
@@ -261,24 +300,6 @@ window.syncCartWithServer = async function () {
         if (typeof renderCartTable === 'function') renderCartTable(localCart, null);
     }
 };
-
-async function loadCart() {
-    try {
-        const response = await fetch('/api/cart', {
-            method: 'GET',
-            credentials: 'include'
-        });
-        
-        if (!response.ok) return;
-        const data = await response.json();
-        
-        if (typeof renderCartTable === 'function') {
-            renderCartTable(data.items, data.coupon);
-        }
-    } catch (err) {
-        console.error('Failed to load cart:', err);
-    }
-}
 
 document.getElementById('coupon-apply-btn')?.addEventListener('click', async () => {
     const input = document.getElementById('coupon-input');
@@ -434,73 +455,40 @@ document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
     initHeroSlideshow();
     loadProducts();
-    loadCart();
     window.syncCartWithServer();
 
-    // Checkout Button Listener
-    document.getElementById('checkout-btn')?.addEventListener('click', async () => {
+    if (new URLSearchParams(location.search).get('checkout') === 'cancelled') {
+        alert('Payment cancelled — your cart is still here whenever you\'re ready.');
+    }
+
+    // Checkout Button — goes straight to Stripe's hosted checkout.
+    const checkoutBtn = document.getElementById('checkout-btn');
+    checkoutBtn?.addEventListener('click', async () => {
         if (!window.currentUser) {
             alert('Please log in to proceed with checkout.');
             window.openAuthModal('login');
             return;
         }
 
+        const original = checkoutBtn.innerText;
+        checkoutBtn.disabled = true;
+        checkoutBtn.innerText = 'Redirecting…';
         try {
-            const cartData = await apiFetch('/api/cart');
-
-            if (!cartData.items || cartData.items.length === 0) {
-                alert('Your cart is empty.');
+            const res = await apiFetch('/api/orders/checkout', {
+                method: 'POST',
+                body: JSON.stringify({ paymentMethod: 'card' })
+            });
+            if (res.redirectUrl) {
+                window.location.href = res.redirectUrl;
                 return;
             }
-
-            const summaryContainer = document.getElementById('checkout-summary-items');
-            if (summaryContainer) {
-                summaryContainer.innerHTML = cartData.items.map(item => `
-                    <div class="checkout-item">
-                        <span>${item.product_name || item.name} (x${item.quantity})</span>
-                        <span>$${(Number(item.price) * Number(item.quantity)).toFixed(2)}</span>
-                    </div>
-                `).join('');
-            }
-
-            const subtotal = cartData.items.reduce((sum, i) => sum + (Number(i.price) * Number(i.quantity)), 0);
-            let discount = 0;
-            if (cartData.coupon) {
-                discount = cartData.coupon.discount_percent 
-                    ? subtotal * (Number(cartData.coupon.discount_percent) / 100) 
-                    : Number(cartData.coupon.discount_amount || 0);
-            }
-
-            const subEl = document.getElementById('checkout-subtotal');
-            const discEl = document.getElementById('checkout-discount');
-            const totEl = document.getElementById('checkout-total');
-
-            if (subEl) subEl.innerText = `$${subtotal.toFixed(2)}`;
-            if (discEl) discEl.innerText = `-$${discount.toFixed(2)}`;
-            if (totEl) totEl.innerText = `$${(subtotal - discount).toFixed(2)}`;
-
-            const checkoutModal = document.getElementById('checkout-modal');
-            if (checkoutModal) checkoutModal.style.display = 'flex';
+            alert(res.error || 'Could not start checkout.');
         } catch (err) {
             alert(err.message);
+        } finally {
+            checkoutBtn.disabled = false;
+            checkoutBtn.innerText = original;
         }
-    });
-
-    // Final Order Confirmation Inside Modal
-    document.getElementById('confirm-order-btn')?.addEventListener('click', async () => {
-        try {
-            const res = await apiFetch('/api/orders/checkout', { method: 'POST' });
-            alert(`Order placed successfully! Order ID: ${res.orderId}`);
-            document.getElementById('checkout-modal').style.display = 'none';
-            window.syncCartWithServer();
-        } catch (err) {
-            alert(err.message);
-        }
-    });
-
-    // Close Modal Handler
-    document.getElementById('close-checkout-modal')?.addEventListener('click', () => {
-        document.getElementById('checkout-modal').style.display = 'none';
     });
 
     // Newsletter Button Modal Trigger
@@ -516,117 +504,8 @@ document.addEventListener('DOMContentLoaded', () => {
         window.openAuthModal('register');
     });
 
-    // Modal View & Auth Control Setup
-    const authModal = document.getElementById('auth-modal');
-    const registerView = document.getElementById('register-view');
-    const loginView = document.getElementById('login-view');
-    const closeBtn = document.getElementById('close-auth-modal');
-    
-    const showLoginLink = document.getElementById('show-login-link');
-    const showRegisterLink = document.getElementById('show-register-link');
-    const logInHeaderBtn = document.querySelector('a[href*="LOG IN"]') || document.getElementById('login-header-btn');
-
-    window.openAuthModal = (view = 'login') => {
-        if (!authModal) return;
-        authModal.style.display = 'flex';
-        if (view === 'login') {
-            if (registerView) registerView.style.display = 'none';
-            if (loginView) loginView.style.display = 'block';
-        } else {
-            if (registerView) registerView.style.display = 'block';
-            if (loginView) loginView.style.display = 'none';
-        }
-    };
-
-    window.closeAuthModal = () => {
-        if (authModal) authModal.style.display = 'none';
-    };
-
-    if (closeBtn) closeBtn.addEventListener('click', window.closeAuthModal);
-    if (logInHeaderBtn) {
-        logInHeaderBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.openAuthModal('login');
-        });
-    }
-
-    if (showLoginLink) {
-        showLoginLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (registerView) registerView.style.display = 'none';
-            if (loginView) loginView.style.display = 'block';
-        });
-    }
-
-    if (showRegisterLink) {
-        showRegisterLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (loginView) loginView.style.display = 'none';
-            if (registerView) registerView.style.display = 'block';
-        });
-    }
-
-    // Auth Submit Handlers
-    const registerForm = document.getElementById('register-form');
-    if (registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const payload = {
-                name: document.getElementById('reg-name').value.trim(),
-                email: document.getElementById('reg-email').value.trim(),
-                password: document.getElementById('reg-password').value,
-                street: document.getElementById('reg-street').value.trim(),
-                city: document.getElementById('reg-city').value.trim(),
-                state: document.getElementById('reg-state').value.trim(),
-                postcode: document.getElementById('reg-postcode').value.trim()
-            };
-
-            try {
-                const res = await fetch('/api/auth/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    alert('Account created successfully!');
-                    window.closeAuthModal();
-                    window.location.reload();
-                } else {
-                    alert(data.error || 'Registration failed.');
-                }
-            } catch (err) {
-                console.error('Register error:', err);
-            }
-        });
-    }
-
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value;
-
-            try {
-                const res = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ email, password })
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    alert('Logged in successfully!');
-                    window.closeAuthModal();
-                    window.location.reload();
-                } else {
-                    alert(data.error || 'Invalid credentials.');
-                }
-            } catch (err) {
-                console.error('Login error:', err);
-            }
-        });
-    }
+    // NOTE: the auth modal (open/close, view toggle) and the register/login
+    // form submissions are all handled in auth.js via apiFetch(). They used to
+    // be duplicated here with raw fetch('/api/...') calls, which broke when the
+    // page is served from a static dev server (Live Server) instead of the API.
 });
