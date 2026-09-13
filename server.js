@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -123,6 +124,48 @@ const STRIPE_CURRENCY = (process.env.STRIPE_CURRENCY || 'aud').toLowerCase();
 const stripe = STRIPE.enabled ? require('stripe')(process.env.STRIPE_SECRET_KEY) : null;
 if (STRIPE.enabled && String(process.env.STRIPE_SECRET_KEY).startsWith('sk_live_')) {
     console.warn('⚠  Stripe is running with a LIVE key — real cards will be charged.');
+}
+
+// -------------------------------------------------------------
+// Facebook Page auto-posting (new/published products)
+// -------------------------------------------------------------
+const FB_PAGE_ID = process.env.FB_PAGE_ID || '';
+const FB_PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN || '';
+const FB_CONFIGURED = !!(FB_PAGE_ID && FB_PAGE_ACCESS_TOKEN);
+if (FB_CONFIGURED) console.log(`📘 Facebook Page posting ready (page ${FB_PAGE_ID})`);
+
+// Posts a product's photo + caption to the connected Facebook Page. The image
+// is uploaded as raw bytes (not a URL) so this works even while the site is
+// only reachable at localhost — Facebook never needs to fetch anything from us.
+async function postProductToFacebook(product) {
+    if (!FB_CONFIGURED) {
+        return { posted: false, error: 'Facebook is not connected. Add FB_PAGE_ID and FB_PAGE_ACCESS_TOKEN to .env.' };
+    }
+    if (/localhost|127\.0\.0\.1/.test(APP_BASE_URL)) {
+        return { posted: false, error: 'APP_BASE_URL is still localhost — Facebook (and your customers) can\'t reach it. Deploy the site and set APP_BASE_URL to the public domain first.' };
+    }
+    try {
+        const price = Number(product.base_retail_price || 0).toFixed(2);
+        const productUrl = `${APP_BASE_URL}/sproduct.html?id=${encodeURIComponent(product.product_id)}`;
+        // No URL in the message itself — the `link` field below is what makes
+        // Facebook render a real clickable preview card pointing at the product.
+        const message = `${product.title}\n\n$${price} AUD — shop now at Ceekay.`;
+
+        const form = new FormData();
+        form.append('message', message);
+        form.append('link', productUrl);
+        form.append('access_token', FB_PAGE_ACCESS_TOKEN);
+
+        const resp = await fetch(`https://graph.facebook.com/v19.0/${FB_PAGE_ID}/feed`, { method: 'POST', body: form });
+        const data = await resp.json();
+        if (!resp.ok || data.error) throw new Error(data.error?.message || `Facebook API error (${resp.status})`);
+
+        console.log(`📘 Posted "${product.title}" to Facebook (post ${data.id})`);
+        return { posted: true, postId: data.id };
+    } catch (err) {
+        console.error('Facebook post failed:', err.message);
+        return { posted: false, error: err.message };
+    }
 }
 
 // What the checkout UI is allowed to offer. card + googlepay both ride on Stripe.
@@ -447,7 +490,7 @@ app.post('/api/admin/products', requireBotOrAdmin, async (req, res) => {
     if (!productId || !productName) return res.status(400).json({ error: 'productId and productName required' });
 
     try {
-        await pool.query(
+        const [result] = await pool.query(
             `INSERT INTO products (product_id, title, category, description, base_retail_price, default_image, variants, stock_quantity)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)
              ON DUPLICATE KEY UPDATE title = VALUES(title), category = VALUES(category),
@@ -457,7 +500,16 @@ app.post('/api/admin/products', requireBotOrAdmin, async (req, res) => {
             [productId, productName, category || null, description || null, price || 0, imageUrl || null, JSON.stringify(variants || []), stockQuantity ?? 0]
         );
         await logAudit(req.admin, 'product.upsert', { productId, productName, viaBot: !!req.isBot });
-        res.json({ ok: true });
+
+        // MySQL's upsert affectedRows: 1 = a brand-new row was inserted.
+        let facebookPost = null;
+        if (result.affectedRows === 1) {
+            facebookPost = await postProductToFacebook({
+                product_id: productId, title: productName,
+                base_retail_price: price || 0, default_image: imageUrl
+            });
+        }
+        res.json({ ok: true, facebookPost });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to save product' });
@@ -562,14 +614,45 @@ app.patch('/api/admin/products/:id', requireAdmin, async (req, res) => {
     if (variants !== undefined) { fields.push('variants = ?'); values.push(JSON.stringify(variants)); }
     if (fields.length === 0) return res.status(400).json({ error: 'No fields to update' });
 
+    // Detect a hidden -> published transition before we overwrite it, so we
+    // know whether this update is the one that should announce the product.
+    let wasInactive = false;
+    if (active !== undefined) {
+        const [[prior]] = await pool.query('SELECT active FROM products WHERE product_id = ?', [req.params.id]);
+        wasInactive = !!prior && !prior.active;
+    }
+
     values.push(req.params.id);
     try {
         await pool.query(`UPDATE products SET ${fields.join(', ')} WHERE product_id = ?`, values);
         await logAudit(req.admin, 'product.update', { productId: req.params.id, fields: Object.keys(map).filter(k => map[k] !== undefined) });
-        res.json({ ok: true });
+
+        let facebookPost = null;
+        if (wasInactive && (active === true || active === 1 || active === '1')) {
+            const [[product]] = await pool.query('SELECT * FROM products WHERE product_id = ?', [req.params.id]);
+            facebookPost = await postProductToFacebook(product);
+        }
+        res.json({ ok: true, facebookPost });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to update product' });
+    }
+});
+
+// Manual/on-demand post — lets the owner (re)announce any product on request.
+app.post('/api/admin/products/:id/post-to-facebook', requireAdmin, async (req, res) => {
+    try {
+        const [[product]] = await pool.query('SELECT * FROM products WHERE product_id = ?', [req.params.id]);
+        if (!product) return res.status(404).json({ error: 'Product not found' });
+
+        const result = await postProductToFacebook(product);
+        if (!result.posted) return res.status(400).json({ error: result.error });
+
+        await logAudit(req.admin, 'product.facebook_post', { productId: req.params.id, postId: result.postId });
+        res.json({ ok: true, postId: result.postId });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to post to Facebook' });
     }
 });
 
@@ -1284,6 +1367,44 @@ app.get('/api/admin/audit-log', requireAdmin, requireOwner, async (req, res) => 
 // ===============================================================
 // SERVE FRONTEND (Must always sit at the bottom of route definitions)
 // ===============================================================
+// Inject per-product Open Graph tags before serving sproduct.html, so a link
+// shared to Facebook/WhatsApp/etc. shows a real preview card (photo, title,
+// price) instead of a blank one — Facebook's link scraper doesn't run our
+// client-side JS, so the tags have to already be in the HTML it fetches.
+app.get('/sproduct.html', async (req, res, next) => {
+    const productId = req.query.id;
+    if (!productId) return next();
+    try {
+        const [[product]] = await pool.query('SELECT * FROM products WHERE product_id = ? AND active = TRUE', [productId]);
+        if (!product) return next();
+
+        let html = fs.readFileSync(path.join(__dirname, 'sproduct.html'), 'utf8');
+        const pageUrl = `${APP_BASE_URL}/sproduct.html?id=${encodeURIComponent(productId)}`;
+        const imageUrl = product.default_image
+            ? `${APP_BASE_URL}/${String(product.default_image).replace(/^\/+/, '')}` : '';
+        const price = Number(product.base_retail_price || 0).toFixed(2);
+        const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+        const title = esc(product.title || 'Ceekay Store');
+        const description = esc(product.description || `${product.title} — $${price} AUD at Ceekay.`).slice(0, 300);
+
+        const ogTags = `
+    <meta property="og:type" content="product">
+    <meta property="og:title" content="${title}">
+    <meta property="og:description" content="${description}">
+    <meta property="og:image" content="${imageUrl}">
+    <meta property="og:url" content="${pageUrl}">
+    <meta property="product:price:amount" content="${price}">
+    <meta property="product:price:currency" content="AUD">
+    <meta name="twitter:card" content="summary_large_image">
+`;
+        res.set('Content-Type', 'text/html');
+        res.send(html.replace('</head>', `${ogTags}</head>`));
+    } catch (err) {
+        console.error('OG tag injection failed:', err.message);
+        next();
+    }
+});
+
 app.use(express.static(path.join(__dirname)));
 app.use('/api', (req, res) => res.status(404).json({ error: 'Not found' }));
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));

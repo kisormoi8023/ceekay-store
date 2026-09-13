@@ -207,12 +207,18 @@ $('product-save-btn').addEventListener('click', async () => {
         description: $('pf-description').value
     };
     try {
-        await apiFetch('/api/admin/products', { method: 'POST', body: JSON.stringify(payload) });
-        showToast('Product added');
+        const res = await apiFetch('/api/admin/products', { method: 'POST', body: JSON.stringify(payload) });
+        showToast('Product added' + fbSuffix(res.facebookPost));
         $('product-form-card').style.display = 'none';
         loadProducts();
     } catch (err) { showToast(err.message); }
 });
+
+// Turns a { posted, error, postId } result from the server into a short toast suffix.
+function fbSuffix(facebookPost) {
+    if (!facebookPost) return '';
+    return facebookPost.posted ? ' · Posted to Facebook' : ` · Facebook: ${facebookPost.error}`;
+}
 
 window.deleteProduct = async function (productId) {
     if (!confirm('Delete this product? This cannot be undone.')) return;
@@ -365,13 +371,21 @@ $('pd-delete').addEventListener('click', async () => {
 
 async function savePatch(body, okMsg) {
     try {
-        await apiFetch(`/api/admin/products/${encodeURIComponent(pdCurrent.product.product_id)}`, {
+        const res = await apiFetch(`/api/admin/products/${encodeURIComponent(pdCurrent.product.product_id)}`, {
             method: 'PATCH', body: JSON.stringify(body)
         });
-        showToast(okMsg);
+        showToast(okMsg + fbSuffix(res.facebookPost));
         openProductDetail(pdCurrent.product.product_id); // reload
     } catch (err) { showToast(err.message); }
 }
+
+$('pd-post-fb').addEventListener('click', async () => {
+    if (!pdCurrent) return;
+    try {
+        await apiFetch(`/api/admin/products/${encodeURIComponent(pdCurrent.product.product_id)}/post-to-facebook`, { method: 'POST' });
+        showToast('Posted to Facebook');
+    } catch (err) { showToast(`Facebook: ${err.message}`); }
+});
 
 // -------------------------------------------------------------
 // PRODUCTS — image manager modal
