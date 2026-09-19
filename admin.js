@@ -114,7 +114,7 @@ document.querySelectorAll('#admin-sidebar nav button').forEach(btn => {
 
         if (tab === 'dashboard') loadDashboardStats();
         if (tab === 'products') loadProducts();
-        if (tab === 'scrape') loadScrapeJobs();
+        if (tab === 'scrape') { loadScrapeJobs(); loadScheduleUI(); }
         if (tab === 'orders') loadOrders();
         if (tab === 'coupons') loadCoupons();
         if (tab === 'customers') loadCustomers();
@@ -476,6 +476,81 @@ async function loadScrapeJobs() {
                 <td>${dateFmt(j.created_at)}</td>
             </tr>
         `).join('') : `<tr><td colspan="4" class="admin-empty">No scrape jobs yet.</td></tr>`;
+    } catch (err) {
+        showToast(err.message);
+    }
+}
+
+// -------------------------------------------------------------
+// SCHEDULED SOCIAL POSTS
+// -------------------------------------------------------------
+async function loadScheduleUI() {
+    const select = document.getElementById('schedule-product-select');
+    try {
+        const products = await apiFetch('/api/admin/products');
+        select.innerHTML = products.length
+            ? products.map(p => `<option value="${p.product_id}">${p.title}</option>`).join('')
+            : '<option value="">No products yet</option>';
+    } catch (err) {
+        select.innerHTML = '<option value="">Failed to load products</option>';
+        showToast(err.message);
+    }
+    loadScheduledPosts();
+}
+
+document.getElementById('schedule-post-btn').addEventListener('click', async () => {
+    const productId = document.getElementById('schedule-product-select').value;
+    const scheduledAt = document.getElementById('schedule-datetime').value;
+    const facebook = document.getElementById('schedule-fb').checked;
+    const instagram = document.getElementById('schedule-ig').checked;
+
+    if (!productId) { showToast('Pick a product first'); return; }
+    if (!scheduledAt) { showToast('Pick a date and time first'); return; }
+    if (!facebook && !instagram) { showToast('Choose at least one platform'); return; }
+
+    // <input type="datetime-local"> has no timezone info and JS parses it as
+    // the BROWSER's local time — convert to a UTC ISO string here so the
+    // server (which may run in a different timezone) fires at the moment
+    // the admin actually meant, not "that clock time in UTC".
+    const scheduledAtUtc = new Date(scheduledAt).toISOString();
+
+    try {
+        await apiFetch(`/api/admin/products/${encodeURIComponent(productId)}/schedule-post`, {
+            method: 'POST',
+            body: JSON.stringify({ scheduledAt: scheduledAtUtc, facebook, instagram })
+        });
+        showToast('Post scheduled');
+        document.getElementById('schedule-datetime').value = '';
+        loadScheduledPosts();
+    } catch (err) {
+        showToast(err.message);
+    }
+});
+
+async function loadScheduledPosts() {
+    const tbody = document.getElementById('scheduled-posts-table-body');
+    try {
+        const posts = await apiFetch('/api/admin/scheduled-posts');
+        tbody.innerHTML = posts.length ? posts.map(p => `
+            <tr>
+                <td>${p.product_title}</td>
+                <td>${p.platforms.split(',').map(pl => pl === 'facebook' ? 'Facebook' : 'Instagram').join(' + ')}</td>
+                <td>${dateFmt(p.scheduled_at)}</td>
+                <td><span class="badge ${p.status === 'posted' ? 'done' : p.status}">${p.status}</span></td>
+                <td>${p.status === 'pending' ? `<button class="admin-btn small danger" onclick="cancelScheduledPost(${p.id})">Cancel</button>` : ''}</td>
+            </tr>
+        `).join('') : `<tr><td colspan="5" class="admin-empty">Nothing scheduled yet.</td></tr>`;
+    } catch (err) {
+        showToast(err.message);
+    }
+}
+
+async function cancelScheduledPost(id) {
+    if (!confirm('Cancel this scheduled post?')) return;
+    try {
+        await apiFetch(`/api/admin/scheduled-posts/${id}`, { method: 'DELETE' });
+        showToast('Scheduled post cancelled');
+        loadScheduledPosts();
     } catch (err) {
         showToast(err.message);
     }

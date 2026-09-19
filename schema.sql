@@ -95,6 +95,26 @@ CREATE TABLE IF NOT EXISTS scrape_jobs (
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------
+-- Scheduled social posts — the admin "schedule a post" queue.
+-- A background loop in server.js checks this every minute and fires
+-- postProductToFacebook / postProductToInstagram for anything due.
+-- ---------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS scheduled_posts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id VARCHAR(64) NOT NULL,
+    platforms SET('facebook', 'instagram') NOT NULL,
+    scheduled_at DATETIME NOT NULL,
+    status ENUM('pending', 'posted', 'failed', 'cancelled') NOT NULL DEFAULT 'pending',
+    result JSON NULL,
+    created_by INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES admin_users(id) ON DELETE SET NULL,
+    INDEX idx_scheduled_posts_due (status, scheduled_at)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------
 -- Carts / Cart Items
 -- ---------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS carts (

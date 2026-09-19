@@ -168,6 +168,91 @@ async function postProductToFacebook(product) {
     }
 }
 
+// -------------------------------------------------------------
+// Instagram auto-posting (via the Instagram Business account linked to
+// the same Facebook Page — reuses FB_PAGE_ACCESS_TOKEN, needs the
+// instagram_basic + instagram_content_publish permissions on that token).
+// -------------------------------------------------------------
+const IG_BUSINESS_ACCOUNT_ID = process.env.IG_BUSINESS_ACCOUNT_ID || '';
+const IG_CONFIGURED = !!(IG_BUSINESS_ACCOUNT_ID && FB_PAGE_ACCESS_TOKEN);
+if (IG_CONFIGURED) console.log(`📸 Instagram posting ready (account ${IG_BUSINESS_ACCOUNT_ID})`);
+
+function toPublicImageUrl(imagePath) {
+    if (!imagePath) return null;
+    if (/^https?:\/\//i.test(imagePath)) return imagePath;
+    return `${APP_BASE_URL}/${String(imagePath).replace(/^\/+/, '')}`;
+}
+
+// Unlike Facebook's link-post (which just needs a URL Facebook can crawl for
+// an OG preview), Instagram's Graph API needs a direct, publicly-fetchable
+// image URL — a two-step create-container-then-publish flow.
+async function postProductToInstagram(product) {
+    if (!IG_CONFIGURED) {
+        return { posted: false, error: 'Instagram is not connected. Add IG_BUSINESS_ACCOUNT_ID to .env (reuses FB_PAGE_ACCESS_TOKEN).' };
+    }
+    if (/localhost|127\.0\.0\.1/.test(APP_BASE_URL)) {
+        return { posted: false, error: 'APP_BASE_URL is still localhost — Instagram needs a publicly reachable image URL. Deploy the site first.' };
+    }
+    const imageUrl = toPublicImageUrl(product.default_image);
+    if (!imageUrl) return { posted: false, error: 'Product has no image to post.' };
+
+    try {
+        const price = Number(product.base_retail_price || 0).toFixed(2);
+        const productUrl = `${APP_BASE_URL}/sproduct.html?id=${encodeURIComponent(product.product_id)}`;
+        const caption = `${product.title}\n\n$${price} AUD — shop now, link in bio.\n${productUrl}`;
+
+        const createResp = await fetch(`https://graph.facebook.com/v19.0/${IG_BUSINESS_ACCOUNT_ID}/media`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image_url: imageUrl, caption, access_token: FB_PAGE_ACCESS_TOKEN })
+        });
+        const createData = await createResp.json();
+        if (!createResp.ok || createData.error) throw new Error(createData.error?.message || `Instagram API error (${createResp.status})`);
+
+        const publishResp = await fetch(`https://graph.facebook.com/v19.0/${IG_BUSINESS_ACCOUNT_ID}/media_publish`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ creation_id: createData.id, access_token: FB_PAGE_ACCESS_TOKEN })
+        });
+        const publishData = await publishResp.json();
+        if (!publishResp.ok || publishData.error) throw new Error(publishData.error?.message || `Instagram publish error (${publishResp.status})`);
+
+        console.log(`📸 Posted "${product.title}" to Instagram (media ${publishData.id})`);
+        return { posted: true, postId: publishData.id };
+    } catch (err) {
+        console.error('Instagram post failed:', err.message);
+        return { posted: false, error: err.message };
+    }
+}
+
+// Runs every minute: fires off anything scheduled for now-or-earlier.
+async function runDueScheduledPosts() {
+    try {
+        const [due] = await pool.query(
+            `SELECT sp.id AS schedule_id, sp.platforms, p.product_id, p.title, p.base_retail_price, p.default_image
+             FROM scheduled_posts sp
+             JOIN products p ON p.product_id = sp.product_id
+             WHERE sp.status = 'pending' AND sp.scheduled_at <= NOW()
+             LIMIT 20`
+        );
+        for (const row of due) {
+            const platforms = row.platforms.split(',');
+            const results = {};
+            if (platforms.includes('facebook')) results.facebook = await postProductToFacebook(row);
+            if (platforms.includes('instagram')) results.instagram = await postProductToInstagram(row);
+
+            const allOk = Object.values(results).every(r => r.posted);
+            await pool.query(
+                'UPDATE scheduled_posts SET status = ?, result = ? WHERE id = ?',
+                [allOk ? 'posted' : 'failed', JSON.stringify(results), row.schedule_id]
+            );
+        }
+    } catch (err) {
+        console.error('Scheduled post worker error:', err.message);
+    }
+}
+setInterval(runDueScheduledPosts, 60 * 1000);
+
 // What the checkout UI is allowed to offer. card + googlepay both ride on Stripe.
 function enabledPaymentMethods() {
     const list = [];
@@ -663,6 +748,65 @@ app.delete('/api/admin/products/:id', requireAdmin, async (req, res) => {
         res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: 'Failed to delete product' });
+    }
+});
+
+// Queue a product to auto-post to Facebook / Instagram at a future time —
+// picked up by runDueScheduledPosts() once a minute.
+app.post('/api/admin/products/:id/schedule-post', requireAdmin, async (req, res) => {
+    const { scheduledAt, facebook, instagram } = req.body;
+    if (!scheduledAt) return res.status(400).json({ error: 'scheduledAt is required' });
+
+    const when = new Date(scheduledAt);
+    if (Number.isNaN(when.getTime())) return res.status(400).json({ error: 'Invalid date/time' });
+
+    const platforms = [facebook ? 'facebook' : null, instagram ? 'instagram' : null].filter(Boolean);
+    if (platforms.length === 0) return res.status(400).json({ error: 'Choose at least one platform' });
+
+    try {
+        const [[product]] = await pool.query('SELECT product_id FROM products WHERE product_id = ?', [req.params.id]);
+        if (!product) return res.status(404).json({ error: 'Product not found' });
+
+        const [result] = await pool.query(
+            'INSERT INTO scheduled_posts (product_id, platforms, scheduled_at, created_by) VALUES (?, ?, ?, ?)',
+            [req.params.id, platforms.join(','), when, req.admin.id]
+        );
+        await logAudit(req.admin, 'product.schedule_post', { productId: req.params.id, platforms, scheduledAt: when });
+        res.json({ ok: true, id: result.insertId });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to schedule post' });
+    }
+});
+
+app.get('/api/admin/scheduled-posts', requireAdmin, async (req, res) => {
+    try {
+        const [rows] = await pool.query(
+            `SELECT sp.id, sp.product_id, sp.platforms, sp.scheduled_at, sp.status, sp.result, sp.created_at,
+                    p.title AS product_title, p.default_image
+             FROM scheduled_posts sp
+             JOIN products p ON p.product_id = sp.product_id
+             ORDER BY sp.scheduled_at DESC
+             LIMIT 200`
+        );
+        res.json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to load scheduled posts' });
+    }
+});
+
+app.delete('/api/admin/scheduled-posts/:id', requireAdmin, async (req, res) => {
+    try {
+        const [result] = await pool.query(
+            "UPDATE scheduled_posts SET status = 'cancelled' WHERE id = ? AND status = 'pending'",
+            [req.params.id]
+        );
+        if (result.affectedRows === 0) return res.status(400).json({ error: 'Only pending scheduled posts can be cancelled' });
+        await logAudit(req.admin, 'scheduled_post.cancel', { id: req.params.id });
+        res.json({ ok: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to cancel scheduled post' });
     }
 });
 

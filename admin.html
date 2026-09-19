@@ -172,6 +172,38 @@
                     <thead><tr><th>Vendor URL</th><th>Status</th><th>Result</th><th>Requested</th></tr></thead>
                     <tbody id="scrape-table-body"></tbody>
                 </table>
+
+                <div class="admin-panel-header" style="margin-top:36px;"><h1>Schedule a Social Post</h1></div>
+                <div class="admin-form-card">
+                    <div class="admin-form-row">
+                        <div class="admin-field">
+                            <label>Product</label>
+                            <select id="schedule-product-select"><option value="">Loading products…</option></select>
+                        </div>
+                        <div class="admin-field">
+                            <label>Date &amp; time</label>
+                            <input type="datetime-local" id="schedule-datetime">
+                        </div>
+                    </div>
+                    <div class="admin-field">
+                        <label>Post to</label>
+                        <label style="display:inline-flex; align-items:center; gap:6px; margin-right:18px; font-weight:400;">
+                            <input type="checkbox" id="schedule-fb" checked> Facebook
+                        </label>
+                        <label style="display:inline-flex; align-items:center; gap:6px; font-weight:400;">
+                            <input type="checkbox" id="schedule-ig"> Instagram
+                        </label>
+                    </div>
+                    <button class="admin-btn gold" id="schedule-post-btn">Schedule Post</button>
+                    <p style="color:var(--admin-muted); font-size:13px; margin-top:10px;">
+                        A background check runs every minute and fires the post automatically once its time arrives.
+                        Facebook and Instagram both need to be connected in your <code>.env</code> file first.
+                    </p>
+                </div>
+                <table class="admin-table">
+                    <thead><tr><th>Product</th><th>Platforms</th><th>Scheduled for</th><th>Status</th><th></th></tr></thead>
+                    <tbody id="scheduled-posts-table-body"></tbody>
+                </table>
             </section>
 
             <!-- ORDERS -->
