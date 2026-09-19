@@ -210,21 +210,32 @@ button.white:hover { background: var(--white); color: var(--ink); }
 
 #sm-banner, #banner3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
 .banner-box {
-    display: flex; min-height: 270px; align-items: center; justify-content: center; flex-direction: column;
-    padding: 28px; border-radius: var(--radius); text-align: center;
-    background:
-        linear-gradient(135deg, rgba(60, 46, 32, 0.55), rgba(30, 22, 14, 0.65)),
-        url("img/hats.jpg") center / cover no-repeat;
+    display: flex; min-height: 340px; align-items: center; justify-content: center; flex-direction: column;
+    padding: 28px; border-radius: var(--radius); text-align: center; background-color: #3c2e20;
+    background-image:
+        linear-gradient(135deg, rgba(60, 46, 32, 0.45), rgba(30, 22, 14, 0.55)),
+        url("img/hats.jpg");
+    background-repeat: no-repeat;
+    background-position: center 20%;
+    background-size: cover;
 }
 .banner-box2 {
-    background:
-        linear-gradient(135deg, rgba(50, 36, 32, 0.55), rgba(25, 17, 14, 0.65)),
-        url("img/womenbanner.avif") center / cover no-repeat;
+    background-color: #322420;
+    background-image:
+        linear-gradient(135deg, rgba(50, 36, 32, 0.45), rgba(25, 17, 14, 0.55)),
+        url("img/womenbanner.avif");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }
 .banner-box3 {
-    background:
-        linear-gradient(135deg, rgba(30, 28, 26, 0.55), rgba(15, 14, 12, 0.65)),
-        url("img/Product7.jpg") center / cover no-repeat;
+    background-color: #1e1c1a;
+    background-image:
+        linear-gradient(135deg, rgba(30, 28, 26, 0.45), rgba(15, 14, 12, 0.55)),
+        url("img/Product7.jpg");
+    background-repeat: no-repeat;
+    background-position: center 70%;
+    background-size: cover;
 }
 .banner-box h2, .banner-box h3 { color: var(--white); }
 .banner-box h3 { margin-top: 8px; color: var(--gold-light); font-family: var(--sans); font-size: .82rem; letter-spacing: .1em; text-transform: uppercase; }
@@ -419,6 +430,8 @@ footer .copyright p { width: 100%; }
 .pw-wrap { position: relative; display: flex; align-items: center; width: 100%; }
 .modal-content .input-box .pw-wrap { flex: 1 1 0; min-width: 0; }
 .pw-wrap input { padding-right: 42px !important; }
+.modal-content .input-box .pw-toggle-btn,
+.modal-content form .pw-toggle-btn,
 .pw-toggle-btn {
     position: absolute;
     right: 14px;
@@ -426,16 +439,24 @@ footer .copyright p { width: 100%; }
     transform: translateY(-50%);
     background: none;
     border: none;
+    border-radius: 0;
     padding: 0;
     margin: 0;
+    width: auto;
+    height: auto;
     cursor: pointer;
     color: #999;
     font-size: 14px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
     display: flex;
     align-items: center;
     z-index: 2;
+    box-shadow: none;
 }
-.pw-toggle-btn:hover { color: #666; }
+.modal-content .input-box .pw-toggle-btn:hover,
+.pw-toggle-btn:hover { background: none; color: #666; }
 
 /* Newsletter opt-in checkbox on the sign-up form */
 .checkbox-box {
@@ -506,6 +527,7 @@ footer .copyright p { width: 100%; }
     .modal-content .input-box input + input,
     .modal-content .input-box input + .pw-wrap { border-left: none; border-top: 1px solid #e0e0e0; }
     .modal-content .input-box button { padding: 12px 24px; width: 100%; }
+    .modal-content .input-box .pw-toggle-btn { padding: 0; width: auto; }
 }
 
 

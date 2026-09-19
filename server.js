@@ -365,7 +365,7 @@ app.post('/api/auth/register', async (req, res) => {
         res.cookie('token', token, authCookieOptions());
         res.json({ ok: true, user: { id: userId, email, name } });
     } catch (err) {
-        if (err.code === 'ER_DUP_ENTRY') return res.status(400).json({ error: 'Email already registered' });
+        if (err.code === 'ER_DUP_ENTRY') return res.status(409).json({ error: 'An account with this email already exists.', code: 'EMAIL_EXISTS' });
         if (err.code === 'ER_NO_SUCH_TABLE') return res.status(500).json({ error: 'Database tables are not set up yet. Run schema.sql.' });
         console.error('Registration Error:', err);
         res.status(500).json({ error: err.message || 'Registration failed' });

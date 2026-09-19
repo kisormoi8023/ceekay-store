@@ -260,6 +260,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof window.closeAuthModal === 'function') window.closeAuthModal();
             window.location.reload();
         } catch (error) {
+            if (error.code === 'EMAIL_EXISTS') {
+                const goLogin = confirm('An account with this email already exists. Log in instead?');
+                if (goLogin) {
+                    window.openAuthModal('login');
+                    const loginEmailInput = document.getElementById('login-email');
+                    if (loginEmailInput) loginEmailInput.value = email;
+                }
+                return;
+            }
             alert(error.message || 'Registration failed');
         }
     });

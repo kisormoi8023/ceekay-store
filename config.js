@@ -41,7 +41,10 @@ window.apiFetch = async function apiFetch(path, options = {}) {
 
     if (!res.ok) {
         const message = (data && (data.error || data.message)) || `Request failed (${res.status})`;
-        throw new Error(message);
+        const err = new Error(message);
+        err.code = data && data.code;
+        err.status = res.status;
+        throw err;
     }
     return data;
 };
