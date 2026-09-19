@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS users (
     city VARCHAR(255),
     state VARCHAR(255),
     postcode VARCHAR(50),
+    newsletter_opt_in BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
@@ -125,6 +126,9 @@ CREATE TABLE IF NOT EXISTS orders (
     total_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
     discount_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
     coupon_code VARCHAR(50) NULL,
+    payment_method VARCHAR(30) NULL,
+    payment_reference VARCHAR(40) NULL,
+    payment_status ENUM('awaiting_payment','paid','failed','refunded') NOT NULL DEFAULT 'awaiting_payment',
     status ENUM('pending', 'processing', 'shipped', 'completed', 'cancelled') NOT NULL DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

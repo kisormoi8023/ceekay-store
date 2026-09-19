@@ -209,9 +209,23 @@ button.white:hover { background: var(--white); color: var(--ink); }
 #page-header.about-header p, #OurStory p { color: var(--gold-light) !important; font-size: 0.85rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; }
 
 #sm-banner, #banner3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
-.banner-box { display: flex; min-height: 270px; align-items: center; justify-content: center; flex-direction: column; padding: 28px; border-radius: var(--radius); background: linear-gradient(135deg,#5b4634,#b18b5c); text-align: center; }
-.banner-box2 { background: linear-gradient(135deg,#463734,#a07867); }
-.banner-box3 { background: linear-gradient(135deg,#252422,#706a63); }
+.banner-box {
+    display: flex; min-height: 270px; align-items: center; justify-content: center; flex-direction: column;
+    padding: 28px; border-radius: var(--radius); text-align: center;
+    background:
+        linear-gradient(135deg, rgba(60, 46, 32, 0.55), rgba(30, 22, 14, 0.65)),
+        url("img/hats.jpg") center / cover no-repeat;
+}
+.banner-box2 {
+    background:
+        linear-gradient(135deg, rgba(50, 36, 32, 0.55), rgba(25, 17, 14, 0.65)),
+        url("img/womenbanner.avif") center / cover no-repeat;
+}
+.banner-box3 {
+    background:
+        linear-gradient(135deg, rgba(30, 28, 26, 0.55), rgba(15, 14, 12, 0.65)),
+        url("img/Product7.jpg") center / cover no-repeat;
+}
 .banner-box h2, .banner-box h3 { color: var(--white); }
 .banner-box h3 { margin-top: 8px; color: var(--gold-light); font-family: var(--sans); font-size: .82rem; letter-spacing: .1em; text-transform: uppercase; }
 
@@ -345,39 +359,103 @@ footer .copyright p { width: 100%; }
     z-index: 2;
 }
 
-.modal-content form { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
+.modal-content form { display: flex; flex-direction: column; gap: 16px; margin-top: 18px; }
 
 /* Bare input in the modal → white pill */
 .modal-content form input {
     width: 100%;
-    border: none;
+    border: 1px solid transparent;
     outline: none;
-    padding: 13px 20px;
+    padding: 14px 20px;
     font: inherit;
-    font-size: 13px;
-    color: #333;
+    font-size: 13.5px;
+    color: #262626;
     background: #fff;
-    border-radius: 30px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+    transition: box-shadow .2s ease, border-color .2s ease;
 }
 .modal-content form input::placeholder { color: #9a9a9a; }
+.modal-content form input:focus {
+    border-color: var(--gold, #b88a44);
+    box-shadow: 0 0 0 3px rgba(184, 138, 68, 0.35), 0 3px 10px rgba(0, 0, 0, 0.35);
+}
 
-/* Joined pill bar: collapses its inputs + attached button into one pill */
+/* Neutralize the browser's autofill tint so every field stays visually consistent */
+.modal-content input:-webkit-autofill,
+.modal-content input:-webkit-autofill:hover,
+.modal-content input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #262626;
+    -webkit-box-shadow: 0 0 0 1000px #fff inset;
+    box-shadow: 0 0 0 1000px #fff inset;
+    transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Joined pill bar: collapses its inputs + attached button into one rounded bar */
 .modal-content .input-box {
     display: flex;
     width: 100%;
     background: #fff;
-    border-radius: 30px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+    transition: box-shadow .2s ease;
+}
+.modal-content .input-box:focus-within {
+    box-shadow: 0 0 0 3px rgba(184, 138, 68, 0.35), 0 3px 10px rgba(0, 0, 0, 0.35);
 }
 .modal-content .input-box input {
     flex: 1 1 0;
     min-width: 0;
+    border: none;
     border-radius: 0;
     box-shadow: none;
 }
-.modal-content .input-box input + input { border-left: 1px solid #e0e0e0; }
+.modal-content .input-box input:focus { box-shadow: none; }
+.modal-content .input-box input + input,
+.modal-content .input-box input + .pw-wrap { border-left: 1px solid #e5e5e5; }
+
+/* Password show/hide toggle — wraps whichever password input it's attached to */
+.pw-wrap { position: relative; display: flex; align-items: center; width: 100%; }
+.modal-content .input-box .pw-wrap { flex: 1 1 0; min-width: 0; }
+.pw-wrap input { padding-right: 42px !important; }
+.pw-toggle-btn {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    color: #999;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    z-index: 2;
+}
+.pw-toggle-btn:hover { color: #666; }
+
+/* Newsletter opt-in checkbox on the sign-up form */
+.checkbox-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #fff;
+    text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.9);
+    font-size: 13px;
+    line-height: 1.4;
+}
+.checkbox-box input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    accent-color: var(--gold, #b88a44);
+    cursor: pointer;
+    flex: 0 0 auto;
+}
+.checkbox-box label { cursor: pointer; }
 
 .modal-content .input-box button {
     flex: 0 0 auto;
@@ -425,7 +503,8 @@ footer .copyright p { width: 100%; }
 @media (max-width: 480px) {
     .modal-content { padding: 38px 20px 28px; }
     .modal-content .input-box { flex-direction: column; }
-    .modal-content .input-box input + input { border-left: none; border-top: 1px solid #e0e0e0; }
+    .modal-content .input-box input + input,
+    .modal-content .input-box input + .pw-wrap { border-left: none; border-top: 1px solid #e0e0e0; }
     .modal-content .input-box button { padding: 12px 24px; width: 100%; }
 }
 

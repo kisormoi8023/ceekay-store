@@ -44,6 +44,17 @@ async function checkAuthStatus() {
     }
 }
 
+// "Joan Limo" -> "Joan L." — keep the greeting personal without printing a
+// customer's full legal name across the storefront header.
+function formatDisplayName(fullName) {
+    if (!fullName) return 'Account';
+    const parts = fullName.trim().split(/\s+/);
+    if (parts.length < 2) return parts[0];
+    const first = parts[0];
+    const lastInitial = parts[parts.length - 1].charAt(0).toUpperCase();
+    return `${first} ${lastInitial}.`;
+}
+
 // Dynamically update Header Navigation & Footer links based on login status
 function updateAuthUI(user) {
     const displayName = document.getElementById('user-display-name');
@@ -51,7 +62,7 @@ function updateAuthUI(user) {
     const footerBtn = document.getElementById('footer-login-btn');
 
     if (user) {
-        if (displayName) displayName.innerText = user.name || 'Account';
+        if (displayName) displayName.innerText = formatDisplayName(user.name);
         if (statusDot) statusDot.style.display = 'inline-block';
         if (footerBtn) footerBtn.innerText = 'Log Out';
     } else {
@@ -102,9 +113,37 @@ async function mergeGuestCartToServer() {
     }
 }
 
+// Wrap every password field on the page with a show/hide eye-toggle button.
+// Works regardless of surrounding markup (bare <form> or the pill .input-box
+// layout) since it only touches the input itself, not its container.
+function initPasswordToggles() {
+    document.querySelectorAll('input[type="password"]').forEach((input) => {
+        if (input.parentElement?.classList.contains('pw-wrap')) return; // already wrapped
+
+        const wrap = document.createElement('div');
+        wrap.className = 'pw-wrap';
+        input.parentNode.insertBefore(wrap, input);
+        wrap.appendChild(input);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'pw-toggle-btn';
+        btn.setAttribute('aria-label', 'Show password');
+        btn.innerHTML = '<i class="fas fa-eye"></i>';
+        btn.addEventListener('click', () => {
+            const showing = input.type === 'text';
+            input.type = showing ? 'password' : 'text';
+            btn.innerHTML = showing ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+        });
+        wrap.appendChild(btn);
+    });
+}
+
 // Main Initialization & DOM Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     checkAuthStatus();
+    initPasswordToggles();
 
     // Toggle Modal Views
     document.getElementById('show-login-link')?.addEventListener('click', (e) => {
@@ -191,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const city = document.getElementById('reg-city')?.value.trim() || '';
         const state = document.getElementById('reg-state')?.value.trim() || '';
         const postcode = document.getElementById('reg-postcode')?.value.trim() || '';
+        const newsletterOptIn = document.getElementById('reg-newsletter')?.checked || false;
 
         if (!email || !password || !name) {
             alert('Please fill in your name, email, and password.');
@@ -209,6 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     city,
                     state,
                     postcode,
+                    newsletterOptIn,
                     address: { street, city, state, postcode }
                 })
             });

@@ -344,7 +344,7 @@ app.get('/api/payment-config', (req, res) => {
 // ===============================================================
 app.post('/api/auth/register', async (req, res) => {
     console.log('--- REGISTER ATTEMPT ---', req.body);
-    const { email, password, name, address, street, city, state, postcode } = req.body;
+    const { email, password, name, address, street, city, state, postcode, newsletterOptIn } = req.body;
     if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
 
     const finalStreet = street || address?.street || null;
@@ -355,8 +355,8 @@ app.post('/api/auth/register', async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const [result] = await pool.query(
-            'INSERT INTO users (email, password_hash, name, street, city, state, postcode) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [email, hashedPassword, name || null, finalStreet, finalCity, finalState, finalPostcode]
+            'INSERT INTO users (email, password_hash, name, street, city, state, postcode, newsletter_opt_in) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [email, hashedPassword, name || null, finalStreet, finalCity, finalState, finalPostcode, !!newsletterOptIn]
         );
 
         const userId = result.insertId;
