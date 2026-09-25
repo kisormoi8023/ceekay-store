@@ -268,6 +268,22 @@ button.white:hover { background: var(--white); color: var(--ink); }
 .video-details { padding: 18px; }
 .video-details h5 { margin: 8px 0; }
 
+/* JOURNAL — written blog articles */
+#journal h2 { text-align: center; }
+#journal > p { text-align: center; color: var(--ink-soft); margin-bottom: 34px; }
+.journal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; text-align: left; }
+.journal-card { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); }
+.journal-card img { display: block; width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+.journal-card-body { padding: 22px; }
+.journal-eyebrow { display: inline-block; color: var(--gold); font-size: .7rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; }
+.journal-card-body h3 { margin: 0 0 12px; font-size: 1.1rem; }
+.journal-card-body p { color: var(--ink-soft); font-size: .88rem; line-height: 1.65; margin: 0 0 14px; }
+.journal-card-body p:last-child { margin-bottom: 0; }
+
+@media (max-width: 900px) {
+    .journal-grid { grid-template-columns: 1fr; }
+}
+
 /* FOOTER */
 footer { display: grid; grid-template-columns: 1.5fr repeat(3,1fr); gap: 38px; background: #eee7dd; }
 footer .logo { width: 135px; margin-bottom: 22px; }
