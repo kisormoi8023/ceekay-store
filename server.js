@@ -1631,6 +1631,52 @@ app.get('/api/admin/audit-log', requireAdmin, requireOwner, async (req, res) => 
 // ===============================================================
 // SERVE FRONTEND (Must always sit at the bottom of route definitions)
 // ===============================================================
+// Product catalog feed — a CSV Meta Commerce Manager polls on a schedule to
+// power catalog and dynamic-retargeting ads ("still interested in this?").
+// One row per active product, using its base price/default image rather
+// than expanding every colour/size variant into its own row.
+function csvEscape(value) {
+    const str = String(value ?? '');
+    return `"${str.replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`;
+}
+
+app.get('/catalog.csv', async (req, res) => {
+    const columns = ['id', 'title', 'description', 'availability', 'condition', 'price', 'link', 'image_link', 'brand'];
+    try {
+        const [products] = await pool.query('SELECT * FROM products WHERE active = TRUE ORDER BY product_id');
+        const rows = [columns.join(',')];
+
+        for (const p of products) {
+            const price = `${Number(p.base_retail_price || 0).toFixed(2)} AUD`;
+            const link = `${APP_BASE_URL}/sproduct.html?id=${encodeURIComponent(p.product_id)}`;
+            const imageLink = p.default_image
+                ? (/^https?:\/\//i.test(p.default_image) ? p.default_image : `${APP_BASE_URL}/${String(p.default_image).replace(/^\/+/, '')}`)
+                : '';
+            const availability = Number(p.stock_quantity) > 0 ? 'in stock' : 'out of stock';
+
+            rows.push([
+                csvEscape(p.product_id),
+                csvEscape(p.title),
+                csvEscape(p.description || p.title),
+                csvEscape(availability),
+                csvEscape('new'),
+                csvEscape(price),
+                csvEscape(link),
+                csvEscape(imageLink),
+                csvEscape('Ceekay')
+            ].join(','));
+        }
+
+        res.set('Content-Type', 'text/csv; charset=utf-8');
+        res.set('Cache-Control', 'public, max-age=3600');
+        res.send(rows.join('\n'));
+    } catch (err) {
+        console.error('Catalog feed error:', err.message);
+        res.set('Content-Type', 'text/csv; charset=utf-8');
+        res.status(500).send(columns.join(',') + '\n');
+    }
+});
+
 // Meta Pixel base snippet, generated from META_PIXEL_ID so the ID lives in
 // .env (like FB_PAGE_ID/IG_BUSINESS_ACCOUNT_ID) instead of being pasted into
 // every HTML file. Every customer-facing page loads this early in <head>.
