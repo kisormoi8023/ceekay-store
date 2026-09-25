@@ -170,6 +170,16 @@ function loadSingleProductPage(products) {
     const product = products.find(p => (p.product_id || p.id) === productId);
     if (!product) return;
 
+    if (typeof fbq === 'function') {
+        fbq('track', 'ViewContent', {
+            content_ids: [String(product.product_id || product.id)],
+            content_name: product.title || product.product_name,
+            content_type: 'product',
+            value: Number(product.base_retail_price || product.price || 0),
+            currency: 'AUD'
+        });
+    }
+
     const mainImg = document.getElementById('MainImg');
     const titleEl = document.getElementById('product-title') || document.querySelector('.single-pro-details h4');
     const priceEl = document.getElementById('product-price') || document.querySelector('.single-pro-details h2');
@@ -325,6 +335,16 @@ document.getElementById('coupon-apply-btn')?.addEventListener('click', async () 
 });
 
 async function addToCart(productId, productName, price, imageUrl, quantity = 1) {
+    if (typeof fbq === 'function') {
+        fbq('track', 'AddToCart', {
+            content_ids: [String(productId)],
+            content_name: productName,
+            content_type: 'product',
+            value: Number(price) * Number(quantity),
+            currency: 'AUD'
+        });
+    }
+
     if (window.currentUser) {
         try {
             await apiFetch('/api/cart/items', {
@@ -457,8 +477,16 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProducts();
     window.syncCartWithServer();
 
-    if (new URLSearchParams(location.search).get('checkout') === 'cancelled') {
+    const checkoutParams = new URLSearchParams(location.search);
+    if (checkoutParams.get('checkout') === 'cancelled') {
         alert('Payment cancelled — your cart is still here whenever you\'re ready.');
+        // Release the stock that was reserved for that abandoned session right away,
+        // instead of leaving it tied up until Stripe's own ~24h expiry fires.
+        const cancelledSessionId = checkoutParams.get('session_id');
+        if (cancelledSessionId) {
+            apiFetch('/api/checkout/stripe/cancel', { method: 'POST', body: { sessionId: cancelledSessionId } })
+                .catch((err) => console.error('Failed to release reserved stock:', err.message));
+        }
     }
 
     // Checkout Button — goes straight to Stripe's hosted checkout.
@@ -468,6 +496,11 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Please log in to proceed with checkout.');
             window.openAuthModal('login');
             return;
+        }
+
+        if (typeof fbq === 'function') {
+            const totalText = document.getElementById('cart-total')?.innerText.replace(/[^0-9.]/g, '');
+            fbq('track', 'InitiateCheckout', { value: Number(totalText) || undefined, currency: 'AUD' });
         }
 
         const original = checkoutBtn.innerText;

@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <script src="pixel.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title>Ceekay - Order Complete</title>
@@ -41,7 +42,8 @@
     <script src="config.js"></script>
     <script>
         (function () {
-            const sessionId = new URLSearchParams(location.search).get('session_id');
+            const params = new URLSearchParams(location.search);
+            const sessionId = params.get('session_id');
             const oc = document.getElementById('oc');
 
             function render(icon, title, msg, linkText, linkHref) {
@@ -52,6 +54,13 @@
                     `<a class="btn" href="${linkHref}">${linkText}</a>`;
             }
 
+            // A 100%-off coupon has nothing to charge, so checkout finalizes the order
+            // immediately and redirects here without ever creating a Stripe session.
+            if (params.get('free') === '1') {
+                render('fa-check-circle', 'Order confirmed', 'Your order is fully covered by your coupon and is now being processed.', 'Continue shopping', 'shop.html');
+                return;
+            }
+
             if (!sessionId) {
                 render('fa-exclamation-circle', 'Missing session', 'We could not find your checkout session.', 'Back to store', 'index.html');
                 return;
@@ -60,6 +69,9 @@
             apiFetch('/api/checkout/stripe/confirm', { method: 'POST', body: { sessionId } })
                 .then(function (data) {
                     if (data.paid) {
+                        if (typeof fbq === 'function') {
+                            fbq('track', 'Purchase', { value: data.total, currency: 'AUD' }, { eventID: 'order_' + data.orderId });
+                        }
                         render('fa-check-circle', 'Payment received', `Thanks! Order ${data.reference} is confirmed and now being processed.`, 'Continue shopping', 'shop.html');
                     } else {
                         render('fa-clock', 'Payment pending', 'Your payment has not completed yet. If money left your account it will confirm shortly.', 'View store', 'index.html');

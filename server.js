@@ -1005,6 +1005,40 @@ app.post('/api/orders/checkout', auth, async (req, res) => {
         const [items] = await connection.query('SELECT * FROM cart_items WHERE cart_id = ?', [carts[0].id]);
         if (items.length === 0) { await connection.rollback(); return res.status(400).json({ error: 'Cart is empty' }); }
 
+        const isStripe = paymentMethod === 'card' || paymentMethod === 'googlepay';
+
+        // A user can only have one Stripe payment pending at a time. Otherwise two
+        // checkouts from the same (unchanged-until-paid) cart — two tabs, or a retry
+        // after abandoning the first — would each reserve stock for the same items.
+        // Superseding the old one here (and giving its stock back) keeps that 1:1.
+        if (isStripe) {
+            const [pending] = await connection.query(
+                `SELECT id FROM orders WHERE user_id = ? AND payment_status = 'awaiting_payment'
+                 AND payment_method IN ('card', 'googlepay') FOR UPDATE`,
+                [req.user.id]
+            );
+            for (const p of pending) {
+                await releaseOrderStock(connection, p.id);
+                await connection.query("UPDATE orders SET payment_status = 'failed', status = 'cancelled' WHERE id = ?", [p.id]);
+            }
+        }
+
+        // Lock the product rows (in a stable order, so two concurrent checkouts that
+        // overlap on products can't deadlock on each other) and verify there's enough
+        // stock before an order — and a Stripe session — gets created for it.
+        const sortedItems = [...items].sort((a, b) => String(a.product_id).localeCompare(String(b.product_id)));
+        for (const item of sortedItems) {
+            const [[product]] = await connection.query(
+                'SELECT stock_quantity FROM products WHERE product_id = ? FOR UPDATE', [item.product_id]
+            );
+            if (!product || product.stock_quantity < item.quantity) {
+                await connection.rollback();
+                return res.status(409).json({
+                    error: `Not enough stock for "${item.product_name || item.product_id}" (${product ? product.stock_quantity : 0} left).`
+                });
+            }
+        }
+
         const subtotal = items.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
 
         let discount = 0;
@@ -1023,8 +1057,6 @@ app.post('/api/orders/checkout', auth, async (req, res) => {
         }
         const total = subtotal - discount;
 
-        const isStripe = paymentMethod === 'card' || paymentMethod === 'googlepay';
-
         const [orderResult] = await connection.query(
             `INSERT INTO orders (user_id, total_amount, discount_amount, coupon_code, payment_method, payment_status, status)
              VALUES (?, ?, ?, ?, ?, 'awaiting_payment', 'pending')`,
@@ -1039,14 +1071,14 @@ app.post('/api/orders/checkout', auth, async (req, res) => {
                 'INSERT INTO order_items (order_id, product_id, product_name, price, quantity) VALUES (?, ?, ?, ?, ?)',
                 [orderId, item.product_id, item.product_name, item.price, item.quantity]
             );
-            // For Stripe the stock is decremented and the cart cleared only once
-            // payment actually succeeds (see finalizePaidOrder).
-            if (!isStripe) {
-                await connection.query(
-                    'UPDATE products SET stock_quantity = GREATEST(stock_quantity - ?, 0) WHERE product_id = ?',
-                    [item.quantity, item.product_id]
-                );
-            }
+            // Stock is reserved as soon as the order exists — for every payment method,
+            // not just Stripe — so a second checkout can't sell the same units while
+            // this one is still awaiting payment. Reservations are given back by
+            // releaseOrderStock() if the order is cancelled, or Stripe payment fails/expires.
+            await connection.query(
+                'UPDATE products SET stock_quantity = stock_quantity - ? WHERE product_id = ?',
+                [item.quantity, item.product_id]
+            );
         }
 
         if (!isStripe) {
@@ -1057,25 +1089,40 @@ app.post('/api/orders/checkout', auth, async (req, res) => {
         await connection.commit();
 
         if (isStripe) {
-            const [[userRow]] = await pool.query('SELECT email FROM users WHERE id = ?', [req.user.id]);
-            const session = await stripe.checkout.sessions.create({
-                mode: 'payment',
-                payment_method_types: ['card'], // Google Pay / Apple Pay ride on this automatically
-                customer_email: userRow?.email || undefined,
-                client_reference_id: String(orderId),
-                metadata: { orderId: String(orderId), reference },
-                line_items: [{
-                    quantity: 1,
-                    price_data: {
-                        currency: STRIPE_CURRENCY,
-                        unit_amount: Math.round(total * 100),
-                        product_data: { name: `Ceekay order ${reference}` }
-                    }
-                }],
-                success_url: `${APP_BASE_URL}/order-complete.html?session_id={CHECKOUT_SESSION_ID}`,
-                cancel_url: `${APP_BASE_URL}/cart.html?checkout=cancelled`
-            });
-            return res.json({ ok: true, orderId, reference, total, paymentMethod, redirectUrl: session.url });
+            // Nothing to charge (e.g. a 100%-off coupon) — there's no Stripe session to
+            // create, so finalize the order immediately instead of calling Stripe.
+            if (total <= 0) {
+                await finalizePaidOrder(orderId);
+                return res.json({ ok: true, orderId, reference, total: 0, paymentMethod, redirectUrl: `${APP_BASE_URL}/order-complete.html?free=1` });
+            }
+            try {
+                const [[userRow]] = await pool.query('SELECT email FROM users WHERE id = ?', [req.user.id]);
+                const session = await stripe.checkout.sessions.create({
+                    mode: 'payment',
+                    payment_method_types: ['card'], // Google Pay / Apple Pay ride on this automatically
+                    customer_email: userRow?.email || undefined,
+                    client_reference_id: String(orderId),
+                    metadata: { orderId: String(orderId), reference },
+                    line_items: [{
+                        quantity: 1,
+                        price_data: {
+                            currency: STRIPE_CURRENCY,
+                            unit_amount: Math.round(total * 100),
+                            product_data: { name: `Ceekay order ${reference}` }
+                        }
+                    }],
+                    success_url: `${APP_BASE_URL}/order-complete.html?session_id={CHECKOUT_SESSION_ID}`,
+                    cancel_url: `${APP_BASE_URL}/cart.html?checkout=cancelled&session_id={CHECKOUT_SESSION_ID}`
+                }, { idempotencyKey: `checkout-session-${orderId}` });
+                return res.json({ ok: true, orderId, reference, total, paymentMethod, redirectUrl: session.url });
+            } catch (stripeErr) {
+                // Stripe refused the session (e.g. the total is below its minimum
+                // chargeable amount). Nothing was charged, so give the stock back and
+                // drop the order instead of leaving a dangling "awaiting_payment" row.
+                console.error('stripe session creation failed:', stripeErr.message);
+                await failPendingOrder(orderId);
+                return res.status(502).json({ error: 'Could not start Stripe checkout. Your cart has not been charged — please try again.' });
+            }
         }
 
         const response = { ok: true, orderId, reference, total, discount, paymentMethod, paymentStatus: 'awaiting_payment' };
@@ -1098,8 +1145,19 @@ app.post('/api/orders/checkout', auth, async (req, res) => {
     }
 });
 
-// Finalize an order once its payment has actually succeeded: decrement stock,
-// clear the buyer's cart, flip the order to paid/processing. Idempotent.
+// Gives back the stock reserved for an order's items — used when an order is
+// superseded, cancelled, or its Stripe payment fails/expires without ever paying.
+async function releaseOrderStock(conn, orderId) {
+    const [items] = await conn.query('SELECT product_id, quantity FROM order_items WHERE order_id = ?', [orderId]);
+    for (const it of items) {
+        await conn.query('UPDATE products SET stock_quantity = stock_quantity + ? WHERE product_id = ?', [it.quantity, it.product_id]);
+    }
+}
+
+// Finalize an order once its payment has actually succeeded: clear the buyer's
+// cart and flip the order to paid/processing. Stock was already reserved when
+// the order was created (see /api/orders/checkout), so there's none to touch
+// here. Idempotent.
 async function finalizePaidOrder(orderId) {
     const conn = await pool.getConnection();
     try {
@@ -1108,19 +1166,36 @@ async function finalizePaidOrder(orderId) {
         if (!order) { await conn.rollback(); return { ok: false, reason: 'not_found' }; }
         if (order.payment_status === 'paid') { await conn.rollback(); return { ok: true, already: true }; }
 
-        const [oitems] = await conn.query('SELECT * FROM order_items WHERE order_id = ?', [orderId]);
-        for (const it of oitems) {
-            await conn.query(
-                'UPDATE products SET stock_quantity = GREATEST(stock_quantity - ?, 0) WHERE product_id = ?',
-                [it.quantity, it.product_id]
-            );
-        }
         const [carts] = await conn.query('SELECT id FROM carts WHERE user_id = ?', [order.user_id]);
         if (carts[0]) {
             await conn.query('DELETE FROM cart_items WHERE cart_id = ?', [carts[0].id]);
             await conn.query('UPDATE carts SET coupon_code = NULL WHERE id = ?', [carts[0].id]);
         }
         await conn.query("UPDATE orders SET payment_status = 'paid', status = 'processing' WHERE id = ?", [orderId]);
+        await conn.commit();
+        return { ok: true };
+    } catch (e) {
+        await conn.rollback();
+        throw e;
+    } finally {
+        conn.release();
+    }
+}
+
+// Called when a Stripe Checkout Session expires or its (delayed) payment fails,
+// or when Stripe itself rejected creating the session: gives back the stock that
+// was reserved when the order was created and marks the order failed/cancelled.
+// Idempotent — a no-op if the order already paid (via another event) or was
+// already released.
+async function failPendingOrder(orderId) {
+    const conn = await pool.getConnection();
+    try {
+        await conn.beginTransaction();
+        const [[order]] = await conn.query('SELECT * FROM orders WHERE id = ? FOR UPDATE', [orderId]);
+        if (!order || order.payment_status !== 'awaiting_payment') { await conn.rollback(); return { ok: true, skipped: true }; }
+
+        await releaseOrderStock(conn, orderId);
+        await conn.query("UPDATE orders SET payment_status = 'failed', status = 'cancelled' WHERE id = ?", [orderId]);
         await conn.commit();
         return { ok: true };
     } catch (e) {
@@ -1158,16 +1233,54 @@ app.post('/api/checkout/stripe/confirm', async (req, res) => {
     }
 });
 
+// Called by cart.html when Stripe redirects the buyer back after they cancel on
+// the Checkout page. An abandoned-but-still-open Stripe session otherwise stays
+// "open" (and its stock reserved) for up to 24h until Stripe's own expiry fires —
+// this releases that reservation immediately instead of making other customers
+// wait. Same no-auth-required reasoning as /confirm above: the caller supplies
+// the unguessable Stripe session id, and we only ever release, never charge.
+app.post('/api/checkout/stripe/cancel', async (req, res) => {
+    if (!stripe) return res.status(400).json({ error: 'Stripe is not configured' });
+    const sessionId = String(req.body.sessionId || '');
+    if (!sessionId.startsWith('cs_')) return res.status(400).json({ error: 'A valid sessionId is required' });
+    try {
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        const orderId = Number(session.metadata?.orderId || session.client_reference_id);
+        if (!orderId) return res.status(400).json({ error: 'Unrecognised checkout session' });
+
+        if (session.status === 'open') {
+            try { await stripe.checkout.sessions.expire(sessionId); }
+            catch (e) { /* already expiring/completed elsewhere — fine, still release below */ }
+        }
+        await failPendingOrder(orderId);
+        res.json({ ok: true });
+    } catch (err) {
+        console.error('stripe cancel error:', err.message);
+        res.status(500).json({ error: 'Could not release reserved stock' });
+    }
+});
+
 // Stripe webhook — authoritative payment confirmation. Raw body (parser skipped above).
 app.post('/api/webhooks/stripe', express.raw({ type: '*/*' }), async (req, res) => {
     if (!stripe) return res.status(400).send('stripe not configured');
+
+    // Without a webhook secret, events can't be signature-verified — anyone who
+    // finds this URL could POST a fake "paid" event and mark any order paid for
+    // free. The unverified fallback below is for local dev only, so it's refused
+    // outright once NODE_ENV=production instead of silently trusting the body.
+    if (!STRIPE.webhookSecret) {
+        if (process.env.NODE_ENV === 'production') {
+            console.error('stripe webhook rejected: STRIPE_WEBHOOK_SECRET is not set in production');
+            return res.status(500).send('Webhook not configured');
+        }
+        console.warn('⚠  STRIPE_WEBHOOK_SECRET not set — accepting this webhook UNVERIFIED (dev only).');
+    }
+
     let event;
     try {
-        if (STRIPE.webhookSecret) {
-            event = stripe.webhooks.constructEvent(req.body, req.headers['stripe-signature'], STRIPE.webhookSecret);
-        } else {
-            event = JSON.parse(req.body.toString('utf8')); // dev only, unverified
-        }
+        event = STRIPE.webhookSecret
+            ? stripe.webhooks.constructEvent(req.body, req.headers['stripe-signature'], STRIPE.webhookSecret)
+            : JSON.parse(req.body.toString('utf8')); // dev only, unverified — blocked above when NODE_ENV=production
     } catch (err) {
         console.error('stripe webhook verification failed:', err.message);
         return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -1179,6 +1292,13 @@ app.post('/api/webhooks/stripe', express.raw({ type: '*/*' }), async (req, res) 
         if (orderId && session.payment_status === 'paid') {
             try { await finalizePaidOrder(orderId); }
             catch (e) { console.error('finalize from webhook failed:', e.message); }
+        }
+    } else if (event.type === 'checkout.session.expired' || event.type === 'checkout.session.async_payment_failed') {
+        const session = event.data.object;
+        const orderId = Number(session.metadata?.orderId || session.client_reference_id);
+        if (orderId) {
+            try { await failPendingOrder(orderId); }
+            catch (e) { console.error('release stock from webhook failed:', e.message); }
         }
     }
     res.json({ received: true });
@@ -1511,6 +1631,28 @@ app.get('/api/admin/audit-log', requireAdmin, requireOwner, async (req, res) => 
 // ===============================================================
 // SERVE FRONTEND (Must always sit at the bottom of route definitions)
 // ===============================================================
+// Meta Pixel base snippet, generated from META_PIXEL_ID so the ID lives in
+// .env (like FB_PAGE_ID/IG_BUSINESS_ACCOUNT_ID) instead of being pasted into
+// every HTML file. Every customer-facing page loads this early in <head>.
+const META_PIXEL_ID = process.env.META_PIXEL_ID || '';
+app.get('/pixel.js', (req, res) => {
+    res.set('Content-Type', 'application/javascript');
+    res.set('Cache-Control', 'no-store');
+    if (!META_PIXEL_ID) {
+        return res.send('// Meta Pixel not configured — set META_PIXEL_ID in .env');
+    }
+    res.send(`!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '${META_PIXEL_ID}');
+fbq('track', 'PageView');`);
+});
+
 // Inject per-product Open Graph tags before serving sproduct.html, so a link
 // shared to Facebook/WhatsApp/etc. shows a real preview card (photo, title,
 // price) instead of a blank one — Facebook's link scraper doesn't run our
