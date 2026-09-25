@@ -570,5 +570,1024 @@
       }
     ],
     "description": "A relaxed sleeveless two-piece set with contrast top-stitch detailing — a longline round-neck top over matching wide-leg trousers. Loose, easy-wear casual fit. Available in nine colourways; sizes S to 3XL. Imported."
+  },
+  {
+    "id": "p007",
+    "title": "Mazi Men's African Print Button-Up Shirt (Ebony Tan Botanic)",
+    "category": "men",
+    "vendor_url": "https://diyanu.com/products/mazi-mens-african-print-button-up-shirt-ebony-tan-botanic-1",
+    "default_image": "img/p007_1.jpg",
+    "base_retail_price": 164.95,
+    "variants": [
+      {
+        "sku": "CK-P007-BLACKS",
+        "size": "S",
+        "color": "Black",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p007_1.jpg"
+      },
+      {
+        "sku": "CK-P007-BLACKM",
+        "size": "M",
+        "color": "Black",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p007_1.jpg"
+      },
+      {
+        "sku": "CK-P007-BLACKL",
+        "size": "L",
+        "color": "Black",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p007_1.jpg"
+      },
+      {
+        "sku": "CK-P007-BLACKXL",
+        "size": "XL",
+        "color": "Black",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p007_1.jpg"
+      },
+      {
+        "sku": "CK-P007-BLACKXXL",
+        "size": "XXL",
+        "color": "Black",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p007_1.jpg"
+      },
+      {
+        "sku": "CK-P007-BLACK3XL",
+        "size": "3XL",
+        "color": "Black",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p007_1.jpg"
+      }
+    ],
+    "description": "Modern African-print button-up shirt with a bold Ebony Tan Botanic pattern. A statement piece that blends heritage with everyday style. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p008",
+    "title": "Naeem Men's African Print Button-Up Shirt (Navy Bohemian Multipattern)",
+    "category": "men",
+    "vendor_url": "https://diyanu.com/products/naeem-mens-african-print-button-up-shirt-navy-bohemian-multipattern-1",
+    "default_image": "img/p008_1.jpg",
+    "base_retail_price": 164.95,
+    "variants": [
+      {
+        "sku": "CK-P008-MULTIS",
+        "size": "S",
+        "color": "Multi",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p008_1.jpg"
+      },
+      {
+        "sku": "CK-P008-MULTIM",
+        "size": "M",
+        "color": "Multi",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p008_1.jpg"
+      },
+      {
+        "sku": "CK-P008-MULTIL",
+        "size": "L",
+        "color": "Multi",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p008_1.jpg"
+      },
+      {
+        "sku": "CK-P008-MULTIXL",
+        "size": "XL",
+        "color": "Multi",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p008_1.jpg"
+      },
+      {
+        "sku": "CK-P008-MULTIXXL",
+        "size": "XXL",
+        "color": "Multi",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p008_1.jpg"
+      },
+      {
+        "sku": "CK-P008-MULTI3XL",
+        "size": "3XL",
+        "color": "Multi",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p008_1.jpg"
+      }
+    ],
+    "description": "Modern African-print button-up shirt with a bold Navy Bohemian Multipattern pattern. A statement piece that blends heritage with everyday style. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p009",
+    "title": "Oumar Men's African Print Mandarin Button-Up Shirt (Green Navy Kente)",
+    "category": "men",
+    "vendor_url": "https://diyanu.com/products/oumar-mens-african-print-mandarin-button-up-shirt-green-navy-kente",
+    "default_image": "img/p009_1.jpg",
+    "base_retail_price": 154.95,
+    "variants": [
+      {
+        "sku": "CK-P009-MULTICS",
+        "size": "S",
+        "color": "Multicolor",
+        "vendor_price": 84.1,
+        "retail_price": 154.95,
+        "image": "img/p009_1.jpg"
+      },
+      {
+        "sku": "CK-P009-MULTICM",
+        "size": "M",
+        "color": "Multicolor",
+        "vendor_price": 84.1,
+        "retail_price": 154.95,
+        "image": "img/p009_1.jpg"
+      },
+      {
+        "sku": "CK-P009-MULTICL",
+        "size": "L",
+        "color": "Multicolor",
+        "vendor_price": 84.1,
+        "retail_price": 154.95,
+        "image": "img/p009_1.jpg"
+      },
+      {
+        "sku": "CK-P009-MULTICXL",
+        "size": "XL",
+        "color": "Multicolor",
+        "vendor_price": 84.1,
+        "retail_price": 154.95,
+        "image": "img/p009_1.jpg"
+      },
+      {
+        "sku": "CK-P009-MULTICXXL",
+        "size": "XXL",
+        "color": "Multicolor",
+        "vendor_price": 84.1,
+        "retail_price": 154.95,
+        "image": "img/p009_1.jpg"
+      },
+      {
+        "sku": "CK-P009-MULTIC3XL",
+        "size": "3XL",
+        "color": "Multicolor",
+        "vendor_price": 84.1,
+        "retail_price": 154.95,
+        "image": "img/p009_1.jpg"
+      }
+    ],
+    "description": "Modern African-print mandarin button-up shirt with a bold Green Navy Kente pattern. A statement piece that blends heritage with everyday style. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p010",
+    "title": "Abiade Men's African Print Button-Up Shirt (Neutral Kuba Geometric)",
+    "category": "men",
+    "vendor_url": "https://diyanu.com/products/abiade-mens-african-print-button-up-shirt-neutral-kuba-geometric-1",
+    "default_image": "img/p010_1.jpg",
+    "base_retail_price": 164.95,
+    "variants": [
+      {
+        "sku": "CK-P010-MULTICS",
+        "size": "S",
+        "color": "Multicolor/Black/Tan",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p010_1.jpg"
+      },
+      {
+        "sku": "CK-P010-MULTICM",
+        "size": "M",
+        "color": "Multicolor/Black/Tan",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p010_1.jpg"
+      },
+      {
+        "sku": "CK-P010-MULTICL",
+        "size": "L",
+        "color": "Multicolor/Black/Tan",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p010_1.jpg"
+      },
+      {
+        "sku": "CK-P010-MULTICXL",
+        "size": "XL",
+        "color": "Multicolor/Black/Tan",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p010_1.jpg"
+      },
+      {
+        "sku": "CK-P010-MULTICXXL",
+        "size": "XXL",
+        "color": "Multicolor/Black/Tan",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p010_1.jpg"
+      },
+      {
+        "sku": "CK-P010-MULTIC3XL",
+        "size": "3XL",
+        "color": "Multicolor/Black/Tan",
+        "vendor_price": 92.66,
+        "retail_price": 164.95,
+        "image": "img/p010_1.jpg"
+      }
+    ],
+    "description": "Modern African-print button-up shirt with a bold Neutral Kuba Geometric pattern. A statement piece that blends heritage with everyday style. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p011",
+    "title": "Oumar Men's African Print Mandarin Button-up Shirt (Purple Multicolor Tribal)",
+    "category": "men",
+    "vendor_url": "https://diyanu.com/products/oumar-mens-african-print-mandarin-button-up-shirt-purple-multicolor-tribal",
+    "default_image": "img/p011_1.jpg",
+    "base_retail_price": 94.95,
+    "variants": [
+      {
+        "sku": "CK-P011-MULTICS",
+        "size": "S",
+        "color": "Multicolor",
+        "vendor_price": 41.34,
+        "retail_price": 94.95,
+        "image": "img/p011_1.jpg"
+      },
+      {
+        "sku": "CK-P011-MULTICM",
+        "size": "M",
+        "color": "Multicolor",
+        "vendor_price": 41.34,
+        "retail_price": 94.95,
+        "image": "img/p011_1.jpg"
+      },
+      {
+        "sku": "CK-P011-MULTICL",
+        "size": "L",
+        "color": "Multicolor",
+        "vendor_price": 41.34,
+        "retail_price": 94.95,
+        "image": "img/p011_1.jpg"
+      },
+      {
+        "sku": "CK-P011-MULTICXL",
+        "size": "XL",
+        "color": "Multicolor",
+        "vendor_price": 41.34,
+        "retail_price": 94.95,
+        "image": "img/p011_1.jpg"
+      },
+      {
+        "sku": "CK-P011-MULTICXXL",
+        "size": "XXL",
+        "color": "Multicolor",
+        "vendor_price": 41.34,
+        "retail_price": 94.95,
+        "image": "img/p011_1.jpg"
+      },
+      {
+        "sku": "CK-P011-MULTIC3XL",
+        "size": "3XL",
+        "color": "Multicolor",
+        "vendor_price": 41.34,
+        "retail_price": 94.95,
+        "image": "img/p011_1.jpg"
+      }
+    ],
+    "description": "Modern African-print mandarin button-up shirt with a bold Purple Multicolor Tribal pattern. A statement piece that blends heritage with everyday style. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p012",
+    "title": "Tahir Men's African Print Button-Up shirt (Orange Blue Multipattern)",
+    "category": "men",
+    "vendor_url": "https://diyanu.com/products/tahir-mens-african-print-button-up-shirt-orange-blue-multipattern",
+    "default_image": "img/p012_1.jpg",
+    "base_retail_price": 94.95,
+    "variants": [
+      {
+        "sku": "CK-P012-MULTIPS",
+        "size": "S",
+        "color": "Multipattern",
+        "vendor_price": 41.34,
+        "retail_price": 94.95,
+        "image": "img/p012_1.jpg"
+      },
+      {
+        "sku": "CK-P012-MULTIPM",
+        "size": "M",
+        "color": "Multipattern",
+        "vendor_price": 41.34,
+        "retail_price": 94.95,
+        "image": "img/p012_1.jpg"
+      },
+      {
+        "sku": "CK-P012-MULTIPL",
+        "size": "L",
+        "color": "Multipattern",
+        "vendor_price": 41.34,
+        "retail_price": 94.95,
+        "image": "img/p012_1.jpg"
+      },
+      {
+        "sku": "CK-P012-MULTIPXL",
+        "size": "XL",
+        "color": "Multipattern",
+        "vendor_price": 41.34,
+        "retail_price": 94.95,
+        "image": "img/p012_1.jpg"
+      },
+      {
+        "sku": "CK-P012-MULTIPXXL",
+        "size": "XXL",
+        "color": "Multipattern",
+        "vendor_price": 41.34,
+        "retail_price": 94.95,
+        "image": "img/p012_1.jpg"
+      },
+      {
+        "sku": "CK-P012-MULTIP3XL",
+        "size": "3XL",
+        "color": "Multipattern",
+        "vendor_price": 41.34,
+        "retail_price": 94.95,
+        "image": "img/p012_1.jpg"
+      }
+    ],
+    "description": "Modern African-print button-up shirt with a bold Orange Blue Multipattern pattern. A statement piece that blends heritage with everyday style. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p013",
+    "title": "Dubaku Men's Traditional African Embroidery Shirt (White)",
+    "category": "men",
+    "vendor_url": "https://diyanu.com/products/dubaku-mens-traditional-african-top-white-blue-embroidery",
+    "default_image": "img/p013_1.jpg",
+    "base_retail_price": 184.95,
+    "variants": [
+      {
+        "sku": "CK-P013-WHITES",
+        "size": "S",
+        "color": "White",
+        "vendor_price": 106.91,
+        "retail_price": 184.95,
+        "image": "img/p013_v1.jpg"
+      },
+      {
+        "sku": "CK-P013-WHITEM",
+        "size": "M",
+        "color": "White",
+        "vendor_price": 106.91,
+        "retail_price": 184.95,
+        "image": "img/p013_v2.jpg"
+      },
+      {
+        "sku": "CK-P013-WHITEL",
+        "size": "L",
+        "color": "White",
+        "vendor_price": 106.91,
+        "retail_price": 184.95,
+        "image": "img/p013_v3.jpg"
+      },
+      {
+        "sku": "CK-P013-WHITEXL",
+        "size": "XL",
+        "color": "White",
+        "vendor_price": 106.91,
+        "retail_price": 184.95,
+        "image": "img/p013_v4.jpg"
+      },
+      {
+        "sku": "CK-P013-WHITEXXL",
+        "size": "XXL",
+        "color": "White",
+        "vendor_price": 106.91,
+        "retail_price": 184.95,
+        "image": "img/p013_v5.jpg"
+      },
+      {
+        "sku": "CK-P013-WHITE3XL",
+        "size": "3XL",
+        "color": "White",
+        "vendor_price": 106.91,
+        "retail_price": 184.95,
+        "image": "img/p013_v6.jpg"
+      }
+    ],
+    "description": "Traditional African shirt in crisp white with intricate embroidery at the neckline. Perfect for celebrations, church and special occasions. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p014",
+    "title": "Ajisomo Men's African Print Tunic (White Cobalt Tribal)",
+    "category": "men",
+    "vendor_url": "https://diyanu.com/products/ajisomo-mens-african-print-tunic-white-cobalt-tribal",
+    "default_image": "img/p014_1.jpg",
+    "base_retail_price": 154.95,
+    "variants": [
+      {
+        "sku": "CK-P014-BLUES",
+        "size": "S",
+        "color": "Blue",
+        "vendor_price": 84.1,
+        "retail_price": 154.95,
+        "image": "img/p014_1.jpg"
+      },
+      {
+        "sku": "CK-P014-BLUEM",
+        "size": "M",
+        "color": "Blue",
+        "vendor_price": 84.1,
+        "retail_price": 154.95,
+        "image": "img/p014_1.jpg"
+      },
+      {
+        "sku": "CK-P014-BLUEL",
+        "size": "L",
+        "color": "Blue",
+        "vendor_price": 84.1,
+        "retail_price": 154.95,
+        "image": "img/p014_1.jpg"
+      },
+      {
+        "sku": "CK-P014-BLUEXL",
+        "size": "XL",
+        "color": "Blue",
+        "vendor_price": 84.1,
+        "retail_price": 154.95,
+        "image": "img/p014_1.jpg"
+      },
+      {
+        "sku": "CK-P014-BLUEXXL",
+        "size": "XXL",
+        "color": "Blue",
+        "vendor_price": 84.1,
+        "retail_price": 154.95,
+        "image": "img/p014_1.jpg"
+      },
+      {
+        "sku": "CK-P014-BLUE3XL",
+        "size": "3XL",
+        "color": "Blue",
+        "vendor_price": 84.1,
+        "retail_price": 154.95,
+        "image": "img/p014_1.jpg"
+      }
+    ],
+    "description": "Relaxed African-print tunic shirt in a White Cobalt Tribal pattern. Pair it with our linen pants for a complete traditional look. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p015",
+    "title": "Asan Men's Linen Blend Pants (Olive)",
+    "category": "men",
+    "vendor_url": "https://diyanu.com/products/asan-mens-linen-pants-olive",
+    "default_image": "img/p015_1.jpg",
+    "base_retail_price": 174.95,
+    "variants": [
+      {
+        "sku": "CK-P015-GREENS",
+        "size": "S",
+        "color": "Green",
+        "vendor_price": 98.36,
+        "retail_price": 174.95,
+        "image": "img/p015_v1.jpg"
+      },
+      {
+        "sku": "CK-P015-GREENM",
+        "size": "M",
+        "color": "Green",
+        "vendor_price": 98.36,
+        "retail_price": 174.95,
+        "image": "img/p015_v2.jpg"
+      },
+      {
+        "sku": "CK-P015-GREENL",
+        "size": "L",
+        "color": "Green",
+        "vendor_price": 98.36,
+        "retail_price": 174.95,
+        "image": "img/p015_v3.jpg"
+      },
+      {
+        "sku": "CK-P015-GREENXL",
+        "size": "XL",
+        "color": "Green",
+        "vendor_price": 98.36,
+        "retail_price": 174.95,
+        "image": "img/p015_v4.jpg"
+      },
+      {
+        "sku": "CK-P015-GREENXXL",
+        "size": "XXL",
+        "color": "Green",
+        "vendor_price": 98.36,
+        "retail_price": 174.95,
+        "image": "img/p015_1.jpg"
+      },
+      {
+        "sku": "CK-P015-GREEN3XL",
+        "size": "3XL",
+        "color": "Green",
+        "vendor_price": 98.36,
+        "retail_price": 174.95,
+        "image": "img/p015_1.jpg"
+      }
+    ],
+    "description": "Relaxed linen-blend pants in olive. The perfect partner for our African-print tunics and shirts. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p016",
+    "title": "Kianga Women's African Print Shirt Dress (Navy Tan Tribal)",
+    "category": "women",
+    "vendor_url": "https://diyanu.com/products/kianga-womens-african-print-shirt-dress-navy-tan-tribal",
+    "default_image": "img/p016_1.jpg",
+    "base_retail_price": 214.95,
+    "variants": [
+      {
+        "sku": "CK-P016-NAVYXS",
+        "size": "XS",
+        "color": "Navy",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p016_1.jpg"
+      },
+      {
+        "sku": "CK-P016-NAVYS",
+        "size": "S",
+        "color": "Navy",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p016_1.jpg"
+      },
+      {
+        "sku": "CK-P016-NAVYM",
+        "size": "M",
+        "color": "Navy",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p016_1.jpg"
+      },
+      {
+        "sku": "CK-P016-NAVYL",
+        "size": "L",
+        "color": "Navy",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p016_1.jpg"
+      },
+      {
+        "sku": "CK-P016-NAVYXL",
+        "size": "XL",
+        "color": "Navy",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p016_1.jpg"
+      },
+      {
+        "sku": "CK-P016-NAVY1X",
+        "size": "1X",
+        "color": "Navy",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p016_1.jpg"
+      },
+      {
+        "sku": "CK-P016-NAVY2X",
+        "size": "2X",
+        "color": "Navy",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p016_1.jpg"
+      },
+      {
+        "sku": "CK-P016-NAVY3X",
+        "size": "3X",
+        "color": "Navy",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p016_1.jpg"
+      }
+    ],
+    "description": "African-print shirt dress in a vibrant Navy Tan Tribal pattern, designed to celebrate culture with a contemporary silhouette. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p017",
+    "title": "Monife Women's African Print Pullover Shirt Dress (Navy Bohemian Multipattern)",
+    "category": "women",
+    "vendor_url": "https://diyanu.com/products/monife-womens-african-print-pullover-shirt-dress-navy-bohemian-multipattern",
+    "default_image": "img/p017_1.jpg",
+    "base_retail_price": 214.95,
+    "variants": [
+      {
+        "sku": "CK-P017-MULTIXS",
+        "size": "XS",
+        "color": "Multi",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p017_1.jpg"
+      },
+      {
+        "sku": "CK-P017-MULTIS",
+        "size": "S",
+        "color": "Multi",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p017_1.jpg"
+      },
+      {
+        "sku": "CK-P017-MULTIM",
+        "size": "M",
+        "color": "Multi",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p017_1.jpg"
+      },
+      {
+        "sku": "CK-P017-MULTIL",
+        "size": "L",
+        "color": "Multi",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p017_1.jpg"
+      },
+      {
+        "sku": "CK-P017-MULTIXL",
+        "size": "XL",
+        "color": "Multi",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p017_1.jpg"
+      },
+      {
+        "sku": "CK-P017-MULTI1X",
+        "size": "1X",
+        "color": "Multi",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p017_1.jpg"
+      },
+      {
+        "sku": "CK-P017-MULTI2X",
+        "size": "2X",
+        "color": "Multi",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p017_1.jpg"
+      },
+      {
+        "sku": "CK-P017-MULTI3X",
+        "size": "3X",
+        "color": "Multi",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p017_1.jpg"
+      }
+    ],
+    "description": "African-print pullover shirt dress in a vibrant Navy Bohemian Multipattern pattern, designed to celebrate culture with a contemporary silhouette. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p018",
+    "title": "Oneyka Women's African Print Cut-Out Maxi Dress (Gold Cream Tribal)",
+    "category": "women",
+    "vendor_url": "https://diyanu.com/products/oneyka-womens-african-print-tie-back-maxi-dress-gold-cream-tribal",
+    "default_image": "img/p018_1.jpg",
+    "base_retail_price": 214.95,
+    "variants": [
+      {
+        "sku": "CK-P018-GOLDXS",
+        "size": "XS",
+        "color": "Gold",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p018_1.jpg"
+      },
+      {
+        "sku": "CK-P018-GOLDS",
+        "size": "S",
+        "color": "Gold",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p018_1.jpg"
+      },
+      {
+        "sku": "CK-P018-GOLDM",
+        "size": "M",
+        "color": "Gold",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p018_1.jpg"
+      },
+      {
+        "sku": "CK-P018-GOLDL",
+        "size": "L",
+        "color": "Gold",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p018_1.jpg"
+      },
+      {
+        "sku": "CK-P018-GOLDXL",
+        "size": "XL",
+        "color": "Gold",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p018_1.jpg"
+      },
+      {
+        "sku": "CK-P018-GOLD1X",
+        "size": "1X",
+        "color": "Gold",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p018_1.jpg"
+      },
+      {
+        "sku": "CK-P018-GOLD2X",
+        "size": "2X",
+        "color": "Gold",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p018_1.jpg"
+      },
+      {
+        "sku": "CK-P018-GOLD3X",
+        "size": "3X",
+        "color": "Gold",
+        "vendor_price": 126.87,
+        "retail_price": 214.95,
+        "image": "img/p018_1.jpg"
+      }
+    ],
+    "description": "African-print cut-out maxi dress in a vibrant Gold Cream Tribal pattern, designed to celebrate culture with a contemporary silhouette. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p019",
+    "title": "Ronke Women's African Print Maxi Dress (Royal Blue Geometric)",
+    "category": "women",
+    "vendor_url": "https://diyanu.com/products/ronke-womens-african-print-maxi-dress-royal-blue-geometric",
+    "default_image": "img/p019_1.jpg",
+    "base_retail_price": 254.95,
+    "variants": [
+      {
+        "sku": "CK-P019-BLUEXS",
+        "size": "XS",
+        "color": "Blue",
+        "vendor_price": 155.38,
+        "retail_price": 254.95,
+        "image": "img/p019_1.jpg"
+      },
+      {
+        "sku": "CK-P019-BLUES",
+        "size": "S",
+        "color": "Blue",
+        "vendor_price": 155.38,
+        "retail_price": 254.95,
+        "image": "img/p019_1.jpg"
+      },
+      {
+        "sku": "CK-P019-BLUEM",
+        "size": "M",
+        "color": "Blue",
+        "vendor_price": 155.38,
+        "retail_price": 254.95,
+        "image": "img/p019_1.jpg"
+      },
+      {
+        "sku": "CK-P019-BLUEL",
+        "size": "L",
+        "color": "Blue",
+        "vendor_price": 155.38,
+        "retail_price": 254.95,
+        "image": "img/p019_1.jpg"
+      },
+      {
+        "sku": "CK-P019-BLUEXL",
+        "size": "XL",
+        "color": "Blue",
+        "vendor_price": 155.38,
+        "retail_price": 254.95,
+        "image": "img/p019_1.jpg"
+      },
+      {
+        "sku": "CK-P019-BLUE1X",
+        "size": "1X",
+        "color": "Blue",
+        "vendor_price": 155.38,
+        "retail_price": 254.95,
+        "image": "img/p019_1.jpg"
+      },
+      {
+        "sku": "CK-P019-BLUE2X",
+        "size": "2X",
+        "color": "Blue",
+        "vendor_price": 155.38,
+        "retail_price": 254.95,
+        "image": "img/p019_1.jpg"
+      },
+      {
+        "sku": "CK-P019-BLUE3X",
+        "size": "3X",
+        "color": "Blue",
+        "vendor_price": 155.38,
+        "retail_price": 254.95,
+        "image": "img/p019_1.jpg"
+      }
+    ],
+    "description": "African-print maxi dress in a vibrant Royal Blue Geometric pattern, designed to celebrate culture with a contemporary silhouette. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p020",
+    "title": "Zolani Women's African Print Knit Dress (Onyx Cream Tribal)",
+    "category": "women",
+    "vendor_url": "https://diyanu.com/products/zolani-womens-african-print-knit-dress-onyx-cream-tribal",
+    "default_image": "img/p020_1.jpg",
+    "base_retail_price": 134.95,
+    "variants": [
+      {
+        "sku": "CK-P020-BLACKXS",
+        "size": "XS",
+        "color": "Black",
+        "vendor_price": 69.85,
+        "retail_price": 134.95,
+        "image": "img/p020_1.jpg"
+      },
+      {
+        "sku": "CK-P020-BLACKS",
+        "size": "S",
+        "color": "Black",
+        "vendor_price": 69.85,
+        "retail_price": 134.95,
+        "image": "img/p020_1.jpg"
+      },
+      {
+        "sku": "CK-P020-BLACKM",
+        "size": "M",
+        "color": "Black",
+        "vendor_price": 69.85,
+        "retail_price": 134.95,
+        "image": "img/p020_1.jpg"
+      },
+      {
+        "sku": "CK-P020-BLACKL",
+        "size": "L",
+        "color": "Black",
+        "vendor_price": 69.85,
+        "retail_price": 134.95,
+        "image": "img/p020_1.jpg"
+      },
+      {
+        "sku": "CK-P020-BLACKXL",
+        "size": "XL",
+        "color": "Black",
+        "vendor_price": 69.85,
+        "retail_price": 134.95,
+        "image": "img/p020_1.jpg"
+      },
+      {
+        "sku": "CK-P020-BLACK1X",
+        "size": "1X",
+        "color": "Black",
+        "vendor_price": 69.85,
+        "retail_price": 134.95,
+        "image": "img/p020_1.jpg"
+      },
+      {
+        "sku": "CK-P020-BLACK2X",
+        "size": "2X",
+        "color": "Black",
+        "vendor_price": 69.85,
+        "retail_price": 134.95,
+        "image": "img/p020_1.jpg"
+      },
+      {
+        "sku": "CK-P020-BLACK3X",
+        "size": "3X",
+        "color": "Black",
+        "vendor_price": 69.85,
+        "retail_price": 134.95,
+        "image": "img/p020_1.jpg"
+      }
+    ],
+    "description": "African-print knit dress in a vibrant Onyx Cream Tribal pattern, designed to celebrate culture with a contemporary silhouette. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p021",
+    "title": "Damilola Women's African Print Strapless Dress (Brick Multipattern)",
+    "category": "women",
+    "vendor_url": "https://diyanu.com/products/damilola-womens-african-print-strapless-dress-brick-multipattern",
+    "default_image": "img/p021_1.jpg",
+    "base_retail_price": 134.95,
+    "variants": [
+      {
+        "sku": "CK-P021-ORANGEXS",
+        "size": "XS",
+        "color": "Orange",
+        "vendor_price": 69.85,
+        "retail_price": 134.95,
+        "image": "img/p021_1.jpg"
+      },
+      {
+        "sku": "CK-P021-ORANGES",
+        "size": "S",
+        "color": "Orange",
+        "vendor_price": 69.85,
+        "retail_price": 134.95,
+        "image": "img/p021_1.jpg"
+      },
+      {
+        "sku": "CK-P021-ORANGEM",
+        "size": "M",
+        "color": "Orange",
+        "vendor_price": 69.85,
+        "retail_price": 134.95,
+        "image": "img/p021_1.jpg"
+      },
+      {
+        "sku": "CK-P021-ORANGEL",
+        "size": "L",
+        "color": "Orange",
+        "vendor_price": 69.85,
+        "retail_price": 134.95,
+        "image": "img/p021_1.jpg"
+      },
+      {
+        "sku": "CK-P021-ORANGEXL",
+        "size": "XL",
+        "color": "Orange",
+        "vendor_price": 69.85,
+        "retail_price": 134.95,
+        "image": "img/p021_1.jpg"
+      },
+      {
+        "sku": "CK-P021-ORANGE1X",
+        "size": "1X",
+        "color": "Orange",
+        "vendor_price": 69.85,
+        "retail_price": 134.95,
+        "image": "img/p021_1.jpg"
+      },
+      {
+        "sku": "CK-P021-ORANGE2X",
+        "size": "2X",
+        "color": "Orange",
+        "vendor_price": 69.85,
+        "retail_price": 134.95,
+        "image": "img/p021_1.jpg"
+      },
+      {
+        "sku": "CK-P021-ORANGE3X",
+        "size": "3X",
+        "color": "Orange",
+        "vendor_price": 69.85,
+        "retail_price": 134.95,
+        "image": "img/p021_1.jpg"
+      }
+    ],
+    "description": "African-print strapless dress in a vibrant Brick Multipattern pattern, designed to celebrate culture with a contemporary silhouette. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p022",
+    "title": "Women's African Print Head Wrap/Scarf (Royal Blue Geometric)",
+    "category": "accessories",
+    "vendor_url": "https://diyanu.com/products/womens-african-print-head-wrap-scarf-royal-blue-geometric",
+    "default_image": "img/p022_1.jpg",
+    "base_retail_price": 89.95,
+    "variants": [
+      {
+        "sku": "CK-P022-BLUEONESIZE",
+        "size": "One Size",
+        "color": "Blue",
+        "vendor_price": 37.06,
+        "retail_price": 89.95,
+        "image": "img/p022_1.jpg"
+      }
+    ],
+    "description": "Versatile African-print head wrap in a Royal Blue Geometric pattern. Style it as a head wrap, scarf or bag accent. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p023",
+    "title": "Ebuni African Print Tote Bag (Green Tortoise Diamonds)",
+    "category": "accessories",
+    "vendor_url": "https://diyanu.com/products/ebuni-african-print-tote-green-tortoise-diamonds",
+    "default_image": "img/p023_1.jpg",
+    "base_retail_price": 79.95,
+    "variants": [
+      {
+        "sku": "CK-P023-GOLDONESIZE",
+        "size": "One Size",
+        "color": "Gold",
+        "vendor_price": 31.36,
+        "retail_price": 79.95,
+        "image": "img/p023_1.jpg"
+      }
+    ],
+    "description": "Roomy African-print tote bag in a Green Tortoise Diamonds pattern - ideal for everyday errands, work or the beach. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
   }
 ]
