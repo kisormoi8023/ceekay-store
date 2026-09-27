@@ -1589,5 +1589,2028 @@
       }
     ],
     "description": "Roomy African-print tote bag in a Green Tortoise Diamonds pattern - ideal for everyday errands, work or the beach. Ships from our design partner overseas - please allow 2-3 weeks for delivery."
+  },
+  {
+    "id": "p024",
+    "title": "Plus Size African Print V-Neck Midi Dress",
+    "category": "women",
+    "vendor_url": "https://www.ninafresa.com/products/plus-size-casual-all-over-print-basic-v-neck-short-sleeve-midi-dress",
+    "default_image": "img/p024_1.jpg",
+    "base_retail_price": 79.95,
+    "variants": [
+      {
+        "sku": "CK-P024-YELLOWL",
+        "size": "L/10-12",
+        "color": "Yellow",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_c1.jpg"
+      },
+      {
+        "sku": "CK-P024-YELLOWXL",
+        "size": "XL/14-16",
+        "color": "Yellow",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_c1.jpg"
+      },
+      {
+        "sku": "CK-P024-YELLOW2XL",
+        "size": "2XL/18-20",
+        "color": "Yellow",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_c1.jpg"
+      },
+      {
+        "sku": "CK-P024-YELLOW3XL",
+        "size": "3XL/22-24",
+        "color": "Yellow",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_c1.jpg"
+      },
+      {
+        "sku": "CK-P024-YELLOW4XL",
+        "size": "4XL/26",
+        "color": "Yellow",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_c1.jpg"
+      },
+      {
+        "sku": "CK-P024-YELLOW5XL",
+        "size": "5XL/28",
+        "color": "Yellow",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_c1.jpg"
+      },
+      {
+        "sku": "CK-P024-BLUEL",
+        "size": "L/10-12",
+        "color": "Blue",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_c2.jpg"
+      },
+      {
+        "sku": "CK-P024-BLUEXL",
+        "size": "XL/14-16",
+        "color": "Blue",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_c2.jpg"
+      },
+      {
+        "sku": "CK-P024-BLUE2XL",
+        "size": "2XL/18-20",
+        "color": "Blue",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_c2.jpg"
+      },
+      {
+        "sku": "CK-P024-BLUE3XL",
+        "size": "3XL/22-24",
+        "color": "Blue",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_c2.jpg"
+      },
+      {
+        "sku": "CK-P024-BLUE4XL",
+        "size": "4XL/26",
+        "color": "Blue",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_c2.jpg"
+      },
+      {
+        "sku": "CK-P024-BLUE5XL",
+        "size": "5XL/28",
+        "color": "Blue",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_c2.jpg"
+      },
+      {
+        "sku": "CK-P024-PURPLEL",
+        "size": "L/10-12",
+        "color": "Purple",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_3.jpg"
+      },
+      {
+        "sku": "CK-P024-PURPLEXL",
+        "size": "XL/14-16",
+        "color": "Purple",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_3.jpg"
+      },
+      {
+        "sku": "CK-P024-PURPLE2XL",
+        "size": "2XL/18-20",
+        "color": "Purple",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_3.jpg"
+      },
+      {
+        "sku": "CK-P024-PURPLE3XL",
+        "size": "3XL/22-24",
+        "color": "Purple",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_3.jpg"
+      },
+      {
+        "sku": "CK-P024-PURPLE4XL",
+        "size": "4XL/26",
+        "color": "Purple",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_3.jpg"
+      },
+      {
+        "sku": "CK-P024-PURPLE5XL",
+        "size": "5XL/28",
+        "color": "Purple",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_3.jpg"
+      },
+      {
+        "sku": "CK-P024-ORANGEL",
+        "size": "L/10-12",
+        "color": "Orange",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_1.jpg"
+      },
+      {
+        "sku": "CK-P024-ORANGEXL",
+        "size": "XL/14-16",
+        "color": "Orange",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_1.jpg"
+      },
+      {
+        "sku": "CK-P024-ORANGE2XL",
+        "size": "2XL/18-20",
+        "color": "Orange",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_1.jpg"
+      },
+      {
+        "sku": "CK-P024-ORANGE3XL",
+        "size": "3XL/22-24",
+        "color": "Orange",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_1.jpg"
+      },
+      {
+        "sku": "CK-P024-ORANGE4XL",
+        "size": "4XL/26",
+        "color": "Orange",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_1.jpg"
+      },
+      {
+        "sku": "CK-P024-ORANGE5XL",
+        "size": "5XL/28",
+        "color": "Orange",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p024_1.jpg"
+      }
+    ],
+    "description": "Easy-wearing midi dress in a bold African all-over print, with a flattering V-neck and short sleeves. Designed for plus sizes (L to 5XL). Free shipping. Ships from our partner designer - please allow 2-4 weeks for delivery."
+  },
+  {
+    "id": "p025",
+    "title": "Plus Size African Portrait Print Midi Dress with Pockets",
+    "category": "women",
+    "vendor_url": "https://www.ninafresa.com/products/plus-size-v-neck-short-sleeve-cute-black-girl-print-mini-dress-7jwd-fe5r_n6gp",
+    "default_image": "img/p025_1.jpg",
+    "base_retail_price": 79.95,
+    "variants": [
+      {
+        "sku": "CK-P025-REDL",
+        "size": "L/10-12",
+        "color": "Red",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_1.jpg"
+      },
+      {
+        "sku": "CK-P025-REDXL",
+        "size": "XL/14-16",
+        "color": "Red",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_1.jpg"
+      },
+      {
+        "sku": "CK-P025-REDXXL",
+        "size": "XXL/18-20",
+        "color": "Red",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_1.jpg"
+      },
+      {
+        "sku": "CK-P025-RED3XL",
+        "size": "3XL/22-24",
+        "color": "Red",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_1.jpg"
+      },
+      {
+        "sku": "CK-P025-RED4XL",
+        "size": "4XL/26",
+        "color": "Red",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_1.jpg"
+      },
+      {
+        "sku": "CK-P025-RED5XL",
+        "size": "5XL/28",
+        "color": "Red",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_1.jpg"
+      },
+      {
+        "sku": "CK-P025-BLACKL",
+        "size": "L/10-12",
+        "color": "Black",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c2.jpg"
+      },
+      {
+        "sku": "CK-P025-BLACKXL",
+        "size": "XL/14-16",
+        "color": "Black",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c2.jpg"
+      },
+      {
+        "sku": "CK-P025-BLACKXXL",
+        "size": "XXL/18-20",
+        "color": "Black",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c2.jpg"
+      },
+      {
+        "sku": "CK-P025-BLACK3XL",
+        "size": "3XL/22-24",
+        "color": "Black",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c2.jpg"
+      },
+      {
+        "sku": "CK-P025-BLACK4XL",
+        "size": "4XL/26",
+        "color": "Black",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c2.jpg"
+      },
+      {
+        "sku": "CK-P025-BLACK5XL",
+        "size": "5XL/28",
+        "color": "Black",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c2.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOWL",
+        "size": "L/10-12",
+        "color": "Yellow 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c3.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOWXL",
+        "size": "XL/14-16",
+        "color": "Yellow 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c3.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOWXXL",
+        "size": "XXL/18-20",
+        "color": "Yellow 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c3.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOW3XL",
+        "size": "3XL/22-24",
+        "color": "Yellow 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c3.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOW4XL",
+        "size": "4XL/26",
+        "color": "Yellow 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c3.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOW5XL",
+        "size": "5XL/28",
+        "color": "Yellow 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c3.jpg"
+      },
+      {
+        "sku": "CK-P025-GREY1L",
+        "size": "L/10-12",
+        "color": "Grey 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c4.jpg"
+      },
+      {
+        "sku": "CK-P025-GREY1XL",
+        "size": "XL/14-16",
+        "color": "Grey 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c4.jpg"
+      },
+      {
+        "sku": "CK-P025-GREY1XXL",
+        "size": "XXL/18-20",
+        "color": "Grey 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c4.jpg"
+      },
+      {
+        "sku": "CK-P025-GREY13XL",
+        "size": "3XL/22-24",
+        "color": "Grey 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c4.jpg"
+      },
+      {
+        "sku": "CK-P025-GREY14XL",
+        "size": "4XL/26",
+        "color": "Grey 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c4.jpg"
+      },
+      {
+        "sku": "CK-P025-GREY15XL",
+        "size": "5XL/28",
+        "color": "Grey 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c4.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOWL",
+        "size": "L/10-12",
+        "color": "Yellow 4",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c5.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOWXL",
+        "size": "XL/14-16",
+        "color": "Yellow 4",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c5.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOWXXL",
+        "size": "XXL/18-20",
+        "color": "Yellow 4",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c5.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOW3XL",
+        "size": "3XL/22-24",
+        "color": "Yellow 4",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c5.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOW4XL",
+        "size": "4XL/26",
+        "color": "Yellow 4",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c5.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOW5XL",
+        "size": "5XL/28",
+        "color": "Yellow 4",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c5.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOWL",
+        "size": "L/10-12",
+        "color": "Yellow 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c6.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOWXL",
+        "size": "XL/14-16",
+        "color": "Yellow 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c6.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOWXXL",
+        "size": "XXL/18-20",
+        "color": "Yellow 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c6.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOW3XL",
+        "size": "3XL/22-24",
+        "color": "Yellow 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c6.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOW4XL",
+        "size": "4XL/26",
+        "color": "Yellow 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c6.jpg"
+      },
+      {
+        "sku": "CK-P025-YELLOW5XL",
+        "size": "5XL/28",
+        "color": "Yellow 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c6.jpg"
+      },
+      {
+        "sku": "CK-P025-GREY2L",
+        "size": "L/10-12",
+        "color": "Grey 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c7.jpg"
+      },
+      {
+        "sku": "CK-P025-GREY2XL",
+        "size": "XL/14-16",
+        "color": "Grey 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c7.jpg"
+      },
+      {
+        "sku": "CK-P025-GREY2XXL",
+        "size": "XXL/18-20",
+        "color": "Grey 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c7.jpg"
+      },
+      {
+        "sku": "CK-P025-GREY23XL",
+        "size": "3XL/22-24",
+        "color": "Grey 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c7.jpg"
+      },
+      {
+        "sku": "CK-P025-GREY24XL",
+        "size": "4XL/26",
+        "color": "Grey 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c7.jpg"
+      },
+      {
+        "sku": "CK-P025-GREY25XL",
+        "size": "5XL/28",
+        "color": "Grey 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c7.jpg"
+      },
+      {
+        "sku": "CK-P025-ORANGEL",
+        "size": "L/10-12",
+        "color": "Orange",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c8.jpg"
+      },
+      {
+        "sku": "CK-P025-ORANGEXL",
+        "size": "XL/14-16",
+        "color": "Orange",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c8.jpg"
+      },
+      {
+        "sku": "CK-P025-ORANGEXXL",
+        "size": "XXL/18-20",
+        "color": "Orange",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c8.jpg"
+      },
+      {
+        "sku": "CK-P025-ORANGE3XL",
+        "size": "3XL/22-24",
+        "color": "Orange",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c8.jpg"
+      },
+      {
+        "sku": "CK-P025-ORANGE4XL",
+        "size": "4XL/26",
+        "color": "Orange",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c8.jpg"
+      },
+      {
+        "sku": "CK-P025-ORANGE5XL",
+        "size": "5XL/28",
+        "color": "Orange",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c8.jpg"
+      },
+      {
+        "sku": "CK-P025-FUCHSIL",
+        "size": "L/10-12",
+        "color": "Fuchsia",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c9.jpg"
+      },
+      {
+        "sku": "CK-P025-FUCHSIXL",
+        "size": "XL/14-16",
+        "color": "Fuchsia",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c9.jpg"
+      },
+      {
+        "sku": "CK-P025-FUCHSIXXL",
+        "size": "XXL/18-20",
+        "color": "Fuchsia",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c9.jpg"
+      },
+      {
+        "sku": "CK-P025-FUCHSI3XL",
+        "size": "3XL/22-24",
+        "color": "Fuchsia",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c9.jpg"
+      },
+      {
+        "sku": "CK-P025-FUCHSI4XL",
+        "size": "4XL/26",
+        "color": "Fuchsia",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c9.jpg"
+      },
+      {
+        "sku": "CK-P025-FUCHSI5XL",
+        "size": "5XL/28",
+        "color": "Fuchsia",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c9.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITEL",
+        "size": "L/10-12",
+        "color": "White 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c10.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITEXL",
+        "size": "XL/14-16",
+        "color": "White 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c10.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITEXXL",
+        "size": "XXL/18-20",
+        "color": "White 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c10.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITE3XL",
+        "size": "3XL/22-24",
+        "color": "White 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c10.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITE4XL",
+        "size": "4XL/26",
+        "color": "White 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c10.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITE5XL",
+        "size": "5XL/28",
+        "color": "White 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c10.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITEL",
+        "size": "L/10-12",
+        "color": "White 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c11.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITEXL",
+        "size": "XL/14-16",
+        "color": "White 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c11.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITEXXL",
+        "size": "XXL/18-20",
+        "color": "White 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c11.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITE3XL",
+        "size": "3XL/22-24",
+        "color": "White 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c11.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITE4XL",
+        "size": "4XL/26",
+        "color": "White 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c11.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITE5XL",
+        "size": "5XL/28",
+        "color": "White 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c11.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITEL",
+        "size": "L/10-12",
+        "color": "White 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c12.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITEXL",
+        "size": "XL/14-16",
+        "color": "White 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c12.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITEXXL",
+        "size": "XXL/18-20",
+        "color": "White 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c12.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITE3XL",
+        "size": "3XL/22-24",
+        "color": "White 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c12.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITE4XL",
+        "size": "4XL/26",
+        "color": "White 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c12.jpg"
+      },
+      {
+        "sku": "CK-P025-WHITE5XL",
+        "size": "5XL/28",
+        "color": "White 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p025_c12.jpg"
+      }
+    ],
+    "description": "V-neck midi dress with pockets, featuring a vibrant portrait artwork print that celebrates Black beauty. Designed for plus sizes (L to 5XL). Free shipping. Ships from our partner designer - please allow 2-4 weeks for delivery."
+  },
+  {
+    "id": "p026",
+    "title": "Plus Size African Print Bodycon Mini Dress",
+    "category": "women",
+    "vendor_url": "https://www.ninafresa.com/products/plus-size-casual-all-over-print-spaghetti-strap-bodycon-mini-dress",
+    "default_image": "img/p026_1.jpg",
+    "base_retail_price": 79.95,
+    "variants": [
+      {
+        "sku": "CK-P026-MULTICL",
+        "size": "L/10-12",
+        "color": "Multicolor 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_1.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTICXL",
+        "size": "XL/12-14",
+        "color": "Multicolor 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_1.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC2XL",
+        "size": "2XL/14-16",
+        "color": "Multicolor 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_1.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC3XL",
+        "size": "3XL/16-18",
+        "color": "Multicolor 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_1.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC4XL",
+        "size": "4XL/18-20",
+        "color": "Multicolor 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_1.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC5XL",
+        "size": "5XL/20-22",
+        "color": "Multicolor 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_1.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC6XL",
+        "size": "6XL/22-24",
+        "color": "Multicolor 1",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_1.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTICL",
+        "size": "L/10-12",
+        "color": "Multicolor 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_2.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTICXL",
+        "size": "XL/12-14",
+        "color": "Multicolor 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_2.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC2XL",
+        "size": "2XL/14-16",
+        "color": "Multicolor 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_2.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC3XL",
+        "size": "3XL/16-18",
+        "color": "Multicolor 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_2.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC4XL",
+        "size": "4XL/18-20",
+        "color": "Multicolor 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_2.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC5XL",
+        "size": "5XL/20-22",
+        "color": "Multicolor 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_2.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC6XL",
+        "size": "6XL/22-24",
+        "color": "Multicolor 2",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_2.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTICL",
+        "size": "L/10-12",
+        "color": "Multicolor 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_3.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTICXL",
+        "size": "XL/12-14",
+        "color": "Multicolor 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_3.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC2XL",
+        "size": "2XL/14-16",
+        "color": "Multicolor 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_3.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC3XL",
+        "size": "3XL/16-18",
+        "color": "Multicolor 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_3.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC4XL",
+        "size": "4XL/18-20",
+        "color": "Multicolor 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_3.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC5XL",
+        "size": "5XL/20-22",
+        "color": "Multicolor 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_3.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC6XL",
+        "size": "6XL/22-24",
+        "color": "Multicolor 3",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_3.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTICL",
+        "size": "L/10-12",
+        "color": "Multicolor 4",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_4.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTICXL",
+        "size": "XL/12-14",
+        "color": "Multicolor 4",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_4.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC2XL",
+        "size": "2XL/14-16",
+        "color": "Multicolor 4",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_4.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC3XL",
+        "size": "3XL/16-18",
+        "color": "Multicolor 4",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_4.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC4XL",
+        "size": "4XL/18-20",
+        "color": "Multicolor 4",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_4.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC5XL",
+        "size": "5XL/20-22",
+        "color": "Multicolor 4",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_4.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC6XL",
+        "size": "6XL/22-24",
+        "color": "Multicolor 4",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_4.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTICL",
+        "size": "L/10-12",
+        "color": "Multicolor 5",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_c5.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTICXL",
+        "size": "XL/12-14",
+        "color": "Multicolor 5",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_c5.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC2XL",
+        "size": "2XL/14-16",
+        "color": "Multicolor 5",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_c5.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC3XL",
+        "size": "3XL/16-18",
+        "color": "Multicolor 5",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_c5.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC4XL",
+        "size": "4XL/18-20",
+        "color": "Multicolor 5",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_c5.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC5XL",
+        "size": "5XL/20-22",
+        "color": "Multicolor 5",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_c5.jpg"
+      },
+      {
+        "sku": "CK-P026-MULTIC6XL",
+        "size": "6XL/22-24",
+        "color": "Multicolor 5",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_c5.jpg"
+      },
+      {
+        "sku": "CK-P026-PINKL",
+        "size": "L/10-12",
+        "color": "Pink",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_c6.jpg"
+      },
+      {
+        "sku": "CK-P026-PINKXL",
+        "size": "XL/12-14",
+        "color": "Pink",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_c6.jpg"
+      },
+      {
+        "sku": "CK-P026-PINK2XL",
+        "size": "2XL/14-16",
+        "color": "Pink",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_c6.jpg"
+      },
+      {
+        "sku": "CK-P026-PINK3XL",
+        "size": "3XL/16-18",
+        "color": "Pink",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_c6.jpg"
+      },
+      {
+        "sku": "CK-P026-PINK4XL",
+        "size": "4XL/18-20",
+        "color": "Pink",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_c6.jpg"
+      },
+      {
+        "sku": "CK-P026-PINK5XL",
+        "size": "5XL/20-22",
+        "color": "Pink",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_c6.jpg"
+      },
+      {
+        "sku": "CK-P026-PINK6XL",
+        "size": "6XL/22-24",
+        "color": "Pink",
+        "vendor_price": 57,
+        "retail_price": 79.95,
+        "image": "img/p026_c6.jpg"
+      }
+    ],
+    "description": "Figure-hugging spaghetti-strap mini dress in a vivid African-inspired print - made for summer and nights out. Designed for plus sizes (L to 6XL). Free shipping. Ships from our partner designer - please allow 2-4 weeks for delivery."
+  },
+  {
+    "id": "p027",
+    "title": "Plus Size African Letter-Print T-Shirt & Shorts Set",
+    "category": "women",
+    "vendor_url": "https://www.ninafresa.com/products/plus-size-black-casual-letter-pattern-print-short-sleeve-short-set",
+    "default_image": "img/p027_1.jpg",
+    "base_retail_price": 70.95,
+    "variants": [
+      {
+        "sku": "CK-P027-BLACKL",
+        "size": "L/12-14",
+        "color": "Black",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_1.jpg"
+      },
+      {
+        "sku": "CK-P027-BLACKXL",
+        "size": "XL/14-16",
+        "color": "Black",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_1.jpg"
+      },
+      {
+        "sku": "CK-P027-BLACK2XL",
+        "size": "2XL/16-18",
+        "color": "Black",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_1.jpg"
+      },
+      {
+        "sku": "CK-P027-BLACK3XL",
+        "size": "3XL/18-20",
+        "color": "Black",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_1.jpg"
+      },
+      {
+        "sku": "CK-P027-BLACK4XL",
+        "size": "4XL/20-22",
+        "color": "Black",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_1.jpg"
+      },
+      {
+        "sku": "CK-P027-BLACK5XL",
+        "size": "5XL/22-24",
+        "color": "Black",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_1.jpg"
+      },
+      {
+        "sku": "CK-P027-GREYL",
+        "size": "L/12-14",
+        "color": "Grey",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_2.jpg"
+      },
+      {
+        "sku": "CK-P027-GREYXL",
+        "size": "XL/14-16",
+        "color": "Grey",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_2.jpg"
+      },
+      {
+        "sku": "CK-P027-GREY2XL",
+        "size": "2XL/16-18",
+        "color": "Grey",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_2.jpg"
+      },
+      {
+        "sku": "CK-P027-GREY3XL",
+        "size": "3XL/18-20",
+        "color": "Grey",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_2.jpg"
+      },
+      {
+        "sku": "CK-P027-GREY4XL",
+        "size": "4XL/20-22",
+        "color": "Grey",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_2.jpg"
+      },
+      {
+        "sku": "CK-P027-GREY5XL",
+        "size": "5XL/22-24",
+        "color": "Grey",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_2.jpg"
+      },
+      {
+        "sku": "CK-P027-BLUEL",
+        "size": "L/12-14",
+        "color": "Blue",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_3.jpg"
+      },
+      {
+        "sku": "CK-P027-BLUEXL",
+        "size": "XL/14-16",
+        "color": "Blue",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_3.jpg"
+      },
+      {
+        "sku": "CK-P027-BLUE2XL",
+        "size": "2XL/16-18",
+        "color": "Blue",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_3.jpg"
+      },
+      {
+        "sku": "CK-P027-BLUE3XL",
+        "size": "3XL/18-20",
+        "color": "Blue",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_3.jpg"
+      },
+      {
+        "sku": "CK-P027-BLUE4XL",
+        "size": "4XL/20-22",
+        "color": "Blue",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_3.jpg"
+      },
+      {
+        "sku": "CK-P027-BLUE5XL",
+        "size": "5XL/22-24",
+        "color": "Blue",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_3.jpg"
+      },
+      {
+        "sku": "CK-P027-ROSERL",
+        "size": "L/12-14",
+        "color": "Rose Red",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_4.jpg"
+      },
+      {
+        "sku": "CK-P027-ROSERXL",
+        "size": "XL/14-16",
+        "color": "Rose Red",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_4.jpg"
+      },
+      {
+        "sku": "CK-P027-ROSER2XL",
+        "size": "2XL/16-18",
+        "color": "Rose Red",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_4.jpg"
+      },
+      {
+        "sku": "CK-P027-ROSER3XL",
+        "size": "3XL/18-20",
+        "color": "Rose Red",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_4.jpg"
+      },
+      {
+        "sku": "CK-P027-ROSER4XL",
+        "size": "4XL/20-22",
+        "color": "Rose Red",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_4.jpg"
+      },
+      {
+        "sku": "CK-P027-ROSER5XL",
+        "size": "5XL/22-24",
+        "color": "Rose Red",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_4.jpg"
+      },
+      {
+        "sku": "CK-P027-ORANGEL",
+        "size": "L/12-14",
+        "color": "Orange",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_c5.jpg"
+      },
+      {
+        "sku": "CK-P027-ORANGEXL",
+        "size": "XL/14-16",
+        "color": "Orange",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_c5.jpg"
+      },
+      {
+        "sku": "CK-P027-ORANGE2XL",
+        "size": "2XL/16-18",
+        "color": "Orange",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_c5.jpg"
+      },
+      {
+        "sku": "CK-P027-ORANGE3XL",
+        "size": "3XL/18-20",
+        "color": "Orange",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_c5.jpg"
+      },
+      {
+        "sku": "CK-P027-ORANGE4XL",
+        "size": "4XL/20-22",
+        "color": "Orange",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_c5.jpg"
+      },
+      {
+        "sku": "CK-P027-ORANGE5XL",
+        "size": "5XL/22-24",
+        "color": "Orange",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_c5.jpg"
+      },
+      {
+        "sku": "CK-P027-LIQUORL",
+        "size": "L/12-14",
+        "color": "Liquor",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_c6.jpg"
+      },
+      {
+        "sku": "CK-P027-LIQUORXL",
+        "size": "XL/14-16",
+        "color": "Liquor",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_c6.jpg"
+      },
+      {
+        "sku": "CK-P027-LIQUOR2XL",
+        "size": "2XL/16-18",
+        "color": "Liquor",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_c6.jpg"
+      },
+      {
+        "sku": "CK-P027-LIQUOR3XL",
+        "size": "3XL/18-20",
+        "color": "Liquor",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_c6.jpg"
+      },
+      {
+        "sku": "CK-P027-LIQUOR4XL",
+        "size": "4XL/20-22",
+        "color": "Liquor",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_c6.jpg"
+      },
+      {
+        "sku": "CK-P027-LIQUOR5XL",
+        "size": "5XL/22-24",
+        "color": "Liquor",
+        "vendor_price": 43,
+        "retail_price": 70.95,
+        "image": "img/p027_c6.jpg"
+      }
+    ],
+    "description": "Relaxed matching T-shirt and shorts set with an African-inspired letter pattern print. Comfortable everyday wear, designed for plus sizes (L to 5XL). Free shipping. Ships from our partner designer - please allow 2-4 weeks for delivery."
+  },
+  {
+    "id": "p028",
+    "title": "Plus Size African Print Comfort Pants",
+    "category": "women",
+    "vendor_url": "https://www.ninafresa.com/products/pre-sale-plus-size-african-print-comfort-pants-grey",
+    "default_image": "img/p028_1.png",
+    "base_retail_price": 70.95,
+    "variants": [
+      {
+        "sku": "CK-P028-GREYL",
+        "size": "L/10-12",
+        "color": "Grey",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_1.png"
+      },
+      {
+        "sku": "CK-P028-GREYXL",
+        "size": "XL/14-16",
+        "color": "Grey",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_1.png"
+      },
+      {
+        "sku": "CK-P028-GREY2XL",
+        "size": "2XL/18-20",
+        "color": "Grey",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_1.png"
+      },
+      {
+        "sku": "CK-P028-GREY3XL",
+        "size": "3XL/22-24",
+        "color": "Grey",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_1.png"
+      },
+      {
+        "sku": "CK-P028-GREY4XL",
+        "size": "4XL/26",
+        "color": "Grey",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_1.png"
+      },
+      {
+        "sku": "CK-P028-GREY5XL",
+        "size": "5XL/28",
+        "color": "Grey",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_1.png"
+      },
+      {
+        "sku": "CK-P028-GREENL",
+        "size": "L/10-12",
+        "color": "Green 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c2.jpg"
+      },
+      {
+        "sku": "CK-P028-GREENXL",
+        "size": "XL/14-16",
+        "color": "Green 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c2.jpg"
+      },
+      {
+        "sku": "CK-P028-GREEN2XL",
+        "size": "2XL/18-20",
+        "color": "Green 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c2.jpg"
+      },
+      {
+        "sku": "CK-P028-GREEN3XL",
+        "size": "3XL/22-24",
+        "color": "Green 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c2.jpg"
+      },
+      {
+        "sku": "CK-P028-GREEN4XL",
+        "size": "4XL/26",
+        "color": "Green 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c2.jpg"
+      },
+      {
+        "sku": "CK-P028-GREEN5XL",
+        "size": "5XL/28",
+        "color": "Green 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c2.jpg"
+      },
+      {
+        "sku": "CK-P028-YELLOWL",
+        "size": "L/10-12",
+        "color": "Yellow",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c3.png"
+      },
+      {
+        "sku": "CK-P028-YELLOWXL",
+        "size": "XL/14-16",
+        "color": "Yellow",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c3.png"
+      },
+      {
+        "sku": "CK-P028-YELLOW2XL",
+        "size": "2XL/18-20",
+        "color": "Yellow",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c3.png"
+      },
+      {
+        "sku": "CK-P028-YELLOW3XL",
+        "size": "3XL/22-24",
+        "color": "Yellow",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c3.png"
+      },
+      {
+        "sku": "CK-P028-YELLOW4XL",
+        "size": "4XL/26",
+        "color": "Yellow",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c3.png"
+      },
+      {
+        "sku": "CK-P028-YELLOW5XL",
+        "size": "5XL/28",
+        "color": "Yellow",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c3.png"
+      },
+      {
+        "sku": "CK-P028-WHITEL",
+        "size": "L/10-12",
+        "color": "White 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c4.jpg"
+      },
+      {
+        "sku": "CK-P028-WHITEXL",
+        "size": "XL/14-16",
+        "color": "White 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c4.jpg"
+      },
+      {
+        "sku": "CK-P028-WHITE2XL",
+        "size": "2XL/18-20",
+        "color": "White 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c4.jpg"
+      },
+      {
+        "sku": "CK-P028-WHITE3XL",
+        "size": "3XL/22-24",
+        "color": "White 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c4.jpg"
+      },
+      {
+        "sku": "CK-P028-WHITE4XL",
+        "size": "4XL/26",
+        "color": "White 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c4.jpg"
+      },
+      {
+        "sku": "CK-P028-WHITE5XL",
+        "size": "5XL/28",
+        "color": "White 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c4.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACKL",
+        "size": "L/10-12",
+        "color": "Black 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c5.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACKXL",
+        "size": "XL/14-16",
+        "color": "Black 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c5.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACK2XL",
+        "size": "2XL/18-20",
+        "color": "Black 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c5.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACK3XL",
+        "size": "3XL/22-24",
+        "color": "Black 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c5.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACK4XL",
+        "size": "4XL/26",
+        "color": "Black 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c5.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACK5XL",
+        "size": "5XL/28",
+        "color": "Black 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c5.jpg"
+      },
+      {
+        "sku": "CK-P028-GREENL",
+        "size": "L/10-12",
+        "color": "Green 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c6.jpg"
+      },
+      {
+        "sku": "CK-P028-GREENXL",
+        "size": "XL/14-16",
+        "color": "Green 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c6.jpg"
+      },
+      {
+        "sku": "CK-P028-GREEN2XL",
+        "size": "2XL/18-20",
+        "color": "Green 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c6.jpg"
+      },
+      {
+        "sku": "CK-P028-GREEN3XL",
+        "size": "3XL/22-24",
+        "color": "Green 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c6.jpg"
+      },
+      {
+        "sku": "CK-P028-GREEN4XL",
+        "size": "4XL/26",
+        "color": "Green 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c6.jpg"
+      },
+      {
+        "sku": "CK-P028-GREEN5XL",
+        "size": "5XL/28",
+        "color": "Green 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c6.jpg"
+      },
+      {
+        "sku": "CK-P028-GREENL",
+        "size": "L/10-12",
+        "color": "Green 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c7.jpg"
+      },
+      {
+        "sku": "CK-P028-GREENXL",
+        "size": "XL/14-16",
+        "color": "Green 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c7.jpg"
+      },
+      {
+        "sku": "CK-P028-GREEN2XL",
+        "size": "2XL/18-20",
+        "color": "Green 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c7.jpg"
+      },
+      {
+        "sku": "CK-P028-GREEN3XL",
+        "size": "3XL/22-24",
+        "color": "Green 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c7.jpg"
+      },
+      {
+        "sku": "CK-P028-GREEN4XL",
+        "size": "4XL/26",
+        "color": "Green 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c7.jpg"
+      },
+      {
+        "sku": "CK-P028-GREEN5XL",
+        "size": "5XL/28",
+        "color": "Green 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c7.jpg"
+      },
+      {
+        "sku": "CK-P028-WHITEL",
+        "size": "L/10-12",
+        "color": "White 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c8.jpg"
+      },
+      {
+        "sku": "CK-P028-WHITEXL",
+        "size": "XL/14-16",
+        "color": "White 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c8.jpg"
+      },
+      {
+        "sku": "CK-P028-WHITE2XL",
+        "size": "2XL/18-20",
+        "color": "White 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c8.jpg"
+      },
+      {
+        "sku": "CK-P028-WHITE3XL",
+        "size": "3XL/22-24",
+        "color": "White 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c8.jpg"
+      },
+      {
+        "sku": "CK-P028-WHITE4XL",
+        "size": "4XL/26",
+        "color": "White 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c8.jpg"
+      },
+      {
+        "sku": "CK-P028-WHITE5XL",
+        "size": "5XL/28",
+        "color": "White 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c8.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACKL",
+        "size": "L/10-12",
+        "color": "Black 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c9.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACKXL",
+        "size": "XL/14-16",
+        "color": "Black 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c9.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACK2XL",
+        "size": "2XL/18-20",
+        "color": "Black 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c9.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACK3XL",
+        "size": "3XL/22-24",
+        "color": "Black 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c9.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACK4XL",
+        "size": "4XL/26",
+        "color": "Black 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c9.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACK5XL",
+        "size": "5XL/28",
+        "color": "Black 4",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c9.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACKL",
+        "size": "L/10-12",
+        "color": "Black 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c10.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACKXL",
+        "size": "XL/14-16",
+        "color": "Black 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c10.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACK2XL",
+        "size": "2XL/18-20",
+        "color": "Black 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c10.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACK3XL",
+        "size": "3XL/22-24",
+        "color": "Black 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c10.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACK4XL",
+        "size": "4XL/26",
+        "color": "Black 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c10.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACK5XL",
+        "size": "5XL/28",
+        "color": "Black 3",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c10.jpg"
+      },
+      {
+        "sku": "CK-P028-BLACKL",
+        "size": "L/10-12",
+        "color": "Black",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c11.png"
+      },
+      {
+        "sku": "CK-P028-BLACKXL",
+        "size": "XL/14-16",
+        "color": "Black",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c11.png"
+      },
+      {
+        "sku": "CK-P028-BLACK2XL",
+        "size": "2XL/18-20",
+        "color": "Black",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c11.png"
+      },
+      {
+        "sku": "CK-P028-BLACK3XL",
+        "size": "3XL/22-24",
+        "color": "Black",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c11.png"
+      },
+      {
+        "sku": "CK-P028-BLACK4XL",
+        "size": "4XL/26",
+        "color": "Black",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c11.png"
+      },
+      {
+        "sku": "CK-P028-BLACK5XL",
+        "size": "5XL/28",
+        "color": "Black",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c11.png"
+      },
+      {
+        "sku": "CK-P028-WHITEL",
+        "size": "L/10-12",
+        "color": "White 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c12.png"
+      },
+      {
+        "sku": "CK-P028-WHITEXL",
+        "size": "XL/14-16",
+        "color": "White 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c12.png"
+      },
+      {
+        "sku": "CK-P028-WHITE2XL",
+        "size": "2XL/18-20",
+        "color": "White 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c12.png"
+      },
+      {
+        "sku": "CK-P028-WHITE3XL",
+        "size": "3XL/22-24",
+        "color": "White 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c12.png"
+      },
+      {
+        "sku": "CK-P028-WHITE4XL",
+        "size": "4XL/26",
+        "color": "White 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c12.png"
+      },
+      {
+        "sku": "CK-P028-WHITE5XL",
+        "size": "5XL/28",
+        "color": "White 2",
+        "vendor_price": 50,
+        "retail_price": 70.95,
+        "image": "img/p028_c12.png"
+      }
+    ],
+    "description": "Soft, relaxed-fit pants in an African print with an easy elastic waist. Designed for plus sizes (L to 5XL). Free shipping. Pre-order item - please allow 3-5 weeks for delivery."
   }
 ]

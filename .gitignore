@@ -4,3 +4,5 @@ node_modules/
 npm-debug.log*
 .DS_Store
 Git-*.exe
+.claude/settings.local.json
+push_live.js
