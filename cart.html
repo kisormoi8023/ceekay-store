@@ -206,10 +206,31 @@
         </div>
     </div>
 
+    <!-- Shipping Address Confirmation Modal (shown before payment) -->
+    <div id="shipping-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn" id="close-shipping-modal">&times;</span>
+            <h2>Confirm Shipping Address</h2>
+            <p>Please review where this order should be delivered before you pay.</p>
+            <form id="shipping-confirm-form">
+                <div class="input-box">
+                    <input type="text" id="ship-street" placeholder="Street Address" required>
+                </div>
+                <div class="input-box">
+                    <input type="text" id="ship-city" placeholder="City / Suburb" required>
+                    <input type="text" id="ship-state" placeholder="State / Province" required>
+                </div>
+                <div class="input-box">
+                    <input type="text" id="ship-postcode" placeholder="Postcode / ZIP" required>
+                </div>
+                <button type="submit" class="btn" id="shipping-confirm-btn">Confirm &amp; Continue to Payment</button>
+            </form>
+        </div>
+    </div>
+
     <script src="config.js"></script>
     <script src="auth.js"></script>
     <script src="script.js"></script>
-    <!-- Checkout Confirmation Modal -->
 </body>
 
 </html>

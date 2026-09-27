@@ -502,7 +502,16 @@ app.post('/api/auth/logout', (req, res) => {
     res.json({ ok: true });
 });
 
-app.get('/api/me', auth, (req, res) => res.json({ user: req.user }));
+app.get('/api/me', auth, async (req, res) => {
+    try {
+        const [[user]] = await pool.query(
+            'SELECT id, email, name, street, city, state, postcode FROM users WHERE id = ?', [req.user.id]
+        );
+        res.json({ user: user || req.user });
+    } catch (err) {
+        res.json({ user: req.user });
+    }
+});
 
 // --- Forgot / reset password (customer) ---
 app.post('/api/auth/forgot-password', async (req, res) => {
@@ -1015,6 +1024,19 @@ app.post('/api/orders/checkout', auth, async (req, res) => {
         });
     }
 
+    // Every order needs a confirmed shipping address — the cart page shows a
+    // confirmation step for this right before payment, so the address here
+    // is whatever the customer just reviewed, not necessarily their saved
+    // profile default (they may have edited it for this order only).
+    const shippingAddress = req.body.shippingAddress || {};
+    const shipStreet = String(shippingAddress.street || '').trim();
+    const shipCity = String(shippingAddress.city || '').trim();
+    const shipState = String(shippingAddress.state || '').trim();
+    const shipPostcode = String(shippingAddress.postcode || '').trim();
+    if (!shipStreet || !shipCity || !shipState || !shipPostcode) {
+        return res.status(400).json({ error: 'A complete shipping address is required.' });
+    }
+
     const connection = await pool.getConnection();
     try {
         await connection.beginTransaction();
@@ -1080,13 +1102,19 @@ app.post('/api/orders/checkout', auth, async (req, res) => {
         const total = subtotal - discount + shipping;
 
         const [orderResult] = await connection.query(
-            `INSERT INTO orders (user_id, total_amount, discount_amount, shipping_amount, coupon_code, payment_method, payment_status, status)
-             VALUES (?, ?, ?, ?, ?, ?, 'awaiting_payment', 'pending')`,
-            [req.user.id, total, discount, shipping, couponCode, paymentMethod]
+            `INSERT INTO orders (user_id, total_amount, discount_amount, shipping_amount, shipping_street, shipping_city, shipping_state, shipping_postcode, coupon_code, payment_method, payment_status, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'awaiting_payment', 'pending')`,
+            [req.user.id, total, discount, shipping, shipStreet, shipCity, shipState, shipPostcode, couponCode, paymentMethod]
         );
         const orderId = orderResult.insertId;
         const reference = `CK-${orderId}`;
         await connection.query('UPDATE orders SET payment_reference = ? WHERE id = ?', [reference, orderId]);
+
+        // Remember this as the customer's default address for next time.
+        await connection.query(
+            'UPDATE users SET street = ?, city = ?, state = ?, postcode = ? WHERE id = ?',
+            [shipStreet, shipCity, shipState, shipPostcode, req.user.id]
+        );
 
         for (const item of items) {
             await connection.query(

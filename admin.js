@@ -614,6 +614,49 @@ window.updateOrderStatus = async function (orderId, status) {
     }
 };
 
+async function viewOrder(orderId) {
+    try {
+        const o = await apiFetch(`/api/admin/orders/${orderId}`);
+        document.getElementById('order-modal-title').innerText = `Order #${o.id} — ${o.reference || o.payment_reference || ''}`;
+
+        const addressLine = [o.shipping_street, o.shipping_city, o.shipping_state, o.shipping_postcode]
+            .filter(Boolean).join(', ');
+
+        document.getElementById('order-modal-body').innerHTML = `
+            <h3>Customer</h3>
+            <p>${o.customer_name || ''} &lt;${o.email}&gt;</p>
+
+            <h3>Shipping address</h3>
+            <p>${addressLine || '<span class="admin-empty">No shipping address on file for this order.</span>'}</p>
+
+            <h3>Items</h3>
+            <table class="admin-table">
+                <thead><tr><th>Product</th><th>Price</th><th>Qty</th></tr></thead>
+                <tbody>
+                    ${(o.items || []).map(it => `
+                        <tr><td>${it.product_name}</td><td>${money(it.price)}</td><td>${it.quantity}</td></tr>
+                    `).join('')}
+                </tbody>
+            </table>
+
+            <h3>Totals</h3>
+            <p>Subtotal + shipping − discount = <strong>${money(o.total_amount)}</strong>
+               ${Number(o.shipping_amount) > 0 ? ` (incl. ${money(o.shipping_amount)} shipping)` : ''}
+               ${Number(o.discount_amount) > 0 ? ` (−${money(o.discount_amount)} discount)` : ''}</p>
+        `;
+        document.getElementById('order-modal').style.display = 'flex';
+    } catch (err) {
+        showToast(err.message);
+    }
+}
+
+document.getElementById('order-modal-close')?.addEventListener('click', () => {
+    document.getElementById('order-modal').style.display = 'none';
+});
+document.getElementById('order-modal-close-btn')?.addEventListener('click', () => {
+    document.getElementById('order-modal').style.display = 'none';
+});
+
 window.viewOrder = async function (orderId) {
     try {
         const o = await apiFetch(`/api/admin/orders/${orderId}`);

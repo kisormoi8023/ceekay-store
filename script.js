@@ -518,12 +518,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Checkout Button — goes straight to Stripe's hosted checkout.
+    // Checkout Button — opens the shipping-address confirmation modal first.
+    // The actual checkout call happens on that modal's submit, below.
     const checkoutBtn = document.getElementById('checkout-btn');
+    const shippingModal = document.getElementById('shipping-modal');
     checkoutBtn?.addEventListener('click', async () => {
         if (!window.currentUser) {
             alert('Please log in to proceed with checkout.');
             window.openAuthModal('login');
+            return;
+        }
+        if (!shippingModal) return; // page has no confirmation step wired up
+
+        try {
+            const data = await apiFetch('/api/me');
+            document.getElementById('ship-street').value = data.user?.street || '';
+            document.getElementById('ship-city').value = data.user?.city || '';
+            document.getElementById('ship-state').value = data.user?.state || '';
+            document.getElementById('ship-postcode').value = data.user?.postcode || '';
+        } catch (err) {
+            console.error('Failed to load saved address:', err.message);
+        }
+        shippingModal.style.display = 'flex';
+    });
+
+    document.getElementById('close-shipping-modal')?.addEventListener('click', () => {
+        shippingModal.style.display = 'none';
+    });
+
+    document.getElementById('shipping-confirm-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const shippingAddress = {
+            street: document.getElementById('ship-street').value.trim(),
+            city: document.getElementById('ship-city').value.trim(),
+            state: document.getElementById('ship-state').value.trim(),
+            postcode: document.getElementById('ship-postcode').value.trim()
+        };
+        if (!shippingAddress.street || !shippingAddress.city || !shippingAddress.state || !shippingAddress.postcode) {
+            alert('Please fill in your full shipping address.');
             return;
         }
 
@@ -532,13 +565,14 @@ document.addEventListener('DOMContentLoaded', () => {
             fbq('track', 'InitiateCheckout', { value: Number(totalText) || undefined, currency: 'AUD' });
         }
 
-        const original = checkoutBtn.innerText;
-        checkoutBtn.disabled = true;
-        checkoutBtn.innerText = 'Redirecting…';
+        const confirmBtn = document.getElementById('shipping-confirm-btn');
+        const original = confirmBtn.innerText;
+        confirmBtn.disabled = true;
+        confirmBtn.innerText = 'Redirecting…';
         try {
             const res = await apiFetch('/api/orders/checkout', {
                 method: 'POST',
-                body: JSON.stringify({ paymentMethod: 'card' })
+                body: JSON.stringify({ paymentMethod: 'card', shippingAddress })
             });
             if (res.redirectUrl) {
                 window.location.href = res.redirectUrl;
@@ -548,8 +582,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             alert(err.message);
         } finally {
-            checkoutBtn.disabled = false;
-            checkoutBtn.innerText = original;
+            confirmBtn.disabled = false;
+            confirmBtn.innerText = original;
         }
     });
 
