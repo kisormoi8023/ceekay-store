@@ -857,6 +857,68 @@ app.post('/api/admin/scrape-jobs', requireAdmin, async (req, res) => {
     }
 });
 
+// Best-effort auto-fill for the "Complete Now" modal: fetches the vendor page
+// server-side and reads its Open Graph / product meta tags. Works for most
+// ordinary storefronts (Shopify, WooCommerce, etc. all populate these for link
+// previews); sites with bot-detection (Etsy, Amazon, ...) will reject the
+// fetch outright, in which case the admin just fills the form in by hand.
+function extractMetaTag(html, property) {
+    const patterns = [
+        new RegExp(`<meta[^>]+property=["']${property}["'][^>]+content=["']([^"']+)["']`, 'i'),
+        new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+property=["']${property}["']`, 'i'),
+        new RegExp(`<meta[^>]+name=["']${property}["'][^>]+content=["']([^"']+)["']`, 'i'),
+        new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+name=["']${property}["']`, 'i')
+    ];
+    for (const re of patterns) {
+        const m = html.match(re);
+        if (m) return m[1];
+    }
+    return null;
+}
+
+function decodeHtmlEntities(str) {
+    if (!str) return str;
+    return str.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+        .replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+}
+
+app.get('/api/admin/scrape-jobs/preview', requireAdmin, async (req, res) => {
+    const url = String(req.query.url || '');
+    if (!/^https?:\/\//i.test(url)) return res.status(400).json({ error: 'A valid URL is required' });
+
+    try {
+        const resp = await fetch(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+            },
+            redirect: 'follow'
+        });
+        if (!resp.ok) {
+            return res.status(502).json({ error: `That site returned ${resp.status} — it's likely blocking automated requests. Fill in the details manually.` });
+        }
+        const html = await resp.text();
+
+        const title = decodeHtmlEntities(extractMetaTag(html, 'og:title')) || decodeHtmlEntities((html.match(/<title>([^<]+)<\/title>/i) || [])[1]);
+        const image = extractMetaTag(html, 'og:image') || extractMetaTag(html, 'og:image:secure_url');
+        const description = decodeHtmlEntities(extractMetaTag(html, 'og:description'));
+        let price = extractMetaTag(html, 'product:price:amount') || extractMetaTag(html, 'og:price:amount');
+        if (!price) {
+            const ldJsonPrice = html.match(/"price"\s*:\s*"?(\d+(?:\.\d+)?)"?/i);
+            if (ldJsonPrice) price = ldJsonPrice[1];
+        }
+
+        res.json({
+            title: title || null,
+            image: image || null,
+            description: description || null,
+            price: price ? Number(price) : null
+        });
+    } catch (err) {
+        res.status(502).json({ error: `Could not reach that page (${err.message}). Fill in the details manually.` });
+    }
+});
+
 // The bot (product_scraper.py --bot) polls /scrape-jobs/next on a timer — there's
 // no other scheduling, so "when will this finish" only has a real answer while
 // the bot is actively polling. Tracked in memory; resets on redeploy, which is

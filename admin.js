@@ -513,6 +513,9 @@ async function openCompleteJobModal(jobId, vendorUrl) {
     document.getElementById('complete-job-form').reset();
     document.getElementById('cj-stock').value = 20;
 
+    const statusEl = document.getElementById('complete-job-autofill-status');
+    statusEl.innerText = '';
+
     try {
         const products = await apiFetch('/api/admin/products');
         const nums = products.map(p => Number((String(p.product_id).match(/p(\d+)/) || [])[1])).filter(n => !isNaN(n));
@@ -521,6 +524,26 @@ async function openCompleteJobModal(jobId, vendorUrl) {
     } catch (_) { /* leave blank, admin can type their own id */ }
 
     document.getElementById('complete-job-modal').style.display = 'flex';
+
+    // Best-effort auto-fill from the vendor page's own product/meta tags —
+    // works for most ordinary storefronts, but sites with bot-detection
+    // (Etsy, Amazon, ...) will refuse the fetch; everything stays editable
+    // either way so the admin can fill in or correct whatever's missing.
+    statusEl.innerText = 'Auto-filling from the vendor page…';
+    try {
+        const preview = await apiFetch(`/api/admin/scrape-jobs/preview?url=${encodeURIComponent(vendorUrl)}`);
+        let filled = [];
+        if (preview.title) { document.getElementById('cj-title').value = preview.title; filled.push('title'); }
+        if (preview.price) { document.getElementById('cj-price').value = preview.price; filled.push('price'); }
+        if (preview.image) { document.getElementById('cj-image').value = preview.image; filled.push('image'); }
+        if (preview.description) { document.getElementById('cj-description').value = preview.description; filled.push('description'); }
+
+        statusEl.innerText = filled.length
+            ? `Auto-filled ${filled.join(', ')} from the vendor page — please double-check before saving.`
+            : 'Could not find product details on that page — fill in the form manually.';
+    } catch (err) {
+        statusEl.innerText = err.message || 'Could not auto-fetch that page — fill in the form manually.';
+    }
 }
 
 function closeCompleteJobModal() {
