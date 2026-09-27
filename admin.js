@@ -793,16 +793,6 @@ document.getElementById('order-modal-close-btn')?.addEventListener('click', () =
     document.getElementById('order-modal').style.display = 'none';
 });
 
-window.viewOrder = async function (orderId) {
-    try {
-        const o = await apiFetch(`/api/admin/orders/${orderId}`);
-        const lines = o.items.map(i => `${i.quantity} × ${i.product_name} — ${money(i.price)}`).join('\n');
-        alert(`Order #${o.id}\nCustomer: ${o.customer_name || o.email}\nStatus: ${o.status}\n\n${lines}\n\nTotal: ${money(o.total_amount)}`);
-    } catch (err) {
-        showToast(err.message);
-    }
-};
-
 // -------------------------------------------------------------
 // COUPONS
 // -------------------------------------------------------------
