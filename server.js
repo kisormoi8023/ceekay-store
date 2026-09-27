@@ -134,6 +134,23 @@ const FB_PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN || '';
 const FB_CONFIGURED = !!(FB_PAGE_ID && FB_PAGE_ACCESS_TOKEN);
 if (FB_CONFIGURED) console.log(`📘 Facebook Page posting ready (page ${FB_PAGE_ID})`);
 
+// FB_PAGE_ACCESS_TOKEN may be a Page token or a system-user/user token.
+// Publishing to /{page}/feed only accepts a *Page* token, so exchange it via
+// GET /{page-id}?fields=access_token (a Page token just gets itself back).
+// Cached; cleared on failure so a rotated token is picked up on the next post.
+let fbPageTokenCache = null;
+async function getFacebookPageToken() {
+    if (fbPageTokenCache) return fbPageTokenCache;
+    const resp = await fetch(`https://graph.facebook.com/v19.0/${FB_PAGE_ID}?fields=access_token&access_token=${encodeURIComponent(FB_PAGE_ACCESS_TOKEN)}`);
+    const data = await resp.json();
+    if (!resp.ok || data.error || !data.access_token) {
+        console.warn('Facebook page-token exchange failed, using configured token as-is:', data.error?.message || resp.status);
+        return FB_PAGE_ACCESS_TOKEN;
+    }
+    fbPageTokenCache = data.access_token;
+    return fbPageTokenCache;
+}
+
 // Posts a product's photo + caption to the connected Facebook Page. The image
 // is uploaded as raw bytes (not a URL) so this works even while the site is
 // only reachable at localhost — Facebook never needs to fetch anything from us.
@@ -154,11 +171,14 @@ async function postProductToFacebook(product) {
         const form = new FormData();
         form.append('message', message);
         form.append('link', productUrl);
-        form.append('access_token', FB_PAGE_ACCESS_TOKEN);
+        form.append('access_token', await getFacebookPageToken());
 
         const resp = await fetch(`https://graph.facebook.com/v19.0/${FB_PAGE_ID}/feed`, { method: 'POST', body: form });
         const data = await resp.json();
-        if (!resp.ok || data.error) throw new Error(data.error?.message || `Facebook API error (${resp.status})`);
+        if (!resp.ok || data.error) {
+            fbPageTokenCache = null;
+            throw new Error(data.error?.message || `Facebook API error (${resp.status})`);
+        }
 
         console.log(`📘 Posted "${product.title}" to Facebook (post ${data.id})`);
         return { posted: true, postId: data.id };
