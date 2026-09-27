@@ -66,6 +66,8 @@ CREATE TABLE IF NOT EXISTS products (
     variants JSON,
     stock_quantity INT NOT NULL DEFAULT 0,
     active BOOLEAN NOT NULL DEFAULT TRUE,
+    shipping_group VARCHAR(50) NULL,
+    shipping_fee DECIMAL(10,2) NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
@@ -145,6 +147,7 @@ CREATE TABLE IF NOT EXISTS orders (
     user_id INT NOT NULL,
     total_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
     discount_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+    shipping_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
     coupon_code VARCHAR(50) NULL,
     payment_method VARCHAR(30) NULL,
     payment_reference VARCHAR(40) NULL,

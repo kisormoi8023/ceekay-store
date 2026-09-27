@@ -1075,12 +1075,14 @@ app.post('/api/orders/checkout', auth, async (req, res) => {
                 discount = Math.min(discount, subtotal);
             }
         }
-        const total = subtotal - discount;
+        // Shipping comes from the DB, never the client. Coupons don't discount it.
+        const shipping = await calculateShipping(connection, items.map(i => i.product_id));
+        const total = subtotal - discount + shipping;
 
         const [orderResult] = await connection.query(
-            `INSERT INTO orders (user_id, total_amount, discount_amount, coupon_code, payment_method, payment_status, status)
-             VALUES (?, ?, ?, ?, ?, 'awaiting_payment', 'pending')`,
-            [req.user.id, total, discount, couponCode, paymentMethod]
+            `INSERT INTO orders (user_id, total_amount, discount_amount, shipping_amount, coupon_code, payment_method, payment_status, status)
+             VALUES (?, ?, ?, ?, ?, ?, 'awaiting_payment', 'pending')`,
+            [req.user.id, total, discount, shipping, couponCode, paymentMethod]
         );
         const orderId = orderResult.insertId;
         const reference = `CK-${orderId}`;
@@ -1145,7 +1147,7 @@ app.post('/api/orders/checkout', auth, async (req, res) => {
             }
         }
 
-        const response = { ok: true, orderId, reference, total, discount, paymentMethod, paymentStatus: 'awaiting_payment' };
+        const response = { ok: true, orderId, reference, total, discount, shipping, paymentMethod, paymentStatus: 'awaiting_payment' };
         if (paymentMethod === 'bank_transfer') {
             response.instructions = {
                 accountName: BANK_TRANSFER.accountName,
@@ -1164,6 +1166,23 @@ app.post('/api/orders/checkout', auth, async (req, res) => {
         connection.release();
     }
 });
+
+// Per-order shipping: each supplier (shipping_group) is charged its fee once,
+// however many of its products are in the order. Fee 0 = ships free.
+async function calculateShipping(conn, productIds) {
+    if (!productIds.length) return 0;
+    const [rows] = await conn.query(
+        'SELECT product_id, shipping_group, shipping_fee FROM products WHERE product_id IN (?)', [productIds]
+    );
+    const feeByGroup = {};
+    for (const r of rows) {
+        const fee = Number(r.shipping_fee) || 0;
+        if (fee <= 0) continue;
+        const group = r.shipping_group || r.product_id;
+        feeByGroup[group] = Math.max(feeByGroup[group] || 0, fee);
+    }
+    return Object.values(feeByGroup).reduce((sum, fee) => sum + fee, 0);
+}
 
 // Gives back the stock reserved for an order's items — used when an order is
 // superseded, cancelled, or its Stripe payment fails/expires without ever paying.

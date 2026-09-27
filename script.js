@@ -423,10 +423,39 @@ function renderCartTable(items, coupon) {
         discount = coupon.discount_percent ? subtotal * (Number(coupon.discount_percent) / 100) : Number(coupon.discount_amount || 0);
         discount = Math.min(discount, subtotal);
     }
-    const total = subtotal - discount;
+    const renderTotals = (shipping) => {
+        const total = subtotal - discount + shipping;
+        const shippingEl = document.getElementById('cart-shipping');
+        if (shippingEl) shippingEl.innerText = shipping > 0 ? `$${shipping.toFixed(2)}` : 'Free';
+        if (subtotalEl) subtotalEl.innerText = `$${subtotal.toFixed(2)}`;
+        if (totalEl) totalEl.innerText = discount > 0 ? `$${total.toFixed(2)} (−$${discount.toFixed(2)} applied)` : `$${total.toFixed(2)}`;
+    };
+    renderTotals(0);
+    getCartShipping(items).then(renderTotals).catch(() => {});
+}
 
-    if (subtotalEl) subtotalEl.innerText = `$${subtotal.toFixed(2)}`;
-    if (totalEl) totalEl.innerText = discount > 0 ? `$${total.toFixed(2)} (−$${discount.toFixed(2)} applied)` : `$${total.toFixed(2)}`;
+// Mirrors the server's calculateShipping(): each supplier (shipping_group) is
+// charged its fee once per order. The server recalculates at checkout, so this
+// is display only.
+let shippingInfoPromise = null;
+async function getCartShipping(items) {
+    if (!shippingInfoPromise) {
+        shippingInfoPromise = fetch(`${window.API_BASE_URL}/api/products`)
+            .then(r => (r.ok ? r.json() : []))
+            .catch(() => []);
+    }
+    const products = await shippingInfoPromise;
+    const byId = new Map(products.map(p => [String(p.product_id), p]));
+    const feeByGroup = {};
+    for (const item of items) {
+        const id = String(item.product_id || item.id);
+        const p = byId.get(id);
+        const fee = Number(p?.shipping_fee) || 0;
+        if (fee <= 0) continue;
+        const group = p.shipping_group || id;
+        feeByGroup[group] = Math.max(feeByGroup[group] || 0, fee);
+    }
+    return Object.values(feeByGroup).reduce((sum, fee) => sum + fee, 0);
 }
 
 async function removeItem(productId, index) {
