@@ -857,6 +857,18 @@ app.post('/api/admin/scrape-jobs', requireAdmin, async (req, res) => {
     }
 });
 
+// The bot (product_scraper.py --bot) polls /scrape-jobs/next on a timer — there's
+// no other scheduling, so "when will this finish" only has a real answer while
+// the bot is actively polling. Tracked in memory; resets on redeploy, which is
+// fine since it's just a recent-activity signal, not a record of truth.
+let lastBotPollAt = null;
+const BOT_POLL_INTERVAL_SECONDS = 15; // matches product_scraper.py's --interval default
+
+app.get('/api/admin/scrape-jobs/bot-status', requireAdmin, (req, res) => {
+    const online = !!lastBotPollAt && (Date.now() - lastBotPollAt.getTime()) < BOT_POLL_INTERVAL_SECONDS * 3 * 1000;
+    res.json({ online, lastSeenAt: lastBotPollAt, pollIntervalSeconds: BOT_POLL_INTERVAL_SECONDS });
+});
+
 app.get('/api/admin/scrape-jobs', requireAdmin, async (req, res) => {
     const { status } = req.query;
     try {
@@ -870,6 +882,7 @@ app.get('/api/admin/scrape-jobs', requireAdmin, async (req, res) => {
 });
 
 app.get('/api/admin/scrape-jobs/next', requireBotOrAdmin, async (req, res) => {
+    lastBotPollAt = new Date();
     try {
         const [pending] = await pool.query(
             "SELECT * FROM scrape_jobs WHERE status = 'pending' ORDER BY created_at ASC LIMIT 1"

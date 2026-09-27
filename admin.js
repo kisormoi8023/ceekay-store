@@ -474,12 +474,96 @@ async function loadScrapeJobs() {
                 <td><span class="badge ${j.status}">${j.status}</span></td>
                 <td>${j.result_product_id || (j.error_message ? `<span style="color:var(--admin-danger); font-size:12px;">${j.error_message}</span>` : '—')}</td>
                 <td>${dateFmt(j.created_at)}</td>
+                <td>${(j.status === 'pending' || j.status === 'processing')
+                    ? `<button class="admin-btn small gold" onclick='openCompleteJobModal(${j.id}, ${JSON.stringify(j.vendor_url)})'>Complete Now</button>`
+                    : ''}</td>
             </tr>
-        `).join('') : `<tr><td colspan="4" class="admin-empty">No scrape jobs yet.</td></tr>`;
+        `).join('') : `<tr><td colspan="5" class="admin-empty">No scrape jobs yet.</td></tr>`;
     } catch (err) {
         showToast(err.message);
     }
+    loadBotStatus();
 }
+
+// There's no real scheduler behind the scrape queue — a job only moves once
+// product_scraper.py --bot happens to be running and polls for it. This shows
+// an honest "will it complete automatically right now" signal instead of a
+// made-up ETA, based on when the bot last checked in.
+async function loadBotStatus() {
+    const el = document.getElementById('scrape-bot-status');
+    if (!el) return;
+    try {
+        const s = await apiFetch('/api/admin/scrape-jobs/bot-status');
+        if (s.online) {
+            el.innerHTML = `<span style="color:var(--admin-success, #1a9e5c);">● Bot is active</span> — checks for new jobs about every ${s.pollIntervalSeconds}s, so pending jobs should complete shortly.`;
+        } else if (s.lastSeenAt) {
+            el.innerHTML = `<span style="color:var(--admin-muted);">○ Bot not currently running</span> (last seen ${dateFmt(s.lastSeenAt)}). Start it with <code>python product_scraper.py --bot</code>, or use "Complete Now" on a job below.`;
+        } else {
+            el.innerHTML = `<span style="color:var(--admin-muted);">○ Bot has never checked in on this deployment.</span> Start it with <code>python product_scraper.py --bot</code>, or use "Complete Now" on a job below.`;
+        }
+    } catch (err) {
+        el.innerText = '';
+    }
+}
+
+let completeJobId = null;
+async function openCompleteJobModal(jobId, vendorUrl) {
+    completeJobId = jobId;
+    document.getElementById('complete-job-vendor-url').innerText = vendorUrl;
+    document.getElementById('complete-job-form').reset();
+    document.getElementById('cj-stock').value = 20;
+
+    try {
+        const products = await apiFetch('/api/admin/products');
+        const nums = products.map(p => Number((String(p.product_id).match(/p(\d+)/) || [])[1])).filter(n => !isNaN(n));
+        const next = nums.length ? Math.max(...nums) + 1 : 1;
+        document.getElementById('cj-id').value = `p${String(next).padStart(3, '0')}`;
+    } catch (_) { /* leave blank, admin can type their own id */ }
+
+    document.getElementById('complete-job-modal').style.display = 'flex';
+}
+
+function closeCompleteJobModal() {
+    document.getElementById('complete-job-modal').style.display = 'none';
+    completeJobId = null;
+}
+document.getElementById('complete-job-modal-close')?.addEventListener('click', closeCompleteJobModal);
+document.getElementById('complete-job-cancel')?.addEventListener('click', closeCompleteJobModal);
+
+document.getElementById('complete-job-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!completeJobId) return;
+
+    const productId = document.getElementById('cj-id').value.trim();
+    const productName = document.getElementById('cj-title').value.trim();
+    const price = Number(document.getElementById('cj-price').value);
+    const imageUrl = document.getElementById('cj-image').value.trim();
+    if (!productId || !productName || !imageUrl || !Number.isFinite(price)) {
+        showToast('Fill in Product ID, Title, Price, and Image URL');
+        return;
+    }
+
+    try {
+        await apiFetch('/api/admin/products', {
+            method: 'POST',
+            body: JSON.stringify({
+                productId, productName, price, imageUrl,
+                category: document.getElementById('cj-category').value.trim() || undefined,
+                description: document.getElementById('cj-description').value.trim() || undefined,
+                stockQuantity: Number(document.getElementById('cj-stock').value) || 0
+            })
+        });
+        await apiFetch(`/api/admin/scrape-jobs/${completeJobId}/complete`, {
+            method: 'POST',
+            body: JSON.stringify({ success: true, productId })
+        });
+        showToast(`Job completed — ${productId} saved`);
+        closeCompleteJobModal();
+        loadScrapeJobs();
+    } catch (err) {
+        showToast(err.message);
+    }
+});
 
 // -------------------------------------------------------------
 // SCHEDULED SOCIAL POSTS

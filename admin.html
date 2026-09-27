@@ -164,12 +164,13 @@
                     </div>
                     <button class="admin-btn gold" id="scrape-submit-btn">Queue Scrape Job</button>
                     <p style="color:var(--admin-muted); font-size:13px; margin-top:10px;">
-                        Jobs sit here until your bot worker picks them up. Run <code>node product_scraper.py --bot</code>
-                        (or however you're running the Python bot) to have it poll and fulfill these automatically.
+                        Jobs sit here until your bot worker picks them up. Run <code>python product_scraper.py --bot</code>
+                        to have it poll and fulfill these automatically.
                     </p>
+                    <p id="scrape-bot-status" style="font-size:13px; margin-top:6px;"></p>
                 </div>
                 <table class="admin-table">
-                    <thead><tr><th>Vendor URL</th><th>Status</th><th>Result</th><th>Requested</th></tr></thead>
+                    <thead><tr><th>Vendor URL</th><th>Status</th><th>Result</th><th>Requested</th><th></th></tr></thead>
                     <tbody id="scrape-table-body"></tbody>
                 </table>
 
@@ -299,6 +300,31 @@
         <div class="admin-modal-foot">
             <button class="admin-btn ghost" id="order-modal-close-btn">Close</button>
         </div>
+    </div>
+</div>
+
+<div class="admin-modal-overlay" id="complete-job-modal" style="display:none;">
+    <div class="admin-modal">
+        <div class="admin-modal-head">
+            <h2>Complete Scrape Job Manually</h2>
+            <button class="admin-modal-x" id="complete-job-modal-close">&times;</button>
+        </div>
+        <p class="pd-meta" id="complete-job-vendor-url"></p>
+        <form id="complete-job-form">
+            <div class="admin-form-row">
+                <div class="admin-field"><label>Product ID (slug)</label><input id="cj-id" required></div>
+                <div class="admin-field"><label>Title</label><input id="cj-title" required></div>
+                <div class="admin-field"><label>Category</label><input id="cj-category"></div>
+                <div class="admin-field"><label>Price ($)</label><input id="cj-price" type="number" step="0.01" required></div>
+                <div class="admin-field"><label>Stock Qty</label><input id="cj-stock" type="number" value="20"></div>
+                <div class="admin-field"><label>Image URL</label><input id="cj-image" placeholder="img/... or https://..." required></div>
+            </div>
+            <div class="admin-field"><label>Description</label><textarea id="cj-description" rows="2"></textarea></div>
+            <div class="admin-modal-foot">
+                <button type="button" class="admin-btn ghost" id="complete-job-cancel">Cancel</button>
+                <button type="submit" class="admin-btn gold">Save Product &amp; Complete Job</button>
+            </div>
+        </form>
     </div>
 </div>
 
