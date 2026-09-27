@@ -153,7 +153,7 @@ function attachCartEventListeners(products) {
                 const price = defaultVariant ? defaultVariant.retail_price : (product.base_retail_price || product.price || 0);
                 const image = defaultVariant ? defaultVariant.image : (product.default_image || product.image_url || product.image);
 
-                addToCart(productId, title, price, image, 1);
+                addToCart(productId, title, price, image, 1, defaultVariant?.sku, defaultVariant?.color, defaultVariant?.size);
             }
         };
     });
@@ -287,7 +287,7 @@ function loadSingleProductPage(products) {
             const price = selectedVariant?.retail_price ?? (product.base_retail_price || product.price || 0);
             const image = selectedVariant?.image || (mainImg ? mainImg.src : (product.default_image || product.image_url || product.image));
 
-            addToCart(productId, product.title || product.product_name, price, image, qty);
+            addToCart(productId, product.title || product.product_name, price, image, qty, selectedVariant?.sku, selectedVariant?.color, selectedVariant?.size);
         };
     }
 }
@@ -334,7 +334,7 @@ document.getElementById('coupon-apply-btn')?.addEventListener('click', async () 
     }
 });
 
-async function addToCart(productId, productName, price, imageUrl, quantity = 1) {
+async function addToCart(productId, productName, price, imageUrl, quantity = 1, variantSku = '', variantColor = '', variantSize = '') {
     if (typeof fbq === 'function') {
         fbq('track', 'AddToCart', {
             content_ids: [String(productId)],
@@ -349,7 +349,10 @@ async function addToCart(productId, productName, price, imageUrl, quantity = 1) 
         try {
             await apiFetch('/api/cart/items', {
                 method: 'POST',
-                body: JSON.stringify({ productId: String(productId), productName, price: Number(price), imageUrl, quantity: Number(quantity) })
+                body: JSON.stringify({
+                    productId: String(productId), productName, price: Number(price), imageUrl, quantity: Number(quantity),
+                    variantSku: variantSku || '', variantColor: variantColor || null, variantSize: variantSize || null
+                })
             });
             showToast(productName, imageUrl);
             window.syncCartWithServer();
@@ -358,12 +361,17 @@ async function addToCart(productId, productName, price, imageUrl, quantity = 1) 
         }
     } else {
         let localCart = JSON.parse(localStorage.getItem('ceekay_cart') || '[]');
-        const existingIndex = localCart.findIndex(item => item.id === productId);
+        // Two different variants of the same product must stay as separate
+        // lines — only merge when both the product AND the variant match.
+        const existingIndex = localCart.findIndex(item => item.id === productId && (item.variantSku || '') === (variantSku || ''));
 
         if (existingIndex > -1) {
             localCart[existingIndex].quantity += Number(quantity);
         } else {
-            localCart.push({ id: productId, name: productName, price: Number(price), image: imageUrl, quantity: Number(quantity) });
+            localCart.push({
+                id: productId, name: productName, price: Number(price), image: imageUrl, quantity: Number(quantity),
+                variantSku: variantSku || '', variantColor: variantColor || '', variantSize: variantSize || ''
+            });
         }
 
         localStorage.setItem('ceekay_cart', JSON.stringify(localCart));
@@ -397,22 +405,33 @@ function renderCartTable(items, coupon) {
     }
 
     items.forEach((item, index) => {
-        const id = item.product_id || item.id;
+        // Server-cart rows have both product_id and their own row id (needed
+        // since a product can appear as several rows, one per variant);
+        // guest localStorage rows only have `id` (= productId), so removal
+        // there falls back to the array index instead.
+        const isServerItem = item.product_id !== undefined;
+        const rowId = isServerItem ? item.id : null;
+        const productId = item.product_id || item.id;
+        const removeArg = rowId != null ? rowId : `'${productId}'`;
+
         const productName = item.product_name || item.productName || item.title || item.name || 'Product';
         const itemPrice = parseFloat(item.price || item.base_retail_price || 0);
         const itemQty = parseInt(item.quantity || item.qty || 1, 10);
         const image = item.image_url || item.image || 'img/p1.jpg';
-        
+        const variantColor = item.variant_color || item.variantColor || '';
+        const variantSize = item.variant_size || item.variantSize || '';
+        const variantLabel = [variantColor, variantSize].filter(Boolean).join(' / ');
+
         const itemSubtotal = itemPrice * itemQty;
         subtotal += itemSubtotal;
 
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td><a href="#" onclick="removeItem('${id}', ${index}); return false;"><i class="far fa-times-circle"></i></a></td>
+            <td><a href="#" onclick="removeItem(${removeArg}, ${index}); return false;"><i class="far fa-times-circle"></i></a></td>
             <td><img src="${image}" width="70px" alt="${productName}"></td>
-            <td>${productName}</td>
+            <td>${productName}${variantLabel ? `<br><small style="color:#888;">${variantLabel}</small>` : ''}</td>
             <td>$${itemPrice.toFixed(2)}</td>
-            <td><input type="number" value="${itemQty}" min="1" onchange="updateItemQuantity('${id}', ${index}, this.value)"></td>
+            <td><input type="number" value="${itemQty}" min="1" onchange="updateItemQuantity(${removeArg}, ${index}, this.value)"></td>
             <td>$${itemSubtotal.toFixed(2)}</td>
         `;
         tableBody.appendChild(row);
@@ -458,9 +477,12 @@ async function getCartShipping(items) {
     return Object.values(feeByGroup).reduce((sum, fee) => sum + fee, 0);
 }
 
-async function removeItem(productId, index) {
+// For a logged-in customer `key` is the cart_items row id (a product can have
+// several rows, one per variant); for a guest it's unused — localStorage
+// removal is purely by array index instead.
+async function removeItem(key, index) {
     if (window.currentUser) {
-        await apiFetch(`/api/cart/items/${productId}`, { method: 'DELETE' });
+        await apiFetch(`/api/cart/items/${key}`, { method: 'DELETE' });
     } else {
         let localCart = JSON.parse(localStorage.getItem('ceekay_cart') || '[]');
         localCart.splice(index, 1);
@@ -469,12 +491,12 @@ async function removeItem(productId, index) {
     window.syncCartWithServer();
 }
 
-async function updateItemQuantity(productId, index, newQty) {
+async function updateItemQuantity(key, index, newQty) {
     const quantity = parseInt(newQty);
     if (quantity < 1) return;
 
     if (window.currentUser) {
-        await apiFetch(`/api/cart/items/${productId}`, { method: 'PATCH', body: JSON.stringify({ quantity }) });
+        await apiFetch(`/api/cart/items/${key}`, { method: 'PATCH', body: JSON.stringify({ quantity }) });
     } else {
         let localCart = JSON.parse(localStorage.getItem('ceekay_cart') || '[]');
         if (localCart[index]) localCart[index].quantity = quantity;

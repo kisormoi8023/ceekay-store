@@ -98,7 +98,10 @@ async function mergeGuestCartToServer() {
             productName: item.name || item.title || item.productName || item.product_name,
             price: Number(item.price),
             imageUrl: item.image || item.imageUrl || item.image_url,
-            quantity: Number(item.quantity || item.qty || 1)
+            quantity: Number(item.quantity || item.qty || 1),
+            variantSku: item.variantSku || item.variant_sku || '',
+            variantColor: item.variantColor || item.variant_color || null,
+            variantSize: item.variantSize || item.variant_size || null
         }));
 
         await apiFetch('/api/cart/merge', {

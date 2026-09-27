@@ -738,11 +738,23 @@ async function viewOrder(orderId) {
 
             <h3>Items</h3>
             <table class="admin-table">
-                <thead><tr><th>Product</th><th>Price</th><th>Qty</th></tr></thead>
+                <thead><tr><th>Product</th><th>Variant</th><th>Price</th><th>Qty</th><th>Links</th></tr></thead>
                 <tbody>
-                    ${(o.items || []).map(it => `
-                        <tr><td>${it.product_name}</td><td>${money(it.price)}</td><td>${it.quantity}</td></tr>
-                    `).join('')}
+                    ${(o.items || []).map(it => {
+                        const variantLabel = [it.variant_color, it.variant_size].filter(Boolean).join(' / ') || '—';
+                        const storeLink = `<a href="sproduct.html?id=${encodeURIComponent(it.product_id)}" target="_blank" rel="noopener noreferrer">View on store</a>`;
+                        const vendorLink = it.vendor_url
+                            ? `<a href="${it.vendor_url}" target="_blank" rel="noopener noreferrer">Vendor page</a>`
+                            : '<span class="admin-empty">No vendor URL</span>';
+                        return `
+                        <tr>
+                            <td>${it.product_name}</td>
+                            <td>${variantLabel}</td>
+                            <td>${money(it.price)}</td>
+                            <td>${it.quantity}</td>
+                            <td>${storeLink}<br>${vendorLink}</td>
+                        </tr>`;
+                    }).join('')}
                 </tbody>
             </table>
 

@@ -135,7 +135,10 @@ CREATE TABLE IF NOT EXISTS cart_items (
     price DECIMAL(10,2) NOT NULL DEFAULT 0,
     image_url VARCHAR(512),
     quantity INT NOT NULL DEFAULT 1,
-    UNIQUE KEY uniq_cart_product (cart_id, product_id),
+    variant_sku VARCHAR(100) NOT NULL DEFAULT '',
+    variant_color VARCHAR(100) NULL,
+    variant_size VARCHAR(50) NULL,
+    UNIQUE KEY uniq_cart_product_variant (cart_id, product_id, variant_sku),
     FOREIGN KEY (cart_id) REFERENCES carts(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -169,6 +172,9 @@ CREATE TABLE IF NOT EXISTS order_items (
     product_name VARCHAR(255),
     price DECIMAL(10,2) NOT NULL DEFAULT 0,
     quantity INT NOT NULL DEFAULT 1,
+    variant_sku VARCHAR(100) NULL,
+    variant_color VARCHAR(100) NULL,
+    variant_size VARCHAR(50) NULL,
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

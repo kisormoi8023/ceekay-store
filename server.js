@@ -1009,15 +1009,15 @@ app.get('/api/cart', optionalAuth, async (req, res) => {
 });
 
 app.post('/api/cart/items', auth, async (req, res) => {
-    const { productId, productName, price, imageUrl, quantity } = req.body;
+    const { productId, productName, price, imageUrl, quantity, variantSku, variantColor, variantSize } = req.body;
     try {
         const cartId = await getOrCreateCart(req.user.id);
         const qty = quantity || 1;
         await pool.query(
-            `INSERT INTO cart_items (cart_id, product_id, product_name, price, image_url, quantity)
-             VALUES (?, ?, ?, ?, ?, ?)
+            `INSERT INTO cart_items (cart_id, product_id, product_name, price, image_url, quantity, variant_sku, variant_color, variant_size)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
              ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)`,
-            [cartId, productId, productName, price, imageUrl, qty]
+            [cartId, productId, productName, price, imageUrl, qty, variantSku || '', variantColor || null, variantSize || null]
         );
         res.json({ ok: true });
     } catch (err) {
@@ -1026,21 +1026,23 @@ app.post('/api/cart/items', auth, async (req, res) => {
     }
 });
 
-app.patch('/api/cart/items/:productId', auth, async (req, res) => {
+// Keyed by the cart_items row id (not product_id) — a customer can have
+// several rows for the same product if they picked different variants.
+app.patch('/api/cart/items/:id', auth, async (req, res) => {
     const { quantity } = req.body;
     try {
         const cartId = await getOrCreateCart(req.user.id);
-        await pool.query('UPDATE cart_items SET quantity = ? WHERE cart_id = ? AND product_id = ?', [quantity, cartId, req.params.productId]);
+        await pool.query('UPDATE cart_items SET quantity = ? WHERE cart_id = ? AND id = ?', [quantity, cartId, req.params.id]);
         res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: 'Failed to update quantity' });
     }
 });
 
-app.delete('/api/cart/items/:productId', auth, async (req, res) => {
+app.delete('/api/cart/items/:id', auth, async (req, res) => {
     try {
         const cartId = await getOrCreateCart(req.user.id);
-        await pool.query('DELETE FROM cart_items WHERE cart_id = ? AND product_id = ?', [cartId, req.params.productId]);
+        await pool.query('DELETE FROM cart_items WHERE cart_id = ? AND id = ?', [cartId, req.params.id]);
         res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: 'Failed to remove item' });
@@ -1054,10 +1056,10 @@ app.post('/api/cart/merge', auth, async (req, res) => {
         const cartId = await getOrCreateCart(req.user.id);
         for (const item of items) {
             await pool.query(
-                `INSERT INTO cart_items (cart_id, product_id, product_name, price, image_url, quantity)
-                 VALUES (?, ?, ?, ?, ?, ?)
+                `INSERT INTO cart_items (cart_id, product_id, product_name, price, image_url, quantity, variant_sku, variant_color, variant_size)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                  ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)`,
-                [cartId, item.productId, item.productName, item.price, item.imageUrl, item.quantity]
+                [cartId, item.productId, item.productName, item.price, item.imageUrl, item.quantity, item.variantSku || '', item.variantColor || null, item.variantSize || null]
             );
         }
         res.json({ ok: true });
@@ -1193,8 +1195,8 @@ app.post('/api/orders/checkout', auth, async (req, res) => {
 
         for (const item of items) {
             await connection.query(
-                'INSERT INTO order_items (order_id, product_id, product_name, price, quantity) VALUES (?, ?, ?, ?, ?)',
-                [orderId, item.product_id, item.product_name, item.price, item.quantity]
+                'INSERT INTO order_items (order_id, product_id, product_name, price, quantity, variant_sku, variant_color, variant_size) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                [orderId, item.product_id, item.product_name, item.price, item.quantity, item.variant_sku || null, item.variant_color || null, item.variant_size || null]
             );
             // Stock is reserved as soon as the order exists — for every payment method,
             // not just Stripe — so a second checkout can't sell the same units while
@@ -1488,7 +1490,15 @@ app.get('/api/admin/orders/:id', requireAdmin, async (req, res) => {
     try {
         const [[order]] = await pool.query('SELECT o.*, u.email, u.name AS customer_name FROM orders o JOIN users u ON o.user_id = u.id WHERE o.id = ?', [req.params.id]);
         if (!order) return res.status(404).json({ error: 'Order not found' });
-        const [items] = await pool.query('SELECT * FROM order_items WHERE order_id = ?', [req.params.id]);
+        // Joined with products for vendor_url — the admin needs it to actually
+        // source/fulfill the item, not just see what was ordered.
+        const [items] = await pool.query(
+            `SELECT oi.*, p.vendor_url
+             FROM order_items oi
+             LEFT JOIN products p ON p.product_id = oi.product_id
+             WHERE oi.order_id = ?`,
+            [req.params.id]
+        );
         res.json({ ...order, items });
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch order' });
