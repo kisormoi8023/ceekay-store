@@ -255,7 +255,7 @@
             if (p.video) {
                 // Hasimline shows products as videos, so play them in place of a photo.
                 var vid = el('video');
-                vid.src = p.video; vid.muted = true; vid.loop = true; vid.playsInline = true;
+                vid.src = p.image ? p.video : p.video + '#t=0.1'; vid.muted = true; vid.loop = true; vid.playsInline = true;
                 vid.preload = 'metadata';
                 vid.setAttribute('aria-label', p.name);
                 if (p.image) vid.poster = p.image;
