@@ -267,6 +267,7 @@ window.openProductDetail = async function (productId) {
     $('pd-price').value = p.base_retail_price ?? '';
     $('pd-stock').value = p.stock_quantity ?? '';
     $('pd-vendor-url').value = p.vendor_url || '';
+    updatePdVendorUrlLink();
     $('pd-description').value = p.description || '';
 
     renderPdImages(images);
@@ -321,6 +322,18 @@ function marginLabel(cost, retail) {
 }
 
 $('pd-back').addEventListener('click', (e) => { e.preventDefault(); loadProducts(); });
+
+function updatePdVendorUrlLink() {
+    const link = $('pd-vendor-url-link');
+    const url = $('pd-vendor-url').value.trim();
+    if (/^https?:\/\//i.test(url)) {
+        link.href = url;
+        link.style.display = 'inline-block';
+    } else {
+        link.style.display = 'none';
+    }
+}
+$('pd-vendor-url').addEventListener('input', updatePdVendorUrlLink);
 
 $('pd-save-core').addEventListener('click', async () => {
     if (!pdCurrent) return;
@@ -470,7 +483,7 @@ async function loadScrapeJobs() {
         const jobs = await apiFetch('/api/admin/scrape-jobs');
         tbody.innerHTML = jobs.length ? jobs.map(j => `
             <tr>
-                <td style="max-width:320px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${j.vendor_url}</td>
+                <td style="max-width:320px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><a href="${j.vendor_url}" target="_blank" rel="noopener noreferrer">${j.vendor_url}</a></td>
                 <td><span class="badge ${j.status}">${j.status}</span></td>
                 <td>${j.result_product_id || (j.error_message ? `<span style="color:var(--admin-danger); font-size:12px;">${j.error_message}</span>` : '—')}</td>
                 <td>${dateFmt(j.created_at)}</td>
@@ -509,7 +522,7 @@ async function loadBotStatus() {
 let completeJobId = null;
 async function openCompleteJobModal(jobId, vendorUrl) {
     completeJobId = jobId;
-    document.getElementById('complete-job-vendor-url').innerText = vendorUrl;
+    document.getElementById('complete-job-vendor-url').innerHTML = `<a href="${vendorUrl}" target="_blank" rel="noopener noreferrer">${vendorUrl}</a>`;
     document.getElementById('complete-job-form').reset();
     document.getElementById('cj-stock').value = 20;
 
