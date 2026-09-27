@@ -78,7 +78,6 @@
         <h2>Watch Hasimline in Motion</h2>
         <p>See the fit, the fabric and the finish up close</p>
         <div class="video-masonry" id="hasimline-videos"></div>
-        <p class="empty-note" id="hasimline-videos-empty" hidden>Videos coming soon. Follow along on the <a href="https://hasimline.qshop.ng/" target="_blank" rel="noopener">Hasimline store</a>.</p>
     </section>
 
     <!-- PRODUCTS -->
@@ -239,16 +238,34 @@
             videoGrid.appendChild(card);
             shown++;
         });
-        if (!shown) document.getElementById('hasimline-videos-empty').hidden = false;
+        if (!shown) document.getElementById('video-feed').hidden = true;
 
         // Products
+        // Only play product videos while they are on screen, to save data on phones.
+        var watcher = 'IntersectionObserver' in window ? new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) { var pr = e.target.play(); if (pr) pr.catch(function () {}); }
+                else e.target.pause();
+            });
+        }, { threshold: 0.25 }) : null;
         var productGrid = document.getElementById('hasimline-products');
         HASIMLINE_PRODUCTS.forEach(function (p) {
             var card = el('a', 'pro');
             card.href = p.link; card.target = '_blank'; card.rel = 'noopener';
-            var img = el('img');
-            img.src = p.image; img.alt = p.name; img.loading = 'lazy';
-            card.appendChild(img);
+            if (p.video) {
+                // Hasimline shows products as videos, so play them in place of a photo.
+                var vid = el('video');
+                vid.src = p.video; vid.muted = true; vid.loop = true; vid.playsInline = true;
+                vid.preload = 'metadata';
+                vid.setAttribute('aria-label', p.name);
+                if (p.image) vid.poster = p.image;
+                card.appendChild(vid);
+                if (watcher) watcher.observe(vid); else vid.autoplay = true;
+            } else {
+                var img = el('img');
+                img.src = p.image; img.alt = p.name; img.loading = 'lazy';
+                card.appendChild(img);
+            }
             var des = el('div', 'des');
             des.appendChild(el('span', '', 'Hasimline'));
             des.appendChild(el('h5', '', p.name));

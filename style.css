@@ -243,9 +243,8 @@ button.white:hover { background: var(--white); color: var(--ink); }
 .vendor-videos .video-masonry { margin-top: 30px; }
 .vendor-videos .video-container iframe { aspect-ratio: 9/16; height: auto; }
 .video-details .normal-btn { margin-top: 6px; }
-.empty-note { text-transform: none !important; letter-spacing: 0 !important; color: var(--ink-soft) !important; font-size: .95rem !important; }
-.empty-note a { color: var(--gold); }
 #hasimline-products .pro { display: block; color: inherit; }
+#hasimline-products .pro > video { display: block; width: 100%; aspect-ratio: 4/5; object-fit: cover; background: #24201d; }
 .vendor-cta { margin-top: 40px; }
 @media (max-width: 700px) {
     .featured-post-card { grid-template-columns: 1fr; }

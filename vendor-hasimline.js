@@ -8,6 +8,8 @@
      - image : image URL (right-click the product photo > "Copy image address")
                or a local file such as "img/hasimline/agbada.jpg"
      - link  : the product's page on hasimline.qshop.ng
+     - video : (optional) product video address ending in .mp4. When set, the
+               card plays the video instead of showing the image.
 
    VIDEOS: paste any of these link types and it will be embedded automatically
      - YouTube   : https://www.youtube.com/watch?v=XXXX  or  https://youtu.be/XXXX
