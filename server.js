@@ -449,7 +449,7 @@ app.get('/api/payment-config', (req, res) => {
 // ===============================================================
 app.post('/api/auth/register', async (req, res) => {
     console.log('--- REGISTER ATTEMPT ---', req.body);
-    const { email, password, name, address, street, city, state, postcode, newsletterOptIn } = req.body;
+    const { email, password, name, phone, address, street, city, state, postcode, newsletterOptIn } = req.body;
     if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
 
     const finalStreet = street || address?.street || null;
@@ -460,8 +460,8 @@ app.post('/api/auth/register', async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const [result] = await pool.query(
-            'INSERT INTO users (email, password_hash, name, street, city, state, postcode, newsletter_opt_in) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            [email, hashedPassword, name || null, finalStreet, finalCity, finalState, finalPostcode, !!newsletterOptIn]
+            'INSERT INTO users (email, password_hash, name, phone, street, city, state, postcode, newsletter_opt_in) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [email, hashedPassword, name || null, phone || null, finalStreet, finalCity, finalState, finalPostcode, !!newsletterOptIn]
         );
 
         const userId = result.insertId;
@@ -505,7 +505,7 @@ app.post('/api/auth/logout', (req, res) => {
 app.get('/api/me', auth, async (req, res) => {
     try {
         const [[user]] = await pool.query(
-            'SELECT id, email, name, street, city, state, postcode FROM users WHERE id = ?', [req.user.id]
+            'SELECT id, email, name, phone, street, city, state, postcode FROM users WHERE id = ?', [req.user.id]
         );
         res.json({ user: user || req.user });
     } catch (err) {
@@ -1110,8 +1110,9 @@ app.post('/api/orders/checkout', auth, async (req, res) => {
     const shipCity = String(shippingAddress.city || '').trim();
     const shipState = String(shippingAddress.state || '').trim();
     const shipPostcode = String(shippingAddress.postcode || '').trim();
-    if (!shipStreet || !shipCity || !shipState || !shipPostcode) {
-        return res.status(400).json({ error: 'A complete shipping address is required.' });
+    const shipPhone = String(shippingAddress.phone || '').trim();
+    if (!shipStreet || !shipCity || !shipState || !shipPostcode || !shipPhone) {
+        return res.status(400).json({ error: 'A complete shipping address, including phone number, is required.' });
     }
 
     const connection = await pool.getConnection();
@@ -1179,9 +1180,9 @@ app.post('/api/orders/checkout', auth, async (req, res) => {
         const total = subtotal - discount + shipping;
 
         const [orderResult] = await connection.query(
-            `INSERT INTO orders (user_id, total_amount, discount_amount, shipping_amount, shipping_street, shipping_city, shipping_state, shipping_postcode, coupon_code, payment_method, payment_status, status)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'awaiting_payment', 'pending')`,
-            [req.user.id, total, discount, shipping, shipStreet, shipCity, shipState, shipPostcode, couponCode, paymentMethod]
+            `INSERT INTO orders (user_id, total_amount, discount_amount, shipping_amount, shipping_street, shipping_city, shipping_state, shipping_postcode, shipping_phone, coupon_code, payment_method, payment_status, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'awaiting_payment', 'pending')`,
+            [req.user.id, total, discount, shipping, shipStreet, shipCity, shipState, shipPostcode, shipPhone, couponCode, paymentMethod]
         );
         const orderId = orderResult.insertId;
         const reference = `CK-${orderId}`;
@@ -1189,8 +1190,8 @@ app.post('/api/orders/checkout', auth, async (req, res) => {
 
         // Remember this as the customer's default address for next time.
         await connection.query(
-            'UPDATE users SET street = ?, city = ?, state = ?, postcode = ? WHERE id = ?',
-            [shipStreet, shipCity, shipState, shipPostcode, req.user.id]
+            'UPDATE users SET street = ?, city = ?, state = ?, postcode = ?, phone = ? WHERE id = ?',
+            [shipStreet, shipCity, shipState, shipPostcode, shipPhone, req.user.id]
         );
 
         for (const item of items) {

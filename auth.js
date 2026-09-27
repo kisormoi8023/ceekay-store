@@ -228,6 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = document.getElementById('reg-email')?.value.trim() || '';
         const password = document.getElementById('reg-password')?.value || '';
         const name = document.getElementById('reg-name')?.value.trim() || '';
+        const phone = document.getElementById('reg-phone')?.value.trim() || '';
 
         const street = document.getElementById('reg-street')?.value.trim() || '';
         const city = document.getElementById('reg-city')?.value.trim() || '';
@@ -235,8 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const postcode = document.getElementById('reg-postcode')?.value.trim() || '';
         const newsletterOptIn = document.getElementById('reg-newsletter')?.checked || false;
 
-        if (!email || !password || !name) {
-            alert('Please fill in your name, email, and password.');
+        if (!email || !password || !name || !phone) {
+            alert('Please fill in your name, phone number, email, and password.');
             return;
         }
 
@@ -248,6 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     email,
                     password,
                     name,
+                    phone,
                     street,
                     city,
                     state,

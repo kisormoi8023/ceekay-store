@@ -728,13 +728,17 @@ async function viewOrder(orderId) {
 
         const addressLine = [o.shipping_street, o.shipping_city, o.shipping_state, o.shipping_postcode]
             .filter(Boolean).join(', ');
+        const fulfillText = [o.customer_name, o.shipping_phone, addressLine].filter(Boolean).join('\n');
 
         document.getElementById('order-modal-body').innerHTML = `
-            <h3>Customer</h3>
-            <p>${o.customer_name || ''} &lt;${o.email}&gt;</p>
-
-            <h3>Shipping address</h3>
-            <p>${addressLine || '<span class="admin-empty">No shipping address on file for this order.</span>'}</p>
+            <h3>Ship to — everything you need for the vendor's checkout</h3>
+            <div class="admin-form-card" style="line-height:1.7;">
+                <div><strong>${o.customer_name || '(no name on file)'}</strong></div>
+                <div>Phone: ${o.shipping_phone ? `<strong>${o.shipping_phone}</strong>` : '<span class="admin-empty">No phone on file for this order</span>'}</div>
+                <div>Email: ${o.email}</div>
+                <div style="margin-top:8px;">${addressLine || '<span class="admin-empty">No shipping address on file for this order.</span>'}</div>
+                ${fulfillText ? `<button type="button" class="admin-btn small ghost" style="margin-top:10px;" onclick="navigator.clipboard.writeText(${JSON.stringify(fulfillText)}); showToast('Copied to clipboard');">Copy for vendor checkout</button>` : ''}
+            </div>
 
             <h3>Items</h3>
             <table class="admin-table">

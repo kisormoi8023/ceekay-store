@@ -558,6 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('ship-city').value = data.user?.city || '';
             document.getElementById('ship-state').value = data.user?.state || '';
             document.getElementById('ship-postcode').value = data.user?.postcode || '';
+            document.getElementById('ship-phone').value = data.user?.phone || '';
         } catch (err) {
             console.error('Failed to load saved address:', err.message);
         }
@@ -575,10 +576,11 @@ document.addEventListener('DOMContentLoaded', () => {
             street: document.getElementById('ship-street').value.trim(),
             city: document.getElementById('ship-city').value.trim(),
             state: document.getElementById('ship-state').value.trim(),
-            postcode: document.getElementById('ship-postcode').value.trim()
+            postcode: document.getElementById('ship-postcode').value.trim(),
+            phone: document.getElementById('ship-phone').value.trim()
         };
-        if (!shippingAddress.street || !shippingAddress.city || !shippingAddress.state || !shippingAddress.postcode) {
-            alert('Please fill in your full shipping address.');
+        if (!shippingAddress.street || !shippingAddress.city || !shippingAddress.state || !shippingAddress.postcode || !shippingAddress.phone) {
+            alert('Please fill in your full shipping address, including phone number.');
             return;
         }
 
