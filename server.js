@@ -1508,13 +1508,22 @@ app.get('/api/admin/orders/:id', requireAdmin, async (req, res) => {
 
 const VALID_ORDER_STATUSES = ['pending', 'processing', 'shipped', 'completed', 'cancelled'];
 app.patch('/api/admin/orders/:id', requireAdmin, async (req, res) => {
-    const { status } = req.body;
-    if (!VALID_ORDER_STATUSES.includes(status)) {
+    const { status, vendorOrderRef, trackingNumber } = req.body;
+    if (status !== undefined && !VALID_ORDER_STATUSES.includes(status)) {
         return res.status(400).json({ error: `status must be one of: ${VALID_ORDER_STATUSES.join(', ')}` });
     }
+
+    const fields = [];
+    const values = [];
+    if (status !== undefined) { fields.push('status = ?'); values.push(status); }
+    if (vendorOrderRef !== undefined) { fields.push('vendor_order_ref = ?'); values.push(vendorOrderRef || null); }
+    if (trackingNumber !== undefined) { fields.push('tracking_number = ?'); values.push(trackingNumber || null); }
+    if (fields.length === 0) return res.status(400).json({ error: 'Nothing to update' });
+
     try {
-        await pool.query('UPDATE orders SET status = ? WHERE id = ?', [status, req.params.id]);
-        await logAudit(req.admin, 'order.status_update', { orderId: req.params.id, status });
+        values.push(req.params.id);
+        await pool.query(`UPDATE orders SET ${fields.join(', ')} WHERE id = ?`, values);
+        await logAudit(req.admin, 'order.update', { orderId: req.params.id, status, vendorOrderRef, trackingNumber });
         res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: 'Failed to update order' });

@@ -705,10 +705,13 @@ async function loadOrders() {
                         ${['pending', 'processing', 'shipped', 'completed', 'cancelled'].map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s}</option>`).join('')}
                     </select>
                 </td>
+                <td>${o.vendor_order_ref
+                    ? `<span class="badge done" title="${o.vendor_order_ref}">✓ placed</span>`
+                    : `<span class="badge pending">not placed</span>`}</td>
                 <td>${dateFmt(o.created_at)}</td>
                 <td><button class="admin-btn small ghost" onclick="viewOrder(${o.id})">View</button></td>
             </tr>`;
-        }).join('') : `<tr><td colspan="7" class="admin-empty">No orders yet.</td></tr>`;
+        }).join('') : `<tr><td colspan="8" class="admin-empty">No orders yet.</td></tr>`;
     } catch (err) {
         showToast(err.message);
     }
@@ -719,6 +722,21 @@ async function markPaid(orderId) {
     try {
         await apiFetch(`/api/admin/orders/${orderId}/mark-paid`, { method: 'POST' });
         showToast(`Order #${orderId} marked paid`);
+        loadOrders();
+    } catch (err) {
+        showToast(err.message);
+    }
+}
+
+async function saveVendorFulfillment(orderId) {
+    const vendorOrderRef = document.getElementById('ord-vendor-ref').value.trim();
+    const trackingNumber = document.getElementById('ord-tracking').value.trim();
+    try {
+        await apiFetch(`/api/admin/orders/${orderId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ vendorOrderRef, trackingNumber })
+        });
+        showToast('Vendor fulfillment info saved');
         loadOrders();
     } catch (err) {
         showToast(err.message);
@@ -779,6 +797,15 @@ async function viewOrder(orderId) {
             <p>Subtotal + shipping − discount = <strong>${money(o.total_amount)}</strong>
                ${Number(o.shipping_amount) > 0 ? ` (incl. ${money(o.shipping_amount)} shipping)` : ''}
                ${Number(o.discount_amount) > 0 ? ` (−${money(o.discount_amount)} discount)` : ''}</p>
+
+            <h3>Vendor fulfillment</h3>
+            <div class="admin-form-card">
+                <div class="admin-form-row">
+                    <div class="admin-field"><label>Vendor order #</label><input id="ord-vendor-ref" value="${o.vendor_order_ref || ''}" placeholder="e.g. XAI35570"></div>
+                    <div class="admin-field"><label>Tracking #</label><input id="ord-tracking" value="${o.tracking_number || ''}" placeholder="Courier tracking number"></div>
+                </div>
+                <button type="button" class="admin-btn gold small" onclick="saveVendorFulfillment(${o.id})">Save</button>
+            </div>
         `;
         document.getElementById('order-modal').style.display = 'flex';
     } catch (err) {

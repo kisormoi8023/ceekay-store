@@ -162,6 +162,8 @@ CREATE TABLE IF NOT EXISTS orders (
     payment_reference VARCHAR(40) NULL,
     payment_status ENUM('awaiting_payment','paid','failed','refunded') NOT NULL DEFAULT 'awaiting_payment',
     status ENUM('pending', 'processing', 'shipped', 'completed', 'cancelled') NOT NULL DEFAULT 'pending',
+    vendor_order_ref VARCHAR(100) NULL,
+    tracking_number VARCHAR(100) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
