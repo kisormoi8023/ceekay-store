@@ -67,9 +67,110 @@ def download_image(url, product_code, img_index, img_dir="img"):
     return "img/default.jpg"
 
 
+def extract_meta_tag(html, prop):
+    """Reads a <meta property="prop" content="..."> tag regardless of
+    attribute order or quote style."""
+    patterns = [
+        rf'<meta[^>]+property=["\']{re.escape(prop)}["\'][^>]+content=["\']([^"\']+)["\']',
+        rf'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']{re.escape(prop)}["\']',
+        rf'<meta[^>]+name=["\']{re.escape(prop)}["\'][^>]+content=["\']([^"\']+)["\']',
+        rf'<meta[^>]+content=["\']([^"\']+)["\'][^>]+name=["\']{re.escape(prop)}["\']',
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, html, re.IGNORECASE)
+        if match:
+            return match.group(1)
+    return None
+
+
+def decode_html_entities(s):
+    if not s:
+        return s
+    return (s.replace("&amp;", "&").replace("&quot;", '"').replace("&#39;", "'")
+             .replace("&lt;", "<").replace("&gt;", ">"))
+
+
+def extract_price_from_html(html):
+    """Open Graph product price, falling back to a JSON-LD "price" field —
+    covers the large majority of ecommerce platforms without needing a
+    site-specific selector."""
+    price = extract_meta_tag(html, "product:price:amount") or extract_meta_tag(html, "og:price:amount")
+    if not price:
+        match = re.search(r'"price"\s*:\s*"?(\d+(?:\.\d+)?)"?', html, re.IGNORECASE)
+        if match:
+            price = match.group(1)
+    try:
+        return float(price) if price else None
+    except ValueError:
+        return None
+
+
+def try_fast_scrape(vendor_url, product_code):
+    """Plain HTTP request + Open Graph/meta-tag extraction — no browser.
+    Mirrors the same approach as the admin dashboard's "Complete Now"
+    auto-fill, and works for most ordinary storefronts (they already expose
+    these tags for link-preview purposes) without the cost of launching a
+    full headless Chromium instance. Returns a product dict, or None if the
+    page didn't expose enough data (JS-rendered content, or the site blocks
+    plain HTTP requests) — the caller falls back to Playwright in that case.
+    """
+    try:
+        resp = requests.get(
+            vendor_url,
+            headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+            },
+            timeout=15
+        )
+    except Exception as e:
+        print(f"[{product_code}] Fast path request failed ({e}) — falling back to a real browser.")
+        return None
+
+    if resp.status_code != 200:
+        print(f"[{product_code}] Fast path got HTTP {resp.status_code} — falling back to a real browser.")
+        return None
+
+    html = resp.text
+    title = decode_html_entities(extract_meta_tag(html, "og:title"))
+    image = extract_meta_tag(html, "og:image") or extract_meta_tag(html, "og:image:secure_url")
+    description = decode_html_entities(extract_meta_tag(html, "og:description")) or ""
+    vendor_price = extract_price_from_html(html)
+
+    if not title or not image:
+        print(f"[{product_code}] Fast path found no usable title/image (likely JS-rendered) — falling back to a real browser.")
+        return None
+
+    local_image = download_image(image, product_code, 1)
+    retail_price = round(vendor_price * 1.4, 2) if vendor_price else 0.0
+
+    print(f"[{product_code}] Fast path succeeded — skipped launching a browser entirely.")
+    return {
+        "id": product_code,
+        "title": title,
+        "vendor_url": vendor_url,
+        "description": description,
+        "base_retail_price": retail_price,
+        "default_image": local_image,
+        "variants": [{
+            "sku": f"{product_code.upper()}-V1",
+            "size": "Default",
+            "color": "Default",
+            "vendor_price": vendor_price or 0.0,
+            "retail_price": retail_price,
+            "image": local_image
+        }]
+    }
+
+
 def scrape_vendor_product_with_variants(vendor_url):
     product_code, _ = get_next_product_id("products.json")
 
+    fast_result = try_fast_scrape(vendor_url, product_code)
+    if fast_result:
+        return fast_result
+
+    print(f"[{product_code}] Falling back to full browser automation...")
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         context = browser.new_context(
@@ -83,6 +184,11 @@ def scrape_vendor_product_with_variants(vendor_url):
         print(f"[{product_code}] Connecting to vendor page...")
         page.goto(vendor_url, wait_until="domcontentloaded", timeout=60000)
         page.wait_for_timeout(4000)
+
+        # Real price from the rendered page's own meta tags — was previously
+        # hardcoded to a fixed $126 for every single product regardless of
+        # what it actually cost.
+        found_vendor_price = extract_price_from_html(page.content())
 
         # 1. Product Title
         title = page.locator("h1").first.inner_text().strip()
@@ -149,7 +255,11 @@ def scrape_vendor_product_with_variants(vendor_url):
         browser.close()
 
         # 4. Download top 5 genuine product photos
-        base_vendor_price = 126.00
+        if found_vendor_price:
+            base_vendor_price = found_vendor_price
+        else:
+            print(f"[{product_code}] Could not find a real price on the page — defaulting to $0, fix it manually in the admin.")
+            base_vendor_price = 0.0
         variants = []
         downloaded_gallery = []
 
@@ -177,7 +287,7 @@ def scrape_vendor_product_with_variants(vendor_url):
             "id": product_code,
             "title": title,
             "vendor_url": vendor_url,
-            "base_retail_price": variants[0]["retail_price"] if variants else 177.20,
+            "base_retail_price": variants[0]["retail_price"] if variants else base_vendor_price,
             "default_image": variants[0]["image"] if variants else "img/default.jpg",
             "variants": variants
         }
