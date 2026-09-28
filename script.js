@@ -92,6 +92,68 @@ function fetchLocalCatalog() {
             });
         });
 }
+function productCardHtml(product) {
+    const id = product.product_id || product.id || 'unknown';
+    const title = product.product_name || product.title || 'Untitled Product';
+
+    const rawPrice = product.base_retail_price ?? product.price ?? 0;
+    const price = isNaN(Number(rawPrice)) ? '0.00' : Number(rawPrice).toFixed(2);
+
+    const image = product.default_image || product.image_url || product.image || 'img/p1.jpg';
+    const detailUrl = `sproduct.html?id=${encodeURIComponent(id)}`;
+
+    return `
+        <div class="pro" data-id="${id}">
+            <img src="${image}" alt="${title}" onclick="window.location.href='${detailUrl}'">
+            <div class="des" onclick="window.location.href='${detailUrl}'">
+                <span>${product.category || 'CeeKay'}</span>
+                <h5>${title}</h5>
+                <h4>$${price}</h4>
+            </div>
+            <button class="add-to-cart-btn" data-id="${id}" aria-label="Add to Cart">
+                <i class="fas fa-shopping-bag"></i>
+            </button>
+        </div>
+    `;
+}
+
+const HOMEPAGE_PAGE_SIZE = 16; // 4 rows x 4 columns at desktop width
+
+// Renders one page of `products` into #<containerId>, with Prev/Next controls
+// in #<paginationId> — used for the homepage's Featured/New Arrivals grids so
+// they show 4 rows at a time instead of the whole catalog at once.
+function setupPaginatedGrid(containerId, paginationId, products) {
+    const container = document.getElementById(containerId);
+    const pagination = document.getElementById(paginationId);
+    if (!container) return;
+
+    let page = 0;
+    const totalPages = Math.max(1, Math.ceil(products.length / HOMEPAGE_PAGE_SIZE));
+
+    function renderPage() {
+        const start = page * HOMEPAGE_PAGE_SIZE;
+        const pageItems = products.slice(start, start + HOMEPAGE_PAGE_SIZE);
+        container.innerHTML = pageItems.map(productCardHtml).join('');
+        attachCartEventListeners(container);
+
+        if (!pagination) return;
+        pagination.innerHTML = totalPages > 1 ? `
+            <button class="normal" id="${containerId}-prev" ${page === 0 ? 'disabled' : ''}>Previous</button>
+            <span class="pro-pagination-status">Page ${page + 1} of ${totalPages}</span>
+            <button class="normal" id="${containerId}-next" ${page >= totalPages - 1 ? 'disabled' : ''}>Next</button>
+        ` : '';
+
+        document.getElementById(`${containerId}-prev`)?.addEventListener('click', () => {
+            if (page > 0) { page--; renderPage(); container.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+        document.getElementById(`${containerId}-next`)?.addEventListener('click', () => {
+            if (page < totalPages - 1) { page++; renderPage(); container.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+    }
+
+    renderPage();
+}
+
 function processAndRenderProducts(products) {
     const containers = document.querySelectorAll('.pro-container');
     // Silently return if the current page (e.g., cart.html) doesn't have a product container
@@ -105,47 +167,48 @@ function processAndRenderProducts(products) {
         return;
     }
 
-    const productCardsHtml = products.map(product => {
-        const id = product.product_id || product.id || 'unknown';
-        const title = product.product_name || product.title || 'Untitled Product';
+    // Every "Add to Cart" button looks its product up here by id, regardless
+    // of which container/page rendered it — avoids buttons from one section
+    // breaking when another section re-renders with a different subset.
+    window._productsById = new Map(products.map(p => [String(p.product_id || p.id), p]));
 
-        const rawPrice = product.base_retail_price ?? product.price ?? 0;
-        const price = isNaN(Number(rawPrice)) ? '0.00' : Number(rawPrice).toFixed(2);
+    const featuredEl = document.getElementById('featured-products');
+    const newArrivalsEl = document.getElementById('new-arrivals');
 
-        const image = product.default_image || product.image_url || product.image || 'img/p1.jpg';
-        const detailUrl = `sproduct.html?id=${encodeURIComponent(id)}`;
+    if (featuredEl) {
+        setupPaginatedGrid('featured-products', 'featured-products-pagination', products);
+    }
+    if (newArrivalsEl) {
+        // Newest first — previously this showed the exact same list as
+        // Featured Products, in the exact same order.
+        const newest = [...products].sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+        setupPaginatedGrid('new-arrivals', 'new-arrivals-pagination', newest);
+    }
 
-        return `
-            <div class="pro" data-id="${id}">
-                <img src="${image}" alt="${title}" onclick="window.location.href='${detailUrl}'">
-                <div class="des" onclick="window.location.href='${detailUrl}'">
-                    <span>${product.category || 'CeeKay'}</span>
-                    <h5>${title}</h5>
-                    <h4>$${price}</h4>
-                </div>
-                <button class="add-to-cart-btn" data-id="${id}" aria-label="Add to Cart">
-                    <i class="fas fa-shopping-bag"></i>
-                </button>
-            </div>
-        `;
-    }).join('');
+    // Any other .pro-container on the page (e.g. shop.html's full catalog
+    // grid) keeps showing the complete, unpaginated list as before.
+    const plainContainers = Array.from(containers).filter(c => c.id !== 'featured-products' && c.id !== 'new-arrivals');
+    if (plainContainers.length > 0) {
+        const html = products.map(productCardHtml).join('');
+        plainContainers.forEach(container => { container.innerHTML = html; });
+        attachCartEventListeners(document);
+    }
 
-    containers.forEach(container => {
-        container.innerHTML = productCardsHtml;
-    });
-
-    attachCartEventListeners(products);
     loadSingleProductPage(products);
 }
 
-function attachCartEventListeners(products) {
-    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+// `scope` limits (re)binding to buttons within one container — needed so
+// paginating one grid doesn't have to re-touch buttons already bound to a
+// different product subset elsewhere on the page. Defaults to the whole
+// document for the plain (non-paginated) render path.
+function attachCartEventListeners(scope = document) {
+    scope.querySelectorAll('.add-to-cart-btn').forEach(btn => {
         btn.onclick = function (e) {
             e.preventDefault();
             e.stopPropagation();
 
             const productId = this.getAttribute('data-id');
-            const product = products.find(p => (p.product_id || p.id) === productId);
+            const product = window._productsById?.get(productId);
 
             if (product) {
                 const title = product.product_name || product.title;

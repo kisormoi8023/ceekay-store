@@ -106,6 +106,9 @@ button.white:hover { background: var(--white); color: var(--ink); }
 #product1, #new-arrivals-section, #video-feed { text-align: center; }
 #product1 > p, #new-arrivals-section > p { color: var(--gold); letter-spacing: .08em; text-transform: uppercase; font-size: .72rem; }
 .pro-container, .vendor-pro-container { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 28px; margin-top: 38px; }
+.pro-pagination { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 34px; }
+.pro-pagination-status { color: var(--ink-soft); font-size: .82rem; letter-spacing: .04em; }
+.pro-pagination .normal:disabled { opacity: .4; cursor: not-allowed; }
 .pro { position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); text-align: left; box-shadow: 0 8px 25px rgba(35,25,16,.04); transition: .3s ease; }
 .pro:hover { transform: translateY(-7px); box-shadow: var(--shadow); }
 .pro > img { width: 100%; aspect-ratio: 4/5; object-fit: cover; cursor: pointer; }
